@@ -1,0 +1,60 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container mt-5">
+    <h2 class="mb-4 text-primary">💰 Ключові соціальні показники на {{ social_indicators.current_year }} рік</h2>
+        <div class="row mb-5">
+            <div class="col-md-6">
+                <ul class="list-group">
+                    <li class="list-group-item"><strong>Мінімальна заробітна плата (місячна):</strong> {{ social_indicators.min_salary_monthly }}</li>
+                    <li class="list-group-item"><strong>Прожитковий мінімум (для працездатних):</strong> {{ social_indicators.pm_for_able_bodied }}</li>
+                </ul>
+            </div>
+            <div class="col-md-6">
+                <ul class="list-group">
+                    <li class="list-group-item"><strong>Ставка ПДФО:</strong> {{ social_indicators.pdfo_rate }}</li>
+                    <li class="list-group-item"><strong>Ставка Військового збору:</strong> {{ social_indicators.vz_rate }}</li>
+                    <li class="list-group-item"><strong>Ставка ЄСВ:</strong> {{ social_indicators.esv_rate }}</li>
+                </ul>
+            </div>
+        </div>
+
+        <hr>
+<h2 class="mt-5 text-info">📰 Актуальні новини</h2>
+    {% if latest_news %}
+    <div class="list-group">
+        {% for news in latest_news %}
+            <div class="card border-success mb-3">
+                <div class="card-header bg-transparent d-flex justify-content-between align-items-center">
+                    <h5 class="card-title mb-0" style="max-width: 700px;">{{ news.title }}</h5>
+                    {# 💡 ФОРМАТУВАННЯ ДАТИ #}
+                    <small class="text-muted">{{ news.publication_date|date:"d.m.Y H:i" }}</small>
+                </div>
+                <div class="card-body text-success">
+                    {# 💡 ВИВОД ОПИСУ, ЯКИЙ МОЖЕ ОБІЙТИ PAYWALL #}
+                    <p class="card-text">{{ news.description|safe|striptags|truncatechars:300 }}</p>
+
+                    <a href="{{ news.link }}" class="btn btn-primary" target="_blank">
+                        <button type="button" class="btn btn-primary position-relative">
+                        Перейти до джерела
+                        {% if news.is_new %}
+                        <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                            NEW
+                            <span class="visually-hidden">Нова публікація</span>
+                        </span>
+                        {% endif %}
+                        </button>
+                    </a>
+                </div>
+                <div class="card-footer bg-transparent">
+                    <small class="text-body-secondary">
+                        <a href="#" class="card-link">#{{ news.category }}</a>
+                    </small>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+    {% else %}
+        <p class="text-muted">Не вдалося завантажити останні новини з RSS-стрічки.</p>
+    {% endif %}
+</div>
+{% endblock %}
