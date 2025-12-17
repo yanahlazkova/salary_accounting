@@ -31,6 +31,24 @@
             display: block;
         }
 
+<!--        /* Колір фону при наведенні на "Кадри" та інші вкладені меню */-->
+<!--        .dropdown-submenu:hover > .dropdown-item {-->
+<!--            background-color: #e9ecef;-->
+<!--            color: #0d6efd; /* Синій колір Bootstrap Primary */-->
+<!--        }-->
+
+        /* Змінює колір звичайних посилань у набарі */
+        .navbar-nav .nav-link:hover {
+            color: #28d1f3 !important; /* Колір Bootstrap Success або ваш власний (зелений #198754) */
+            transition: color 0.3s ease; /* Плавний перехід */
+        }
+
+        /* Змінює колір пунктів у випадаючому списку */
+        .dropdown-item:hover {
+            background-color: #C0C0C0; /* Світло-сірий фон #f8f9fa*/
+            color: #28d1f3; /* Зелений текст #198754*/
+        }
+
     </style>
 </head>
 <body>
@@ -39,8 +57,6 @@
         <a class="navbar-brand" href="{% url 'home' %}">
             <img src="{% static 'business_office_accounting_chart_marketing_finance_icon_226219.svg' %}" alt="Bootstrap"
                  width="50" height="44">
-            <!--            <img src="{% static 'accounting_banking_investment_business_finance_icon_227602.ico' %}"  alt="Bootstrap" width="30" height="24">-->
-            <!--            Облік ЗП-->
         </a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarScroll"
                 aria-controls="navbarScroll" aria-expanded="false" aria-label="Toggle navigation">
