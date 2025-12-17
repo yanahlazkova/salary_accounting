@@ -77,7 +77,7 @@ class Home(ListView):
             'pdfo_rate': '18%',
             'vz_rate': '5%',  # Згідно з трудовим законодавством
             'esv_rate': '22%',
-        }
+            }
 
         # 2. Основні закони та нормативи
         context['laws_and_regulations'] = [
