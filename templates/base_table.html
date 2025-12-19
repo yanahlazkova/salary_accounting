@@ -7,9 +7,6 @@
 <body>
 <div class="container">
     <h1 class="mt-3 text-info">{{ title }}</h1>
-    {% for row in table_rows.first %}
-    {{ row }}
-    {% endfor %}
     <table class="table table-success table-striped table-hover">
         <tr>
             {% for table_title in table_titles %}

@@ -49,10 +49,30 @@
             color: #28d1f3; /* Зелений текст #198754*/
         }
 
+        /* Обмеження ширини пунктів navbar */
+        .navbar-nav .nav-link {
+            width: 180px;          /* підбери 160–200px */
+            white-space: normal;       /* дозволяє перенос */
+            line-height: 1.2;
+            text-align: center;        /* виглядає охайніше */
+        }
+
+        /* Іконка + текст вертикально вирівняні */
+        .navbar-nav .nav-link i {
+            display: inline-block;
+            vertical-align: top;
+            margin-top: 2px;
+        }
+
+
+
     </style>
 </head>
 <body>
+<nav class="navbar navbar-expand-lg text-bg-primary mb-3">
+{% comment %}
 <nav class="navbar navbar-expand-lg bg-body-tertiary">
+{% endcomment %}
     <div class="container-fluid">
         <a class="navbar-brand" href="{% url 'home' %}">
             <img src="{% static 'business_office_accounting_chart_marketing_finance_icon_226219.svg' %}" alt="Bootstrap"
@@ -87,7 +107,7 @@
 
                             <ul class="dropdown-menu">
                                 <li>
-                                    <a class="dropdown-item" href="#">
+                                    <a class="dropdown-item" href="{% url 'orders' %}">
                                         <i class="bi bi-file-earmark-text me-2"></i>
                                         Накази
                                     </a>
@@ -110,21 +130,14 @@
                         <li>
                             <a class="dropdown-item" href="#">
                                 <i class="bi bi-clock-history me-2"></i>
-                                Робочий час та розрахункові періоди
+                                Класифікатор посад
                             </a>
                         </li>
 
                         <li>
                             <a class="dropdown-item" href="#">
                                 <i class="bi bi-cash-stack me-2"></i>
-                                Зарплатні операції
-                            </a>
-                        </li>
-
-                        <li>
-                            <a class="dropdown-item" href="#">
-                                <i class="bi bi-calculator me-2"></i>
-                                Розрахунок та відображення у бух.обліку
+                                Посади
                             </a>
                         </li>
 
@@ -153,8 +166,47 @@
                     </ul>
                 </li>
 
-                <li class="nav-item">
-                    <a class="nav-link disabled" aria-disabled="true">Link</a>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" role="button"
+                       data-bs-toggle="dropdown" aria-expanded="false">
+                        <i class="bi bi-people me-2"></i>
+                        Кадри
+                    </a>
+                </li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" role="button"
+                       data-bs-toggle="dropdown" aria-expanded="false">
+                        <i class="bi bi-clock-history me-2"></i>
+                        Робочий час та розрах. періоди
+                    </a>
+                </li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" role="button"
+                       data-bs-toggle="dropdown" aria-expanded="false">
+                        <i class="bi bi-cash-stack me-2"></i>
+                        Зарплатні операції
+                    </a>
+                </li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" role="button"
+                       data-bs-toggle="dropdown" aria-expanded="false">
+                        <i class="bi bi-calculator me-2"></i>
+                        Розрахунок та відображ. у бух.обліку
+                    </a>
+                </li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" role="button"
+                       data-bs-toggle="dropdown" aria-expanded="false">
+                        <i class="bi bi-bar-chart-line me-2"></i>
+                        Звіти
+                    </a>
+                </li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" role="button"
+                       data-bs-toggle="dropdown" aria-expanded="false">
+                        <i class="bi bi-gear me-2"></i>
+                        Налаштування
+                    </a>
                 </li>
             </ul>
             <form class="d-flex" role="search">
