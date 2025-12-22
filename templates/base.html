@@ -4,6 +4,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css"
           rel="stylesheet"
           integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB"
@@ -16,49 +17,190 @@
         {% endblock title %}
     </title>
     <style>
+        /* Стилі для вертикального меню */
+        body {
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
 
+        #sidebar {
+            min-width: 280px;
+            max-width: 280px;
+            min-height: 100vh;
+            height: 100vh; /* На всю висоту екрана */
+            position: sticky; /* Замість fixed */
+            top: 0;
+            z-index: 1000;
+            background-color: #f8f9fa;
+            border-right: 1px solid #dee2e6;
+        }
+
+        .nav-link {
+            color: #333;
+            padding: 10px 20px;
+            cursor: pointer;
+        }
+
+        .nav-link:hover {
+            background-color: #e9ecef;
+            color: #0aa1c0; /* 198754 - Зелений акцент при наведенні */
+        }
+
+        /* Вирівнювання підменю для вертикального вигляду */
+        .collapse-submenu {
+            list-style: none;
+            padding-left: 1.5rem;
+            background: #f1f3f5;
+        }
+
+        .main-content {
+            width: 100%;
+            padding: 20px;
+        }
+
+        /* Повертаємо стрілочку при розгортанні */
+        .nav-link[aria-expanded="true"] .bi-chevron-down {
+            transform: rotate(180deg);
+        }
+
+        .bi-chevron-down { transition: transform 0.3s; }
     </style>
 </head>
 <body>
-<nav class="navbar navbar-expand-lg bg-body-tertiary sticky-top">
-    <div class="container-fluid">
-        <a class="navbar-brand" href="{% url 'home' %}">
-            <img src="{% static 'business_office_accounting_chart_marketing_finance_icon_226219.svg' %}" alt="Bootstrap"
-                 width="50" height="44">
-            Home
+<div class="d-flex">
+    <nav id="sidebar" class="d-flex flex-column p-3">
+        <a class="d-flex align-items-center mb-3 mb-md-0 me-md-auto link-dark text-decoration-none"
+           href="{% url 'home' %}">
+            <img src="{% static 'business_office_accounting_chart_marketing_finance_icon_226219.svg' %}" alt="Logo"
+                 width="50" height="44" class="me-2">
+            <span class="fs-4 fw-bold text-info">Облік ЗП</span>
         </a>
-        {% comment %}
-        <!--  Кнопка з трьома рисками, яка відкриває або закриває панель навігації     -->
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
-                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-        {% endcomment %}
-        <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
-            <div class="navbar-nav">
-                <a class="nav-link" aria-current="page" href="#">Нарахування ЗП</a>
-            <span class="navbar-text">
-              Користувач: {{ user }}
-            </span>
-            </div>
+        <hr>
+        <ul class="nav nav-pills flex-column mb-auto">
+            <li class="nav-item">
+                <a href="{% url 'home' %}" class="nav-link active bg-info">
+                    <i class="bi bi-house-door me-2"></i> Головна
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link d-flex justify-content-between" data-bs-toggle="collapse" href="#menuDirectories">
+                    <span><i class="bi bi-journal-text me-2"></i> Довідники</span>
+                    <i class="bi bi-chevron-down"></i>
+                </a>
+                <ul class="collapse collapse-submenu" id="menuDirectories">
+                    <li><a href="#" class="nav-link small">Класифікатори посад</a></li>
+                    <li><a href="#" class="nav-link small">Посади</a></li>
+                    <li><a href="#" class="nav-link small">Підрозділи</a></li>
+                </ul>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link d-flex justify-content-between" data-bs-toggle="collapse" href="#menuStaff">
+                    <span><i class="bi bi-people me-2"></i> Кадри</span>
+                    <i class="bi bi-chevron-down"></i>
+                </a>
+                <ul class="collapse collapse-submenu" id="menuStaff">
+                    <li><a href="#" class="nav-link small">Накази</a></li>
+                    <li><a href="#" class="nav-link small">Фізичні особи</a></li>
+                    <li><a href="#" class="nav-link small">Особові рахунки</a></li>
+                </ul>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link d-flex justify-content-between" data-bs-toggle="collapse" href="#menuTime">
+                    <span><i class="bi bi-clock-history me-2"></i> Робочий час та розрахункові
+                    періоди</span>
+                    <i class="bi bi-chevron-down"></i>
+                </a>
+                <ul class="collapse collapse-submenu" id="menuTime">
+                    <li><a class="nav-link small" href="#">Розрахунковий період ЗП</a></li>
+                    <li><a class="nav-link small" href="#">Графіки робіт</a></li>
+                    <li><a class="nav-link small" href="#">Табель обліку робочого часу</a></li>
+                </ul>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link d-flex justify-content-between" data-bs-toggle="collapse" href="#menuOperations">
+                    <span><i class="bi bi-cash-stack me-2"></i>Зарплатні операції</span>
+                    <i class="bi bi-chevron-down"></i>
+                </a>
+                <ul class="collapse collapse-submenu navbar-nav-scroll" id="menuOperations"
+                    style="--bs-scroll-height: 60%;">
+                    <li><a class="nav-link small" href="#">Відомості на виплату</a></li>
+                    <li><a class="nav-link small" href="#">Розрахунок авансу</a></li>
+                    <li><a class="nav-link small" href="#">Нарахування матеріальної допомоги</a></li>
+                    <li><a class="nav-link small" href="#">Премії</a></li>
+                    <li><a class="nav-link small" href="#">Разові нарахування та утримання</a></li>
+                    <li><a class="nav-link small" href="#">Коригування нарахувань та утримань</a></li>
+                    <li><a class="nav-link small" href="#">Відпускні (нова операція)</a></li>
+                    <li><a class="nav-link small" href="#">Розрахунок відпускних (стара операція)</a></li>
+                    <li><a class="nav-link small" href="#">Розрахунок лікарняних</a></li>
+                    <li><a class="nav-link small" href="#">Відпустка по догляду за дитиною</a></li>
+                    <li><a class="nav-link small" href="#">Перерахунок</a></li>
+                    <li><a class="nav-link small" href="#">Середня за час відрядження</a></li>
+                    <li><a class="nav-link small" href="#">Заміни</a></li>
+                    <li><a class="nav-link small" href="#">Простій</a></li>
+                </ul>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link d-flex justify-content-between" data-bs-toggle="collapse" href="#menuCalculations">
 
-            <form class="d-flex" role="search">
-                <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search"/>
-                <button class="btn btn-outline-success" type="submit">Search</button>
-            </form>
-            {% comment %}
-            <form class="container-fluid justify-content-start">
-                <button class="btn btn-outline-success me-2" type="button">Log in</button>
-            </form>
-            {% endcomment %}
-        </div>
-    </div>
-</nav>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"
+                    <span><i class="bi bi-cash-stack me-2"></i>Розрахунок та відображення у
+                    бух.обліку</span>
+                    <i class="bi bi-chevron-down"></i>
+                </a>
+                <ul class="collapse collapse-submenu" id="menuCalculations">
+                    <li><a href="#" class="nav-link small">Нарахування зарплати та утримань </a></li>
+                    <li><a href="#" class="nav-link small">Відображення у бух.обліку нарахувань та утримань </a></li>
+                    <li><a href="#" class="nav-link small">Нарахування ЄСВ </a></li>
+                    <li><a href="#" class="nav-link small">Розрахунковий лист співробітника (табулька)</a></li>
+                </ul>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link d-flex justify-content-between" data-bs-toggle="collapse" href="#menuOrders">
+                    <span><i class="bi bi-bar-chart-line me-2"></i> Звіти</span>
+                    <i class="bi bi-chevron-down"></i>
+                </a>
+                <ul class="collapse collapse-submenu" id="menuOrders">
+                    <li><a href="#" class="nav-link small">Зведена РПВ</a></li>
+                    <li><a href="#" class="nav-link small">Аналітичний звіт нарахувань ПДФО, ВЗ та ЄСВ</a></li>
+                </ul>
+            </li>
+            <li><a href="#" class="nav-link"><i class="bi bi-gear me-2"></i> Налаштування</a></li>
+            <li>
+                <hr>
+                <div class="dropdown">
+                    <a href="#" class="d-flex align-items-center link-dark text-decoration-none dropdown-toggle"
+                       id="dropdownUser" data-bs-toggle="dropdown" aria-expanded="false">
+                        <i class="bi bi-person-circle fs-4 me-2"></i>
+                        <strong>Бухгалтер</strong>
+                    </a>
+                    <ul class="dropdown-menu text-small shadow" aria-labelledby="dropdownUser">
+                        <li><a class="dropdown-item" href="#">Профіль</a></li>
+                        <li>
+                            <hr class="dropdown-divider">
+                        </li>
+                        <li><a class="dropdown-item" href="#">Вихід</a></li>
+                    </ul>
+                    <form class="d-flex" role="search">
+                        <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search"/>
+                        <button class="btn btn-outline-info" type="submit">Search</button>
+                    </form>
+                </div>
+                {% comment %}
+                <form class="container-fluid justify-content-start">
+                    <button class="btn btn-outline-info me-2" type="button">Log in</button>
+                </form>
+                {% endcomment %}
+
+            </li>
+        </ul>
+    </nav>
+    <main class="main-content">
+        {% block content %}
+        {% endblock content %}
+    </main>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
         crossorigin="anonymous">
 </script>
-{% block content %}
-{% endblock content %}
 </body>
 </html>
