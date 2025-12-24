@@ -66,6 +66,7 @@
         .bi-chevron-down { transition: transform 0.3s; }
     </style>
 </head>
+
 <body>
 <div class="d-flex">
     <nav id="sidebar" class="d-flex flex-column p-3">
@@ -84,8 +85,8 @@
             </li>
             <li class="nav-item">
                 <a class="nav-link d-flex justify-content-between" data-bs-toggle="collapse" href="#menuDirectories">
-                    <span><i class="bi bi-journal-text me-2"></i> Довідники</span>
-                    <i class="bi bi-chevron-down"></i>
+                    <span><i class="bi bi-journal-text me-2 text-info"></i> Довідники</span>
+                    <i class="bi bi-chevron-down text-info"></i>
                 </a>
                 <ul class="collapse collapse-submenu" id="menuDirectories">
                     <li><a href="#" class="nav-link small">Класифікатори посад</a></li>
@@ -95,8 +96,8 @@
             </li>
             <li class="nav-item">
                 <a class="nav-link d-flex justify-content-between" data-bs-toggle="collapse" href="#menuStaff">
-                    <span><i class="bi bi-people me-2"></i> Кадри</span>
-                    <i class="bi bi-chevron-down"></i>
+                    <span><i class="bi bi-people me-2 text-info"></i> Кадри</span>
+                    <i class="bi bi-chevron-down text-info"></i>
                 </a>
                 <ul class="collapse collapse-submenu" id="menuStaff">
                     <li><a href="#" class="nav-link small">Накази</a></li>
@@ -106,9 +107,9 @@
             </li>
             <li class="nav-item">
                 <a class="nav-link d-flex justify-content-between" data-bs-toggle="collapse" href="#menuTime">
-                    <span><i class="bi bi-clock-history me-2"></i> Робочий час та розрахункові
+                    <span><i class="bi bi-clock-history me-2 text-info"></i> Робочий час та розрахункові
                     періоди</span>
-                    <i class="bi bi-chevron-down"></i>
+                    <i class="bi bi-chevron-down text-info"></i>
                 </a>
                 <ul class="collapse collapse-submenu" id="menuTime">
                     <li><a class="nav-link small" href="#">Розрахунковий період ЗП</a></li>
@@ -118,8 +119,8 @@
             </li>
             <li class="nav-item">
                 <a class="nav-link d-flex justify-content-between" data-bs-toggle="collapse" href="#menuOperations">
-                    <span><i class="bi bi-cash-stack me-2"></i>Зарплатні операції</span>
-                    <i class="bi bi-chevron-down"></i>
+                    <span><i class="bi bi-cash-stack me-2 text-info"></i>Зарплатні операції</span>
+                    <i class="bi bi-chevron-down text-info"></i>
                 </a>
                 <ul class="collapse collapse-submenu navbar-nav-scroll" id="menuOperations"
                     style="--bs-scroll-height: 60%;">
@@ -142,9 +143,9 @@
             <li class="nav-item">
                 <a class="nav-link d-flex justify-content-between" data-bs-toggle="collapse" href="#menuCalculations">
 
-                    <span><i class="bi bi-cash-stack me-2"></i>Розрахунок та відображення у
+                    <span><i class="bi bi-calculator me-2 text-info"></i>Розрахунок та відображення у
                     бух.обліку</span>
-                    <i class="bi bi-chevron-down"></i>
+                    <i class="bi bi-chevron-down text-info"></i>
                 </a>
                 <ul class="collapse collapse-submenu" id="menuCalculations">
                     <li><a href="#" class="nav-link small">Нарахування зарплати та утримань </a></li>
@@ -155,15 +156,15 @@
             </li>
             <li class="nav-item">
                 <a class="nav-link d-flex justify-content-between" data-bs-toggle="collapse" href="#menuOrders">
-                    <span><i class="bi bi-bar-chart-line me-2"></i> Звіти</span>
-                    <i class="bi bi-chevron-down"></i>
+                    <span><i class="bi bi-bar-chart-line me-2 text-info"></i> Звіти</span>
+                    <i class="bi bi-chevron-down text-info"></i>
                 </a>
                 <ul class="collapse collapse-submenu" id="menuOrders">
                     <li><a href="#" class="nav-link small">Зведена РПВ</a></li>
                     <li><a href="#" class="nav-link small">Аналітичний звіт нарахувань ПДФО, ВЗ та ЄСВ</a></li>
                 </ul>
             </li>
-            <li><a href="#" class="nav-link"><i class="bi bi-gear me-2"></i> Налаштування</a></li>
+            <li><a href="{% url 'settings' %}" class="nav-link"><i class="bi bi-gear me-2 text-info"></i> Налаштування</a></li>
             <li>
                 <hr>
                 <div class="dropdown">

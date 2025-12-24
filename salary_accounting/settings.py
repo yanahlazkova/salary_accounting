@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'home.apps.HomeConfig',
     'persons.apps.PersonsConfig',
     'directories.apps.DirectoriesConfig',
+    'settings.apps.SettingsConfig',
 ]
 
 MIDDLEWARE = [
