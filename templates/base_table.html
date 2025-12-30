@@ -7,6 +7,9 @@
 <body>
 <div class="container">
     <h1 class="mt-3 text-info">{{ title }}</h1>
+    <button class="btn btn-outline-info me-2" type="button"
+        onclick="window.location='{% url button_add %}'">
+        Додати</button>
     <table class="table table-success table-striped table-hover">
         <tr>
             {% for table_title in table_titles %}
@@ -14,7 +17,11 @@
             {% endfor %}
         </tr>
         {% for key, table_row in table_rows.items %}
-        <tr>
+        <tr role="button"
+            tabindex="0"
+            onclick="window.location='{% url editing key %}'"
+            onkeypress="if(event.keyCode==13) window.location='{% url editing key %}'"
+            style="cursor: pointer;">
             <th>{{ key }}</th>
             {% for data_row in table_row %}
             <td>{{ data_row }}</td>

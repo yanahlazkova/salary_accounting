@@ -13,6 +13,11 @@ RSS_URL = 'https://buhgalter.com.ua/rss-for-users.rss'
 NEWS_LIMIT = 20
 
 
+# def listBuh(request):
+#     feed = feedparser.parse(RSS_URL)
+#     year = getattr(feed.entries[0], 'published_parsed').tm_year
+#     print(year)
+
 # --------------------
 
 class Home(ListView):
@@ -30,6 +35,7 @@ class Home(ListView):
 
         # Якщо в кеші немає, завантажуємо з RSS...
         feed = feedparser.parse(RSS_URL)
+
         news_list = []
         today = date.today()  # ⬅️ Отримуємо поточну дату
 
