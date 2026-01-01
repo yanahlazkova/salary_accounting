@@ -7,8 +7,13 @@
 </form>
 <div class="bd-callout bd-callout-info">
     <p>
-    {{ message }}
+        {{ message }}
 
     </p>
+    <button class="btn btn-outline-info me-2"
+            type="button"
+            onclick="window.location='{% url redirect_button %}'">
+        Exit
+    </button>
 </div>
 {% endblock content %}

@@ -1,5 +1,5 @@
 # home/views.py
-
+from django.http import HttpResponseNotFound
 from django.views.generic import ListView
 from django.utils import timezone
 from datetime import datetime, date  # ⬅️ КОРЕКТНИЙ ІМПОРТ date
@@ -100,3 +100,7 @@ class Home(ListView):
         ]
 
         return context
+
+
+def pageNotFound(request, exception):
+    return HttpResponseNotFound("<h1>Сторінка не знайдена<h1>")
