@@ -1,7 +1,9 @@
-{% extends 'base.html' %}
-{% block content %}
 <div class="container mt-5">
-    
+
+    {% include 'social_settings.html' %}
+
+    {% comment %}
+
     <h2 class="mb-4 text-primary">💰 Ключові соціальні показники на {{ social_indicators.current_year }} рік</h2>
     <div class="row mb-5">
         <div class="col-md-6">
@@ -18,9 +20,10 @@
             </ul>
         </div>
     </div>
-    
+
     <hr>
-    
+
+    {% endcomment %}
     <h2 class="mt-5 text-secondary">🏛️ Основні нормативно-правові акти для нарахування зарплати (Бюджетна сфера)</h2>
     <p class="lead">Розрахунки в системі базуються на наступних першоджерелах:</p>
     
@@ -38,4 +41,3 @@
     {% endfor %}
     
 </div>
-{% endblock %}
