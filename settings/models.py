@@ -50,7 +50,7 @@ class SocialSettings(models.Model):
     # user_updated - останній користувач, який змінив запис
 
     def __str__(self):
-        return self.effective_from
+        return str(self.effective_from)
 
     class Meta:
         db_table = 'social_settings'

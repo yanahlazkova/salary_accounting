@@ -3,7 +3,7 @@
     {% if buttons %}
         {% for button in buttons %}
             <button class="btn btn-outline-info me-2" type="button"
-{#                    onclick="window.location='{% url button.redirect_button %}'"#}
+                    {#                    onclick="window.location='{% url button.redirect_button %}'"#}
                     hx-get="{% url button.redirect_button %}"
                     hx-target="#main-content"
                     hx-push-url="true">
@@ -13,23 +13,25 @@
         {% endfor %}
     {% endif %}
     <table class="table table-success table-striped table-hover mt-3">
+        <thead>
         <tr>
             {% for table_title in table_titles %}
                 <th>{{ table_title }}</th>
             {% endfor %}
         </tr>
-        {% for key, table_row in table_rows.items %}
+        </thead>
+        <tbody>
+        {% for table_row in table_rows %}
             <tr role="button"
                 tabindex="0"
-                onclick="window.location='{% url editing key %}'"
-                onkeypress="if(event.keyCode==13) window.location='{% url editing key %}'"
+                onclick="window.location='{% url 'editing' table_row.id %}'"
+                onkeypress="if(event.keyCode==13) window.location='{% url 'editing' table_row.id %}'"
                 style="cursor: pointer;">
-                <th>{{ key }}</th>
-                {% for data_row in table_row %}
-                    <td>{{ data_row }}</td>
+                {% for value in table_row.values %}
+                    <td>{{ value }}</td>
                 {% endfor %}
             </tr>
         {% endfor %}
-    </table>
-
+        </tbody>
+        </table>
 </div>

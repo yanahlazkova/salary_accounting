@@ -8,8 +8,16 @@ from .models import SocialSettings
 
 
 def settings(request):
-    data_db = SocialSettings.objects.all()
+    data_db = SocialSettings.objects.all().values() #.order_by('-effective_from')
     table_titles = [f.verbose_name for f in SocialSettings._meta.fields]
+
+    # Створюємо список списків (ID + значення полів)
+    rows_data = []
+    for obj in data_db:
+        rows_data.append({
+            'id': obj['id'],  # Звернення через дужки (словник)
+            'values': [obj.get(f.name) for f in SocialSettings._meta.fields]
+        })
 
     context = {
         'title': 'Соціальні показники',
@@ -22,28 +30,16 @@ def settings(request):
             },
         ],
         'table_titles': table_titles,
-        # 'table_titles': [
-        #     'id',
-        #     'дата початку',
-        #     'дата створення',
-        #     'дата оновлення',
-        #     'Мін.ЗП',
-        #     'Військовий збір, %',
-        #     'Прожитковий мін.',
-        #     'ПДФО, %',
-        #     'ЄСВ, %',
-        # ],
-        'table_rows': data_db
+        'table_rows': rows_data,
+        'editing': 'editing',
     }
 
     # ПЕРЕВІРКА: Чи це HTMX запит?
     if request.headers.get('HX-Request'):
         # Віддаємо тільки таблицю (без меню)
-        print('data_social_settings')
         return render(request, 'data_social_settings.html', context)
 
     # Якщо звичайний запит — віддаємо сторінку, яка "огортає" таблицю в base.html
-    print('page_social_settings')
     return render(request, 'page_social_settings.html', context)
 
 def add_social_settings(request):
@@ -75,10 +71,11 @@ def add_social_settings(request):
             # Якщо форма невалідна, просто рендеримо її з помилками
             context['form'] = form
             return render(request, 'form_social_settings.html', context)
+
     elif request.method == 'GET':
         print(f'method = {request.method}')
         form = SocialSettingsForm()
-        context.update({'form': form})
+        # context['form'] = form
         # ПЕРЕВІРКА: Чи це HTMX запит?
         if request.headers.get('HX-Request'):
             # Віддаємо тільки таблицю (без меню)
@@ -88,3 +85,6 @@ def add_social_settings(request):
         # Якщо звичайний запит — віддаємо сторінку, яка "огортає" таблицю в base.html
         print('page_form_social_settings')
         return render(request, 'page_form_social_settings.html', context)
+
+def edit_social_settings(request, id_social_settings):
+    return HttpResponse(f'Editing f{id_social_settings}')
