@@ -3,7 +3,10 @@
     {% if buttons %}
         {% for button in buttons %}
             <button class="btn btn-outline-info me-2" type="button"
-                    onclick="window.location='{% url button.redirect_button %}'">
+{#                    onclick="window.location='{% url button.redirect_button %}'"#}
+                    hx-get="{% url button.redirect_button %}"
+                    hx-target="#main-content"
+                    hx-push-url="true">
                 <i class="{{ button.icon_button }}"></i>
                 {{ button.title_button }}
             </button>

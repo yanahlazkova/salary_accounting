@@ -6,19 +6,24 @@
             </div>
 
 
-
             <div class="card-body mt-4">
                 {% if buttons %}
                     {% for button in buttons %}
                         <button class="btn btn-outline-info me-2" type="button"
-                                onclick="window.location='{% url button.redirect_button %}'">
+                                hx-get="{% url button.redirect_button %}"
+                                hx-target="#main-content"
+                                hx-push-url="true">
+                            {#                            onclick="window.location='{% url button.redirect_button %}'">#}
                             <i class="{{ button.icon_button }}"></i>
                             {{ button.title_button }}
                         </button>
                     {% endfor %}
                 {% endif %}
                 <hr>
-                <form action="#" method="post">
+                <form method="POST"
+                      hx-post="{% url form_action %}"
+                      hx-target="#main-content"
+                      hx-push-url="true">
                     {% csrf_token %}
                     <div class="mb-3 row">
                         {% for field in form %}
@@ -35,6 +40,9 @@
                             </label>
                             <div class="col-sm-10">
                                 {{ field }}
+                                {% if field.errors %}
+                                    <div class="text-danger small">{{ field.errors }}</div>
+                                {% endif %}
                             </div>
                         {% endfor %}
                     </div>
@@ -55,16 +63,16 @@
                             {% endif %}
                         </label>
                         {{ field }}
-                        {% if field.errors %}
-                            <div class="text-danger small">{{ field.errors }}</div>
-                        {% endif %}
                     </div>
                 {% endfor %}
 
             </div>
             {% endcomment %}
                     <div class="mt-4">
-                        <button type="submit" class="btn btn-success">
+                        <button type="submit" class="btn btn-success"
+                                {# hx-get="{% url button.redirect_button %}"#}
+                                hx-target="#main-content"
+                                hx-push-url="true">
                             <i class="bi bi-save me-2"></i>Зберегти налаштування
                         </button>
                     </div>
@@ -72,3 +80,4 @@
             </div>
         </div>
     </div>
+</div>

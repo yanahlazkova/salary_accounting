@@ -1,13 +1,13 @@
 from cProfile import label
 from os import name
 
-from django.forms import ModelForm
 from django import forms
+from django.core.exceptions import ValidationError
 
 from settings.models import SocialSettings
 
 
-class SocialSettingsForm(ModelForm):
+class SocialSettingsForm(forms.ModelForm):
     # effective_from = forms.DateField(
     #     label="Дата введення в дію",
     #     widget=forms.DateInput(
@@ -40,6 +40,11 @@ class SocialSettingsForm(ModelForm):
                   'vz_rate',
                   'esv_rate',  # attrs multiple - можна обрати декілька значень
                   ]
+        error_messages = {
+            'effective_from': {
+                'unique': "Дані з такою датою вже існують. Оберіть іншу дату.",
+            },
+        }
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -59,3 +64,13 @@ class SocialSettingsForm(ModelForm):
             # Користувач не зможе ввести число менше 0
             if isinstance(field, forms.DecimalField) or isinstance(field, forms.IntegerField):
                 field.widget.attrs.update({'min': '0', 'step': '0.01'})
+
+    # def clean_effective_from(self):
+    #     date = self.cleaned_data.get('effective_from')
+    #
+    #     # Перевіряємо, чи є вже такий запис у базі (тільки для нових записів)
+    #     if SocialSettings.objects.filter(effective_from=date).exists():
+    #         raise forms.ValidationError(f'Дані з такою датою {date} вже існують.')
+    #
+    #     # ОБОВ'ЯЗКОВО повертаємо значення
+    #     return date
