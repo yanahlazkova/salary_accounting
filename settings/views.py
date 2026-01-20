@@ -50,7 +50,7 @@ def add_social_settings(request):
         'buttons': [
             {
                 'redirect_button': 'settings',
-                'icon_button': 'bi bi-backspace',
+                'icon_button': 'bi bi-arrow-left-square', # 'bi bi-backspace',
                 'title_button': 'Exit',
             }
         ]
@@ -75,7 +75,7 @@ def add_social_settings(request):
     elif request.method == 'GET':
         print(f'method = {request.method}')
         form = SocialSettingsForm()
-        # context['form'] = form
+        context['form'] = form
         # ПЕРЕВІРКА: Чи це HTMX запит?
         if request.headers.get('HX-Request'):
             # Віддаємо тільки таблицю (без меню)
