@@ -36,7 +36,7 @@ class PayrollSettings(models.Model):
     esv_rate = models.DecimalField(
         max_digits=5,
         decimal_places=2,
-        verbose_name="Ставка ЄСВ, %",
+        verbose_name="Ставка ЄСВ, % (стандартна)",
         default=22.00
     )
     """ дата початку дії"""

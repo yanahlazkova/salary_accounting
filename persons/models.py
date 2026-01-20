@@ -5,20 +5,26 @@ from django.db import models
 
 
 class Person(models.Model):
+    """ модель для довідника Фізичні Особи """
     GENDER_CHOICES = {
-        'male': 'чоловіча',
-        'female': 'жіноча',
+        'ч': 'чоловіча',
+        'ж': 'жіноча',
     }
     last_name = models.CharField(max_length=100, name='Прізвище')
     first_name = models.CharField(max_length=100, name="Ім'я")
     patronymic = models.CharField(max_length=100, name='По батькові')  # по батькові
-    full_name = models.CharField(max_length=100, name='ПІБ')
+    # full_name = models.CharField(max_length=100, name='ПІБ')
     birth_date = models.DateField(blank=True, name='День народження')
     gender = models.CharField(choices=GENDER_CHOICES.items(), name='Стать')
     employee = models.BooleanField(name='Співробітник')
-    time_create = models.DateTimeField(auto_now_add=True)
-    time_update = models.DateTimeField(auto_now=True)
     is_working = models.BooleanField(default=False, name='Працює')
+    time_create = models.DateTimeField(auto_now_add=True, name='Дата створення')
+    time_update = models.DateTimeField(auto_now=True, name='Дата оновлення')
+
+    @property
+    def full_name(self):
+        """ Returns the person's full name."""
+        return f'{self.last_name} {self.first_name} {self.patronymic}'
 
 
 class Orders(models.Model):
