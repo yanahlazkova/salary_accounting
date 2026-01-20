@@ -36,10 +36,10 @@ def settings(request):
 
     # ПЕРЕВІРКА: Чи це HTMX запит?
     if request.headers.get('HX-Request'):
-        # Віддаємо тільки таблицю (без меню)
+        # Віддаємо контент (без меню)
         return render(request, 'data_social_settings.html', context)
 
-    # Якщо звичайний запит — віддаємо сторінку, яка "огортає" таблицю в base.html
+    # Якщо звичайний запит — віддаємо сторінку, яка "огортає" контент в base.html
     return render(request, 'page_social_settings.html', context)
 
 def add_social_settings(request):
@@ -50,7 +50,7 @@ def add_social_settings(request):
         'buttons': [
             {
                 'redirect_button': 'settings',
-                'icon_button': 'bi bi-backspace',
+                'icon_button': 'bi bi-arrow-left-square', # 'bi bi-backspace',
                 'title_button': 'Exit',
             }
         ]
@@ -75,16 +75,16 @@ def add_social_settings(request):
     elif request.method == 'GET':
         print(f'method = {request.method}')
         form = SocialSettingsForm()
-        # context['form'] = form
+        context['form'] = form
         # ПЕРЕВІРКА: Чи це HTMX запит?
         if request.headers.get('HX-Request'):
             # Віддаємо тільки таблицю (без меню)
             print('form_social_settings')
             return render(request, 'form_social_settings.html', context)
-
-        # Якщо звичайний запит — віддаємо сторінку, яка "огортає" таблицю в base.html
-        print('page_form_social_settings')
-        return render(request, 'page_form_social_settings.html', context)
+        else:
+            # Якщо звичайний запит — віддаємо сторінку, яка "огортає" таблицю в base.html
+            print('page_form_social_settings')
+            return render(request, 'page_form_social_settings.html', context)
 
 def edit_social_settings(request, id_social_settings):
     return HttpResponse(f'Editing f{id_social_settings}')
