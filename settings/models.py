@@ -1,8 +1,5 @@
-from decimal import Decimal
-
-from django.core.validators import MinValueValidator, DecimalValidator, MaxValueValidator
 from django.db import models
-
+from django.core.validators import MinValueValidator, MaxValueValidator
 
 class SocialSettings(models.Model):
     """
@@ -14,6 +11,38 @@ class SocialSettings(models.Model):
         unique=True,
         help_text="Оберіть дату, з якої ці показники стають актуальними",
     )
+    min_salary = models.DecimalField(
+        max_digits=10,
+        decimal_places=2,
+        verbose_name="Мінімальна ЗП (місячна), грн",
+        default=8000.00
+    )
+    pm_for_able_bodied = models.DecimalField(
+        max_digits=10,
+        decimal_places=2,
+        verbose_name="Прожитковий мінімум для працездатних осіб, грн",
+        default=3028.00
+    )
+    pdfo_rate = models.DecimalField(
+        max_digits=5,
+        decimal_places=2,
+        verbose_name="Ставка ПДФО, %",
+        default=18.00
+    )
+    vz_rate = models.DecimalField(
+        max_digits=5,
+        decimal_places=2,
+        verbose_name="Ставка Військового збору, %",
+        default=5.00
+    )
+    esv_rate = models.DecimalField(
+        max_digits=5,
+        decimal_places=2,
+        verbose_name="Ставка ЄСВ, % (стандартна)",
+        default=22.00
+    )
+    """ дата початку дії"""
+    time_start = models.DateField(
 
     # Показники
     min_salary = models.DecimalField(max_digits=10, decimal_places=2,
