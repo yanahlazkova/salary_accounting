@@ -1,22 +1,13 @@
-from cProfile import label
-from os import name
-
-from django.forms import ModelForm
 from django import forms
+from django.forms import ModelForm
 
-from settings.models import SocialSettings
+from persons.models import Person
 
 
-class SocialSettingsForm(ModelForm):
+class PersonForm(ModelForm):
     class Meta:
-        model = SocialSettings
-        fields = ['effective_from',
-                  'min_salary',
-                  'pm_able_bodied',
-                  'pdfo_rate',
-                  'vz_rate',
-                  'esv_rate',  # attrs multiple - можна обрати декілька значень
-                  ]
+        model = Person
+        fields = '__all__'
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -24,7 +15,6 @@ class SocialSettingsForm(ModelForm):
         for field_name, field in self.fields.items():
             # Додаємо загальний клас для всіх
             field.widget.attrs.update({'class': 'form-control'})
-
             # Якщо поле — це дата, міняємо тип на календар
             if isinstance(field, forms.DateField):
                 field.widget = forms.DateInput(attrs={'type': 'date', 'class': 'form-control'})
