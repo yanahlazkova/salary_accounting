@@ -20,7 +20,8 @@ def settings(request):
         })
 
     context = {
-        'title': 'Соціальні показники',
+        'title': 'Налаштування соціальних показників',
+        'icon_title': 'bi bi-gear me-2',
         'current_user': request.user.username if request.user.is_authenticated else 'Гість',
         'buttons': [
             {
@@ -28,6 +29,10 @@ def settings(request):
                 'icon_button': 'bi bi-gear',
                 'title_button': 'Додати',
             },
+        ],
+        'contents': [
+            'social_settings.html',
+            'base_table.html',
         ],
         'table_titles': table_titles,
         'table_rows': rows_data,
@@ -37,10 +42,12 @@ def settings(request):
     # ПЕРЕВІРКА: Чи це HTMX запит?
     if request.headers.get('HX-Request'):
         # Віддаємо контент (без меню)
-        return render(request, 'data_social_settings.html', context)
+        return render(request, 'base_content.html', context)
+        # return render(request, 'data_social_settings.html', context)
 
     # Якщо звичайний запит — віддаємо сторінку, яка "огортає" контент в base.html
-    return render(request, 'page_social_settings.html', context)
+    return render(request, 'base_page.html', context)
+    # return render(request, 'page_social_settings.html', context)
 
 def add_social_settings(request):
     context = {

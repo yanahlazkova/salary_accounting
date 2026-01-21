@@ -10,6 +10,7 @@ from persons.models import Person, Orders
 def add_person(request):
     context = {
         'title': 'Фізична особа (створення)',
+        'icon_title': 'be bi-person-add me-2',
         'current_user': request.user.username if request.user.is_authenticated else 'Гість',
         'form_action': 'add_person',
         'buttons': [
@@ -58,7 +59,7 @@ def edit_order(request, order_id):
     return HttpResponse(f'Наказ id: {order_id}')
 
 
-def list_personnel(request):
+def personnel(request):
     data_db = Person.objects.all().values()
     table_titles = [f.name for f in Person._meta.get_fields()]
     rows_data = []
@@ -69,6 +70,7 @@ def list_personnel(request):
         })
     context = {
         'title': 'Фізичні особи',
+        'icon_title': 'be bi-people me-2',
         'current_user': request.user.username if request.user.is_authenticated else 'Гість',
         'table_titles': table_titles,  # ['ПІБ', 'id', 'Стать', 'Співробітник', 'Працює'],
         'table_rows': rows_data,
@@ -81,14 +83,17 @@ def list_personnel(request):
                 'icon_button': "bi bi-person-add me-2 text-info",
                 'title_button': 'Додати',
             }],
+        'contents': ['base_table.html'],
 
     }
     if request.headers.get('HX-Request'):
+        print('base_content.html')
         # Віддаємо контент (без меню)
-        return render(request, 'list_personnel.html', context)
+        return render(request, 'base_content.html', context)
 
     # Якщо звичайний запит — віддаємо сторінку, яка "огортає" контент в base.html
-    return render(request, 'page_personnel.html', context)
+    print('base_page.html')
+    return render(request, 'base_page.html', context)
 
     return render(request, 'personnel.html', context)
 
