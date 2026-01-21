@@ -17,6 +17,11 @@ def add_person(request):
                 'redirect_button': 'personnel',
                 'icon_button': 'bi bi-arrow-left-square', # 'bi bi-backspace',
                 'title_button': 'Назад',
+            },
+            {
+                'redirect_button': 'personnel',
+                'icon_button': 'bi bi-arrow-left-square',  # 'bi bi-backspace',
+                'title_button': 'Змінити',
             }
         ]
     }
@@ -28,23 +33,11 @@ def add_person(request):
     if request.headers.get('HX-Request'):
         # Віддаємо тільки таблицю (без меню)
         print('form_social_settings')
-        return render(request, 'form_person.html', context)
+        return render(request, 'base_form.html', context)
     else:
         # Якщо звичайний запит — віддаємо сторінку, яка "огортає" таблицю в base.html
         print('page_form_social_settings')
         return render(request, 'page_form_person.html', context)
-    if request.headers.get('HX-Request'):
-        # Віддаємо контент (без меню)
-        return render(request, 'form_person.html', context)
-
-    # Якщо звичайний запит — віддаємо сторінку, яка "огортає" контент в base.html
-    return render(request, 'page_personnel.html', context)
-
-    # return render(request, 'page_form_person.html', {
-    #     'title': 'Фізична особа (створення)',
-    #     'message': 'Заповніть обов\'язкові поля',
-    #     'redirect_button': 'personnel',
-    # })
 
 
 def add_order(request):
