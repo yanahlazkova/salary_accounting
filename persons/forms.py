@@ -11,18 +11,25 @@ class PersonForm(ModelForm):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        # Словник з бажаною шириною для конкретних полів
+
         # Проходимо циклом по всіх полях форми
         for field_name, field in self.fields.items():
             # Додаємо загальний клас для всіх
-            field.widget.attrs.update({'class': 'form-control'})
+            field.widget.attrs.update({'class': 'form-control w-75'})
+
             # Якщо поле — це дата, міняємо тип на календар
             if isinstance(field, forms.DateField):
-                field.widget = forms.DateInput(attrs={'type': 'date', 'class': 'form-control'})
+                field.widget = (forms.
+                                DateInput(attrs={'type': 'date',
+                                                 'class': 'form-control w-25',
+                                                 # 'style': 'width: 150px'
+                                                 }))
 
-            # Якщо поле — це Decimal (числове), додаємо крок 0.01
-            if isinstance(field, forms.DecimalField):
-                field.widget.attrs.update({'step': '0.01'})
+            # Якщо поле — це випадаючий список, вказуємо ширину
+            if field_name == 'gender':
+                field.widget.attrs.update({'class': 'form-control w-25'})
 
             # Користувач не зможе ввести число менше 0
-            if isinstance(field, forms.DecimalField) or isinstance(field, forms.IntegerField):
-                field.widget.attrs.update({'min': '0', 'step': '0.01'})
+            if isinstance(field, forms.BooleanField):
+                field.widget = forms.CheckboxInput({'type': 'checkbox'})

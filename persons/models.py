@@ -15,7 +15,7 @@ class Person(models.Model):
     patronymic = models.CharField(max_length=100, name='По батькові')  # по батькові
     # full_name = models.CharField(max_length=100, name='ПІБ')
     birth_date = models.DateField(blank=True, name='День народження')
-    gender = models.CharField(choices=GENDER_CHOICES.items(), name='Стать')
+    gender = models.CharField(choices=GENDER_CHOICES.items(), verbose_name='Стать')
     employee = models.BooleanField(name='Співробітник')
     is_working = models.BooleanField(default=False, name='Працює')
     time_create = models.DateTimeField(auto_now_add=True, name='Дата створення')
