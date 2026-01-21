@@ -24,7 +24,8 @@ def add_person(request):
                 'icon_button': 'bi bi-arrow-left-square',  # 'bi bi-backspace',
                 'title_button': 'Змінити',
             }
-        ]
+        ],
+        'contents': ['base_form.html'],
     }
     if request.method == 'GET':
         print(f'method = {request.method}')
@@ -38,7 +39,7 @@ def add_person(request):
     else:
         # Якщо звичайний запит — віддаємо сторінку, яка "огортає" таблицю в base.html
         print('page_form_social_settings')
-        return render(request, 'page_form_person.html', context)
+        return render(request, 'base_page_form.html', context)
 
 
 def add_order(request):

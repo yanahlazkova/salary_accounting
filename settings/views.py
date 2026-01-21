@@ -60,7 +60,8 @@ def add_social_settings(request):
                 'icon_button': 'bi bi-arrow-left-square', # 'bi bi-backspace',
                 'title_button': 'Exit',
             }
-        ]
+        ],
+        'contents': ['base_form.html'],
     }
 
     if request.method == 'POST':
@@ -77,7 +78,7 @@ def add_social_settings(request):
         else:
             # Якщо форма невалідна, просто рендеримо її з помилками
             context['form'] = form
-            return render(request, 'form_social_settings.html', context)
+            return render(request, 'base_form.html', context)
 
     elif request.method == 'GET':
         print(f'method = {request.method}')
@@ -86,12 +87,12 @@ def add_social_settings(request):
         # ПЕРЕВІРКА: Чи це HTMX запит?
         if request.headers.get('HX-Request'):
             # Віддаємо тільки таблицю (без меню)
-            print('form_social_settings')
-            return render(request, 'form_social_settings.html', context)
+            print('base_form')
+            return render(request, 'base_form.html', context)
         else:
             # Якщо звичайний запит — віддаємо сторінку, яка "огортає" таблицю в base.html
-            print('page_form_social_settings')
-            return render(request, 'page_form_social_settings.html', context)
+            print('base_page_form')
+            return render(request, 'base_page_form.html', context)
 
 def edit_social_settings(request, id_social_settings):
     context = {
