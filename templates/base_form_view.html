@@ -1,22 +1,45 @@
-<h2 class="mb-4 text-primary">💰 {{ title }} </h2>
-<div class="row mb-5">
-    <div class="col-md-6">
-        <ul class="list-group">
-            <li class="list-group-item"><strong>Мінімальна заробітна плата
-                (місячна):</strong> {{ social_indicators.min_salary_monthly }}
-            </li>
-            <li class="list-group-item"><strong>Прожитковий мінімум (для
-                працездатних):</strong> {{ social_indicators.pm_for_able_bodied }}
-            </li>
-        </ul>
-    </div>
-    <div class="col-md-6">
-        <ul class="list-group">
-            <li class="list-group-item"><strong>Ставка ПДФО:</strong> {{ social_indicators.pdfo_rate }}</li>
-            <li class="list-group-item"><strong>Ставка Військового збору:</strong> {{ social_indicators.vz_rate }}
-            </li>
-            <li class="list-group-item"><strong>Ставка ЄСВ:</strong> {{ social_indicators.esv_rate }}</li>
-        </ul>
+<div class="container mt-4">
+    <div class="card shadow">
+        <div class="card-header bg-info text-white">
+            <h3 class="card-title mb-0"><i class="{{ icon_title }} me-2"></i>{{ section_name }}</h3>
+        </div>
+        <div class="card-body mt-4">
+            {% if buttons %}
+            {% for button in buttons %}
+            <button class="btn btn-outline-info me-2" type="button"
+                    hx-get="{% url button.redirect_button %}"
+                    hx-target="#main-content"
+                    hx-push-url="true">
+                {# onclick="window.location='{% url button.redirect_button %}'">#}
+                <i class="{{ button.icon_button }}"></i>
+                {{ button.title_button }}
+            </button>
+            {% endfor %}
+            {% endif %}
+            <hr>
+            <h2 class="mb-4 text-primary">💰 {{ title }} </h2>
+            <div class="row mb-5">
+                <div class="col-md-6">
+                    <ul class="list-group">
+                        <li class="list-group-item"><strong>Мінімальна заробітна плата
+                            (місячна):</strong> {{ social_indicators.min_salary_monthly }}
+                        </li>
+                        <li class="list-group-item"><strong>Прожитковий мінімум (для
+                            працездатних):</strong> {{ social_indicators.pm_for_able_bodied }}
+                        </li>
+                    </ul>
+                </div>
+                <div class="col-md-6">
+                    <ul class="list-group">
+                        <li class="list-group-item"><strong>Ставка ПДФО:</strong> {{ social_indicators.pdfo_rate }}</li>
+                        <li class="list-group-item"><strong>Ставка Військового збору:</strong> {{
+                            social_indicators.vz_rate }}
+                        </li>
+                        <li class="list-group-item"><strong>Ставка ЄСВ:</strong> {{ social_indicators.esv_rate }}</li>
+                    </ul>
+                </div>
+            </div>
+            <hr>
+        </div>
     </div>
 </div>
-<hr>

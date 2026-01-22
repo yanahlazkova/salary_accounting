@@ -146,6 +146,8 @@ def edit_social_settings(request, id_social_settings):
 def view_social_settings(request, id_social_settings):
     print(f'view: {request.method}')
     context = {
+        'section_name': 'Налаштування соціальних показників',
+        'icon_title': 'bi bi-gear me-2',
         'title': f'Cоціальні показники з id: {id_social_settings}',
         'current_user': request.user.username if request.user.is_authenticated else 'Гість',
         'buttons': [
@@ -154,11 +156,11 @@ def view_social_settings(request, id_social_settings):
                 'icon_button': 'bi bi-backspace',
                 'title_button': 'Закрити',
             },
-            {
-                'redirect_button': f'editing {id_social_settings}',
-                'icon_button': 'bi bi-save2',
-                'title_button': 'Редагувати',
-            },
+            # {
+            #     'redirect_button': f'editing {id_social_settings}',
+            #     'icon_button': 'bi bi-save2',
+            #     'title_button': 'Редагувати',
+            # },
             # {
             #     'redirect_button': f'editing {id_social_settings}',
             #     'icon_button': 'bi bi-copy me-2',
