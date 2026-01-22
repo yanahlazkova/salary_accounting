@@ -12,9 +12,9 @@ class PersonForm(ModelForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         # Словник з бажаною шириною для конкретних полів
-
         # Проходимо циклом по всіх полях форми
         for field_name, field in self.fields.items():
+            print(field_name, field)
             # Додаємо загальний клас для всіх
             field.widget.attrs.update({'class': 'form-control w-75'})
 
@@ -27,7 +27,8 @@ class PersonForm(ModelForm):
                                                  }))
 
             # Якщо поле — це випадаючий список, вказуємо ширину
-            if field_name == 'gender':
+            # if field_name == 'gender':
+            if isinstance(field, forms.ChoiceField):
                 field.widget.attrs.update({'class': 'form-control w-25'})
 
             # Користувач не зможе ввести число менше 0
