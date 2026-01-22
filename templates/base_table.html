@@ -24,8 +24,8 @@
         {% for table_row in table_rows %}
             <tr role="button"
                 tabindex="0"
-                onclick="window.location='{% url 'editing' table_row.id %}'"
-                onkeypress="if(event.keyCode==13) window.location='{% url 'editing' table_row.id %}'"
+                onclick="window.location='{% url open table_row.id %}'"
+                onkeypress="if(event.keyCode==13) window.location='{% url open table_row.id %}'"
                 style="cursor: pointer;">
                 {% for value in table_row.values %}
                     <td>{{ value }}</td>

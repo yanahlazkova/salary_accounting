@@ -8,6 +8,8 @@ from .models import SocialSettings
 
 
 def settings(request):
+    print(f'settings: {request.method}')
+
     data_db = SocialSettings.objects.all().values() #.order_by('-effective_from')
     table_titles = [f.verbose_name for f in SocialSettings._meta.fields]
 
@@ -36,7 +38,7 @@ def settings(request):
         ],
         'table_titles': table_titles,
         'table_rows': rows_data,
-        'editing': 'editing',
+        'open': 'view',
     }
 
     # ПЕРЕВІРКА: Чи це HTMX запит?
@@ -50,6 +52,8 @@ def settings(request):
     # return render(request, 'page_social_settings.html', context)
 
 def add_social_settings(request):
+    print(f'add: {request.method}')
+
     context = {
         'title': 'Додати соціальні показники',
         'current_user': request.user.username if request.user.is_authenticated else 'Гість',
@@ -59,9 +63,14 @@ def add_social_settings(request):
                 'redirect_button': 'settings',
                 'icon_button': 'bi bi-arrow-left-square', # 'bi bi-backspace',
                 'title_button': 'Exit',
+            },
+            {
+                'redirect_button': 'add_social_settings',
+                'icon_button': 'bi bi-copy me-2',  # 'bi bi-backspace',
+                'title_button': 'Копіювати',
             }
         ],
-        'contents': ['base_form.html'],
+        'content_form': ['base_form.html'],
     }
 
     if request.method == 'POST':
@@ -94,7 +103,9 @@ def add_social_settings(request):
             print('base_page_form')
             return render(request, 'base_page_form.html', context)
 
+
 def edit_social_settings(request, id_social_settings):
+    print(f'edit: {request.method}')
     context = {
         'title': 'Редагування соціальних показників',
         'current_user': request.user.username if request.user.is_authenticated else 'Гість',
@@ -109,8 +120,9 @@ def edit_social_settings(request, id_social_settings):
                 'redirect_button': f'editing {id_social_settings}',
                 'icon_button': 'bi bi-save2',
                 'title_button': 'Зберегти',
-            }
-        ]
+            },
+        ],
+        'content_form': 'base_form.html',
     }
     if request.method == 'GET':
         print(f'method = {request.method}')
@@ -119,13 +131,52 @@ def edit_social_settings(request, id_social_settings):
         # ПЕРЕВІРКА: Чи це HTMX запит?
         if request.headers.get('HX-Request'):
             # Віддаємо тільки таблицю (без меню)
-            print('form_social_settings')
-            return render(request, 'form_social_settings.html', context)
-
-        # Якщо звичайний запит — віддаємо сторінку, яка "огортає" таблицю в base.html
-        print('page_form_social_settings')
-        return render(request, 'page_form_social_settings.html', context)
+            print('method GET - base_form_view.html')
+            return render(request, 'base_form_view.html', context)
+        else:
+            # Якщо звичайний запит — віддаємо сторінку, яка "огортає" таблицю в base.html
+            print('base_page_form')
+            return render(request, 'base_page_form.html', context)
 
     elif request.method == 'POST':
         print(f'method = {request.method}')
         return HttpResponse(f'Editing f{id_social_settings}')
+
+
+def view_social_settings(request, id_social_settings):
+    print(f'view: {request.method}')
+    context = {
+        'title': f'Cоціальні показники з id: {id_social_settings}',
+        'current_user': request.user.username if request.user.is_authenticated else 'Гість',
+        'buttons': [
+            {
+                'redirect_button': 'settings',
+                'icon_button': 'bi bi-backspace',
+                'title_button': 'Закрити',
+            },
+            {
+                'redirect_button': f'editing {id_social_settings}',
+                'icon_button': 'bi bi-save2',
+                'title_button': 'Редагувати',
+            },
+            # {
+            #     'redirect_button': f'editing {id_social_settings}',
+            #     'icon_button': 'bi bi-copy me-2',
+            #     'title_button': 'Копіювати',
+            # }
+        ],
+        'content_form': ['base_form_view.html'],
+    }
+    if request.method == 'GET':
+        print(f'method = {request.method}')
+
+    # ПЕРЕВІРКА: Чи це HTMX запит?
+    if request.headers.get('HX-Request'):
+        # Віддаємо тільки таблицю (без меню)
+        print('base_form_view')
+        return render(request, 'base_form_view.html', context)
+    else:
+        # Якщо звичайний запит — віддаємо сторінку, яка "огортає" таблицю в base.html
+        print('page_form_social_settings')
+        return render(request, 'base_page_form.html', context)
+
