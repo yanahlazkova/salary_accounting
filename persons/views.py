@@ -20,12 +20,12 @@ def add_person(request):
                 'title_button': 'Назад',
             },
             {
-                'redirect_button': 'personnel',
-                'icon_button': 'bi bi-arrow-left-square',  # 'bi bi-backspace',
-                'title_button': 'Змінити',
+                'redirect_button': 'add_person',
+                'icon_button': 'bi bi-copy me-2',  # 'bi bi-backspace',
+                'title_button': 'Копіювати',
             }
         ],
-        'contents': ['base_form.html'],
+        'content_form': 'base_form.html',
     }
     if request.method == 'GET':
         print(f'method = {request.method}')
