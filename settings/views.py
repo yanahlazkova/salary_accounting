@@ -122,8 +122,14 @@ def edit_social_settings(request, id_social_settings):
             },
             {
                 'redirect_button': 'add_social_settings',
-                'icon_button': 'bi bi-save2',
+                'icon_button': 'bi bi-floppy',
                 'title_button': 'Зберегти',
+            },
+            {
+                'redirect_button': 'view',
+                'id': id_social_settings,
+                'icon_button': 'bi bi-binoculars',
+                'title_button': 'Перегляд',
             },
         ],
         'content_form': 'base_form.html',

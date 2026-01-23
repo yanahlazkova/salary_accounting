@@ -7,7 +7,11 @@
             {% if buttons %}
             {% for button in buttons %}
             <button class="btn btn-outline-info me-2" type="button"
-                    hx-get="{% url button.redirect_button %}"
+                    {% if button.id %}
+                        hx-get="{% url button.redirect_button button.id %}"
+                    {% else %}
+                        hx-get="{% url button.redirect_button %}"
+                    {% endif %}
                     hx-target="#main-content"
                     hx-push-url="true">
                 {# onclick="window.location='{% url button.redirect_button %}'">#}
