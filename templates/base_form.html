@@ -18,7 +18,11 @@
             {% endif %}
             <hr>
             <form method="POST"
-                  hx-post="{% url form_action %}"
+                  {% if data %}
+                    hx-post="{% url form_action data.id %}"
+                  {% else %}
+                    hx-post="{% url form_action %}"
+                  {% endif %}
                   hx-target="#main-content"
                   hx-push-url="true">
                 {% csrf_token %}

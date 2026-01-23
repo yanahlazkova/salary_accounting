@@ -106,18 +106,22 @@ def add_social_settings(request):
 
 def edit_social_settings(request, id_social_settings):
     print(f'edit: {request.method}')
+    data_db = SocialSettings.objects.get(id=id_social_settings)
     context = {
-        'title': 'Редагування соціальних показників',
+        'section_name': 'Налаштування соціальних показників',
+        'icon_title': 'bi bi-gear me-2',
+        'title': f'Редагування соціальні показники з id: {id_social_settings}',
         'current_user': request.user.username if request.user.is_authenticated else 'Гість',
-        'form_action': f'editing {id_social_settings}',
+        'form_action': 'editing',
+        'data': data_db,
         'buttons': [
             {
                 'redirect_button': 'settings',
-                'icon_button': 'bi bi-backspace',
+                'icon_button': 'bi bi-arrow-left-square',
                 'title_button': 'Exit',
             },
             {
-                'redirect_button': f'editing {id_social_settings}',
+                'redirect_button': 'add_social_settings',
                 'icon_button': 'bi bi-save2',
                 'title_button': 'Зберегти',
             },
@@ -131,8 +135,8 @@ def edit_social_settings(request, id_social_settings):
         # ПЕРЕВІРКА: Чи це HTMX запит?
         if request.headers.get('HX-Request'):
             # Віддаємо тільки таблицю (без меню)
-            print('method GET - base_form_view.html')
-            return render(request, 'base_form_view.html', context)
+            print('method GET - base_form.html')
+            return render(request, 'base_form.html', context)
         else:
             # Якщо звичайний запит — віддаємо сторінку, яка "огортає" таблицю в base.html
             print('base_page_form')
@@ -145,22 +149,25 @@ def edit_social_settings(request, id_social_settings):
 
 def view_social_settings(request, id_social_settings):
     print(f'view: {request.method}')
+    data_db = SocialSettings.objects.get(id=id_social_settings)
     context = {
         'section_name': 'Налаштування соціальних показників',
         'icon_title': 'bi bi-gear me-2',
         'title': f'Cоціальні показники з id: {id_social_settings}',
         'current_user': request.user.username if request.user.is_authenticated else 'Гість',
+        'data': data_db,
         'buttons': [
             {
                 'redirect_button': 'settings',
-                'icon_button': 'bi bi-backspace',
+                'icon_button': 'bi bi-arrow-left-square me-2',
                 'title_button': 'Закрити',
             },
-            # {
-            #     'redirect_button': f'editing {id_social_settings}',
-            #     'icon_button': 'bi bi-save2',
-            #     'title_button': 'Редагувати',
-            # },
+            {
+                'redirect_button': 'editing',
+                'id': id_social_settings,
+                'icon_button': 'bi bi-pencil-fill me-2',
+                'title_button': 'Редагувати',
+            },
             # {
             #     'redirect_button': f'editing {id_social_settings}',
             #     'icon_button': 'bi bi-copy me-2',
@@ -172,13 +179,17 @@ def view_social_settings(request, id_social_settings):
     if request.method == 'GET':
         print(f'method = {request.method}')
 
-    # ПЕРЕВІРКА: Чи це HTMX запит?
-    if request.headers.get('HX-Request'):
-        # Віддаємо тільки таблицю (без меню)
-        print('base_form_view')
-        return render(request, 'base_form_view.html', context)
-    else:
-        # Якщо звичайний запит — віддаємо сторінку, яка "огортає" таблицю в base.html
-        print('page_form_social_settings')
-        return render(request, 'base_page_form.html', context)
+        # ПЕРЕВІРКА: Чи це HTMX запит?
+        if request.headers.get('HX-Request'):
+            # Віддаємо тільки таблицю (без меню)
+            print('base_form_view')
+            return render(request, 'base_form_view.html', context)
+        else:
+            # Якщо звичайний запит — віддаємо сторінку, яка "огортає" таблицю в base.html
+            print('page_form_social_settings')
+            return render(request, 'base_page_form.html', context)
+    elif request.method == 'POST':
+        print(f'method = {request.method}')
+
+        return HttpResponse(f'Editing method POST (id: f{id_social_settings})')
 
