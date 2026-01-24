@@ -23,11 +23,11 @@ class SocialSettingsForm(ModelForm):
         # Проходимо циклом по всіх полях форми
         for field_name, field in self.fields.items():
             # Додаємо загальний клас для всіх
-            field.widget.attrs.update({'class': 'form-control'})
+            field.widget.attrs.update({'class': 'form-control w-25'})
 
             # Якщо поле — це дата, міняємо тип на календар
             if isinstance(field, forms.DateField):
-                field.widget = forms.DateInput(attrs={'type': 'date', 'class': 'form-control'})
+                field.widget = forms.DateInput(attrs={'type': 'date', 'class': 'form-control w-25'})
 
             # Якщо поле — це Decimal (числове), додаємо крок 0.01
             if isinstance(field, forms.DecimalField):

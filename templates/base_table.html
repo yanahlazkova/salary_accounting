@@ -24,7 +24,9 @@
         {% for table_row in table_rows %}
             <tr role="button"
                 tabindex="0"
-                onclick="window.location='{% url open table_row.id %}'"
+                hx-get="{% url open table_row.id %}"
+                hx-target="#main-content"
+                hx-push-url="true"
                 onkeypress="if(event.keyCode==13) window.location='{% url open table_row.id %}'"
                 style="cursor: pointer;">
                 {% for value in table_row.values %}
