@@ -5,6 +5,6 @@ from settings.views import *
 urlpatterns = [
     path('', settings, name='settings'),
     path('new/', add_social_settings, name='add_social_settings'),
-    path('edit/<int:id_social_settings>/', edit_social_settings, name='editing'),
-    path('view/<int:id_social_settings>/', view_social_settings, name='view'),
+    path('edit/<int:pk>/', edit_social_settings, name='edit'),
+    path('view/<int:pk>/', view_social_settings, name='view'),
 ]
