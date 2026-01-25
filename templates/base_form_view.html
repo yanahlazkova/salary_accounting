@@ -4,13 +4,14 @@
             <h3 class="card-title mb-0"><i class="{{ icon_title }} me-2"></i>{{ section_name }}</h3>
         </div>
         <div class="card-body mt-4">
+            {% comment %}
             {% if buttons %}
             {% for button in buttons %}
             <button class="btn btn-outline-info me-2" type="button"
                     {% if button.id %}
-                        hx-get="{% url button.redirect_button button.id %}"
+                    hx-get="{% url button.redirect_button button.id %}"
                     {% else %}
-                        hx-get="{% url button.redirect_button %}"
+                    hx-get="{% url button.redirect_button %}"
                     {% endif %}
                     hx-target="#main-content"
                     hx-push-url="true">
@@ -18,8 +19,15 @@
                 <i class="{{ button.icon_button }}"></i>
                 {{ button.title_button }}
             </button>
+
             {% endfor %}
             {% endif %}
+            {% endcomment %}
+            <div class="mb-3">
+                {% for button in buttons %}
+                {% include "ui/htmx_button.html" with button=button %}
+                {% endfor %}
+            </div>
             <hr>
             <h2 class="mb-4 text-primary">💰 {{ title }} </h2>
             <div class="row mb-5">
