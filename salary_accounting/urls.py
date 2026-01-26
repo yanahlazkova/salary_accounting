@@ -22,7 +22,7 @@ from home.views import pageNotFound
 
 urlpatterns = [
     path('', include('home.urls')),
-    path('staff', include('persons.urls')), # кадри
+    path('staff/', include('persons.urls')), # кадри
     # path('directories', include('directories.urls')),
     path('settings/', include('settings.urls')),
     path('admin/', admin.site.urls),

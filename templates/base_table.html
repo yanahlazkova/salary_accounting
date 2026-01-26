@@ -1,39 +1,55 @@
 <div class="container">
     <h1 class="mt-3 text-info">{{ title }}</h1>
+    {% comment %}
     {% if buttons %}
-        {% for button in buttons %}
-            <button class="btn btn-outline-info me-2" type="button"
-                    {#                    onclick="window.location='{% url button.redirect_button %}'"#}
-                    hx-get="{% url button.redirect_button %}"
-                    hx-target="#main-content"
-                    hx-push-url="true">
-                <i class="{{ button.icon_button }}"></i>
-                {{ button.title_button }}
-            </button>
-        {% endfor %}
+    {% for button in buttons %}
+    <button
+            class="{{ button.css_class }} me-2"
+            {% for attr, value in button.htmx_attrs.items %}
+            {{ attr }}="{{ value }}"
+            {% endfor %}
+            {% if button.confirm %}
+            hx-confirm="{{ button.confirm }}"
+            {% endif %}
+            {% if button.disabled %}
+            disabled
+            {% endif %}
+    >
+        <i class="{{ button.icon }}"></i>
+        {% if button.label %} {{ button.label }}{% endif %}
+    </button>
+    {% endfor %}
     {% endif %}
+    {% endcomment %}
+
+    <div class="mb-3">
+        {% for button in buttons %}
+        {% include "ui/htmx_button.html" with button=button %}
+        {% endfor %}
+    </div>
+
     <table class="table table-success table-striped table-hover mt-3">
         <thead>
         <tr>
             {% for table_title in table_titles %}
-                <th>{{ table_title }}</th>
+            <th>{{ table_title }}</th>
             {% endfor %}
         </tr>
         </thead>
         <tbody>
         {% for table_row in table_rows %}
-            <tr role="button"
-                tabindex="0"
-                hx-get="{% url open table_row.id %}"
-                hx-target="#main-content"
-                hx-push-url="true"
-                onkeypress="if(event.keyCode==13) window.location='{% url open table_row.id %}'"
-                style="cursor: pointer;">
-                {% for value in table_row.values %}
-                    <td>{{ value }}</td>
-                {% endfor %}
-            </tr>
+        <tr role="button"
+            tabindex="0"
+            hx-get="{% url open table_row.id %}"
+            hx-target="#main-content"
+            hx-push-url="true"
+            onkeypress="if(event.keyCode==13) window.location='{% url open table_row.id %}'"
+            style="cursor: pointer;">
+            {% for value in table_row.values %}
+            <td>{{ value }}</td>
+            {% endfor %}
+        </tr>
         {% endfor %}
         </tbody>
-        </table>
+    </table>
 </div>

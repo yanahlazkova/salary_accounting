@@ -5,25 +5,31 @@ from django.shortcuts import render
 
 from persons.forms import PersonForm
 from persons.models import Person, Orders
+from salary_accounting.ui.button_registry import HTMXButtons
 
 
 def add_person(request):
     context = {
+        'section_name': 'Фізичні особи',
         'title': 'Фізична особа (створення)',
-        'icon_title': 'be bi-person-add me-2',
+        'icon_title': 'be bi-people me-2',
+        'icon_name': 'be bi-person-add me-2',
         'current_user': request.user.username if request.user.is_authenticated else 'Гість',
         'form_action': 'add_person',
         'buttons': [
-            {
-                'redirect_button': 'personnel',
-                'icon_button': 'bi bi-arrow-left-square', # 'bi bi-backspace',
-                'title_button': 'Назад',
-            },
-            {
-                'redirect_button': 'add_person',
-                'icon_button': 'bi bi-copy me-2',  # 'bi bi-backspace',
-                'title_button': 'Копіювати',
-            }
+            HTMXButtons.exit(url_name='personnel'),
+            HTMXButtons.save(url_name='edit_person', pk=1),
+
+            # {
+            #     'redirect_button': 'personnel',
+            #     'icon_button': 'bi bi-arrow-left-square', # 'bi bi-backspace',
+            #     'title_button': 'Назад',
+            # },
+            # {
+            #     'redirect_button': 'add_person',
+            #     'icon_button': 'bi bi-copy me-2',  # 'bi bi-backspace',
+            #     'title_button': 'Копіювати',
+            # }
         ],
         'content_form': 'base_form.html',
     }
@@ -79,11 +85,8 @@ def personnel(request):
         # 'button_add': 'add_person',
         # 'button_icon': "bi bi-person-add me-2 text-info",
         'buttons': [
-            {
-                'redirect_button': 'add_person',  # вказує яку функцію визивати у шаблоні
-                'icon_button': "bi bi-person-add me-2 text-info",
-                'title_button': 'Додати',
-            }],
+            HTMXButtons.create(url_name='add_person', icon='people'),
+        ],
         'contents': ['base_table.html'],
 
     }
@@ -96,8 +99,20 @@ def personnel(request):
     print('base_page.html')
     return render(request, 'base_page.html', context)
 
-    return render(request, 'personnel.html', context)
-
+def view_person(request, pk):
+    person = Person.objects.get(pk=pk)
+    context = {
+        'section_name': 'Налаштування соціальних показників',
+        'icon_title': 'bi bi-gear me-2', 'title': 'Додати соціальні показники',
+        'current_user': request.user.username if request.user.is_authenticated else 'Гість',
+        'form_action': 'add_social_settings',
+        'buttons': [
+            HTMXButtons.exit(url_name='settings'),
+            button_view,
+            HTMXButtons.save(url_name='save', pk=1)
+        ],
+        'content_form': ['base_form.html'],
+    }
 
 def list_orders(request):
     table_titles = [f.name for f in Orders._meta.get_fields()]

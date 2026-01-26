@@ -1,31 +1,23 @@
 <div class="container mt-4">
     <div class="card shadow">
         <div class="card-header bg-info text-white">
-            <h3 class="card-title mb-0"><i class="{{ icon_title }} me-2"></i>{{ title }}</h3>
+            <h3 class="card-title mb-0"><i class="{{ icon_title }} me-2"></i>{{ section_name }}</h3>
         </div>
         <div class="card-body mt-4">
-            {% if buttons %}
-            {% for button in buttons %}
-            <button class="btn btn-outline-info me-2" type="button"
-                    {% if button.id %}
-                        hx-get="{% url button.redirect_button button.id %}"
-                    {% else %}
-                        hx-get="{% url button.redirect_button %}"
-                    {% endif %}
-                    hx-target="#main-content"
-                    hx-push-url="true">
-                {# onclick="window.location='{% url button.redirect_button %}'">#}
-                <i class="{{ button.icon_button }}"></i>
-                {{ button.title_button }}
-            </button>
-            {% endfor %}
-            {% endif %}
+            <div class="mb-3">
+                {% for button in buttons %}
+                {% include "ui/htmx_button.html" with button=button %}
+                {% endfor %}
+            </div>
             <hr>
+            <h2 class="mb-4 text-primary"><i class="{{ icon_name }} me-2"></i>💰 {{ title }}</h2>
+
+
             <form method="POST"
                   {% if data %}
-                    hx-post="{% url form_action data.id %}"
+                  hx-post="{% url form_action data.id %}"
                   {% else %}
-                    hx-post="{% url form_action %}"
+                  hx-post="{% url form_action %}"
                   {% endif %}
                   hx-target="#main-content"
                   hx-push-url="true">
@@ -78,7 +70,7 @@
                             {# hx-get="{% url button.redirect_button %}" #}
                             hx-target="#main-content"
                             hx-push-url="true">
-                        <i class="bi bi-save me-2"></i>Зберегти налаштування
+                        <i class="bi bi-save me-2"></i>Зберегти і закрити
                     </button>
                 </div>
             </form>
