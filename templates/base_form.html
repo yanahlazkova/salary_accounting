@@ -1,7 +1,7 @@
 <div class="container mt-4">
     <div class="card shadow">
         <div class="card-header bg-info text-white">
-            <h3 class="card-title mb-0"><i class="{{ icon_title }} me-2"></i>{{ title }}</h3>
+            <h3 class="card-title mb-0"><i class="{{ icon_title }} me-2"></i>{{ section_name }}</h3>
         </div>
         <div class="card-body mt-4">
             <div class="mb-3">
@@ -9,8 +9,10 @@
                 {% include "ui/htmx_button.html" with button=button %}
                 {% endfor %}
             </div>
-
             <hr>
+            <h2 class="mb-4 text-primary"><i class="{{ icon_name }} me-2"></i>💰 {{ title }}</h2>
+
+
             <form method="POST"
                   {% if data %}
                   hx-post="{% url form_action data.id %}"
