@@ -85,7 +85,7 @@ def personnel(request):
         # 'button_add': 'add_person',
         # 'button_icon': "bi bi-person-add me-2 text-info",
         'buttons': [
-            HTMXButtons.create(url_name='add_person', icon='people'),
+            HTMXButtons.create(url_name='add_person', name_app='person'),
         ],
         'contents': ['base_table.html'],
 

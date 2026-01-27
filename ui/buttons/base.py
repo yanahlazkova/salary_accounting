@@ -22,7 +22,7 @@ class HTMXButton:
     def url(self) -> str:
         return reverse(self.url_name, kwargs=self.url_kwargs)
 
-    def attrs(self) -> Dict[str, str]:
+    def htmx_attrs(self) -> Dict[str, str]:
         attrs = {
             f"hx-{self.hx_method}": self.url(),
             "hx-target": self.hx_target,

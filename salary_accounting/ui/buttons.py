@@ -11,12 +11,12 @@ class HTMXButton:
 
     url_kwargs: Dict[str, object] = field(default_factory=dict)
 
-    css_class: str = "btn btn-outline-primary"
+    css_class: str = "btn btn-outline-info me-2"
 
     hx_method: str = "get"          # get | post | delete
     hx_target: str = "#main-content"
-    hx_push_url: str = "true"
     hx_swap: str = "innerHTML"
+    hx_push_url: str = 'ture'
 
     confirm: Optional[str] = None
     disabled: bool = False
@@ -28,6 +28,6 @@ class HTMXButton:
         return {
             f"hx-{self.hx_method}": self.url(),
             "hx-target": self.hx_target,
-            "hx-push-url": self.hx_push_url,
+            'hx-push-url': self.hx_push_url,
             "hx-swap": self.hx_swap,
         }
