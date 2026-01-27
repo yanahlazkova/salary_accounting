@@ -2,89 +2,64 @@ from salary_accounting.ui.buttons import HTMXButton
 
 
 class HTMXButtons:
-    target = "#main-content"
-    css_class = "btn btn-outline-info"
 
     @staticmethod
-    def create(url_name, icon, css_class=css_class, target=target):
-        icon_create = {
-            'plus': 'bi bi-plus-circle me-2',
-            'setting': 'bi bi-gear me-2',
-            'people': 'bi bi-person-add me-2',
-            'archive': 'bi bi-archive me-2',
+    def create(url_name, name_app):
+        icon = {
+            'person': 'bi bi-person-add me-2',
+            'setting': 'bi bi-plus-circle me-2',
+            'dictionary': 'bi bi-journal-plus me-2',
         }
         return HTMXButton(
-            label="Додати",
-            icon=icon_create[icon],
+            label="Створити",
+            icon=icon[name_app],
             url_name=url_name,
-            css_class=css_class,
-            hx_target=target,
+            # css_class="btn btn-success",
         )
 
     @staticmethod
-    def edit(url_name, pk, css_class=css_class, target=target):
+    def edit(url_name, name_app, pk):
         return HTMXButton(
-            label="Редагувати",
-            icon="bi bi-pencil me-2",
+            label="",
+            icon="bi bi-pencil",
             url_name=url_name,
             url_kwargs={"pk": pk},
-            css_class=css_class,
-            hx_target=target,
+#             css_class="btn btn-sm btn-outline-primary",
         )
 
     @staticmethod
-    def delete(url_name, pk, css_class=css_class, target=target):
+    def delete(url_name, name_app, pk):
         return HTMXButton(
-            label="Видалити",
+            label="",
             icon="bi bi-trash",
             url_name=url_name,
             url_kwargs={"pk": pk},
-            css_class="btn btn-sm btn-outline-danger",
+#             css_class="btn btn-sm btn-outline-danger",
             hx_method="delete",
             confirm="Видалити запис?",
-            hx_target=target,
         )
 
     @staticmethod
-    def view(url_name, pk, css_class=css_class, target=target):
+    def view(url_name, pk):
         return HTMXButton(
-            label="Перегляд",
+            label="",
             icon="bi bi-eye",
             url_name=url_name,
             url_kwargs={"pk": pk},
-            css_class=css_class,
-            hx_target=target,
+#             css_class="btn btn-sm btn-outline-secondary",
+#             hx_target=target,
         )
 
     @staticmethod
-    def copy(url_name, pk, css_class=css_class, target=target):
+    def exit(url_name, name_app):
+        icon = {
+            'person': 'bi bi-people me-2',
+            'setting': 'bi bi-gear me-2',
+            'dictionary': 'bi bi-journal-text me-2',
+        }
         return HTMXButton(
-            label="Копіювати",
-            icon="bi bi-copy",
+            label="",
+            icon=icon[name_app],
             url_name=url_name,
-            url_kwargs={"pk": pk},
-            css_class=css_class,
-            hx_target=target,
-        )
-
-    @staticmethod
-    def exit(url_name, css_class=css_class, target=target):
-        return HTMXButton(
-            label="Закрити",
-            icon="bi bi-arrow-left-square",
-            url_name=url_name,
-            # url_kwargs={"pk": pk}, # для відображення раніше обраного у таблиці
-            css_class=css_class,
-            hx_target=target,
-        )
-
-    @staticmethod
-    def save(url_name, pk, css_class=css_class, target=target):
-        return HTMXButton(
-            label="Зберегти",
-            icon="bi bi-floppy",
-            url_name=url_name,
-            url_kwargs={"pk": pk},
-            css_class=css_class,
-            hx_target=target,
+#             css_class="btn btn-sm btn-outline-primary",
         )

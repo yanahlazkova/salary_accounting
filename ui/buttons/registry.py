@@ -1,4 +1,4 @@
-from salary_accounting.ui.buttons import HTMXButton
+from ui.buttons.base import HTMXButton
 
 
 class HTMXButtons:

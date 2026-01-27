@@ -2,7 +2,7 @@ from django import forms
 
 
 class BaseHTMXForm(forms.Form):
-    hx_target = "#content"
+    hx_target = "#main-content"
     hx_push_url = "true"
     hx_swap = "innerHTML"
     submit_label = "Зберегти"

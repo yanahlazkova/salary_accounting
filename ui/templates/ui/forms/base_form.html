@@ -1,0 +1,13 @@
+<form method="post"
+      hx-post="."
+      hx-target="{{ form.hx_target }}"
+      hx-push-url="{{ form.hx_push_url }}"
+      hx-swap="{{ form.hx_swap }}"
+>
+    {% csrf_token %}
+    {{ form.as_p }}
+
+    <button class="{{ form.submit_class }}">
+        {{ form.submit_label }}
+    </button>
+</form>

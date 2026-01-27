@@ -1,0 +1,15 @@
+<button
+    class="{{ button.css_class }}"
+    {% for attr, value in button.htmx_attrs.items %}
+        {{ attr }}="{{ value }}"
+    {% endfor %}
+    {% if button.confirm %}
+        hx-confirm="{{ button.confirm }}"
+    {% endif %}
+    {% if button.disabled %}
+        disabled
+    {% endif %}
+>
+    <i class="{{ button.icon }}"></i>
+    {% if button.label %} {{ button.label }}{% endif %}
+</button>

@@ -28,7 +28,7 @@ def settings(request):
         'current_user': request.user.username if request.user.is_authenticated else 'Гість',
         'buttons': [HTMXButtons.create(
             url_name='add_social_settings',
-            icon='setting')
+            name_app='setting')
 
         ],
         'contents': [
