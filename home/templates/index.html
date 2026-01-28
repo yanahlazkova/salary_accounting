@@ -1,23 +1,66 @@
 <div class="container mt-5">
-<div id="main-content">
+    <div id="main-content">
 
-    {% include 'social_settings.html' %}
+        {% include 'social_settings.html' %}
 
-    <h2 class="mt-5 text-secondary">🏛️ Основні нормативно-правові акти для нарахування зарплати (Бюджетна сфера)</h2>
-    <p class="lead">Розрахунки в системі базуються на наступних першоджерелах:</p>
-    
-    {% for law in laws_and_regulations %}
+        {% comment %}
+        <h2 class="mt-5 text-secondary">🏛️ Основні нормативно-правові акти для нарахування зарплати (Бюджетна
+            сфера)</h2>
+        <p class="lead">Розрахунки в системі базуються на наступних першоджерелах:</p>
+
+        {% for law in laws_and_regulations %}
         <div class="card mb-3 shadow-sm">
             <div class="card-body">
                 <h5 class="card-title text-success">{{ law.title }}</h5>
                 <h6 class="card-subtitle mb-2 text-muted">{{ law.category }}</h6>
                 <p class="card-text">{{ law.description }}</p>
                 {% if law.link %}
-                    <a href="{{ law.link }}" target="_blank" class="card-link">Перейти до повного тексту <i class="fas fa-external-link-alt"></i></a>
+                <a href="{{ law.link }}" target="_blank" class="card-link">Перейти до повного тексту <i
+                        class="fas fa-external-link-alt"></i></a>
                 {% endif %}
             </div>
         </div>
-    {% endfor %}
+        {% endfor %}
+        {% endcomment %}
+    </div>
+<hr>
+<h2 class="mt-5 text-info">📰 Актуальні новини</h2>
+    {% if latest_news %}
+    <div class="list-group">
+        {% for news in latest_news %}
+            <div class="card border-success mb-3">
+                <div class="card-header bg-transparent d-flex justify-content-between align-items-center">
+                    <h5 class="card-title mb-0" style="max-width: 700px;">{{ news.title }}</h5>
+                    {# 💡 ФОРМАТУВАННЯ ДАТИ #}
+                    <small class="text-muted">{{ news.publication_date|date:"d.m.Y H:i" }}</small>
+                </div>
+                <div class="card-body text-success">
+                    {# 💡 ВИВОД ОПИСУ, ЯКИЙ МОЖЕ ОБІЙТИ PAYWALL #}
+                    <p class="card-text">{{ news.description|safe|striptags|truncatechars:300 }}</p>
+
+                    <a href="{{ news.link }}" class="btn btn-primary" target="_blank">
+                        <button type="button" class="btn btn-primary position-relative">
+                        Перейти до джерела
+                        {% if news.is_new %}
+                        <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                            NEW
+                            <span class="visually-hidden">Нова публікація</span>
+                        </span>
+                        {% endif %}
+                        </button>
+                    </a>
+                </div>
+                <div class="card-footer bg-transparent">
+                    <small class="text-body-secondary">
+                        <a href="#" class="card-link">#{{ news.category }}</a>
+                    </small>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+    {% else %}
+        <p class="text-muted">Не вдалося завантажити останні новини з RSS-стрічки.</p>
+    {% endif %}
 </div>
 
 </div>
