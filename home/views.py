@@ -8,6 +8,8 @@ from datetime import datetime, date  # ⬅️ КОРЕКТНИЙ ІМПОРТ da
 # import feedparser
 from django.core.cache import cache
 
+from settings.models import SocialSettings
+
 # ... (інші імпорти)
 
 # --- Конфігурація ---
@@ -30,7 +32,6 @@ class Home(ListView):
     """
     Представлення для відображення головної сторінки.
     """
-    template_name = 'home.html'
     context_object_name = 'latest_news'
 
     def get_queryset(self):  # ⬅️ Метод класу
@@ -74,22 +75,23 @@ class Home(ListView):
         cache.set('latest_rss_news', news_list, 3600)
         return news_list
 
-    # def get_context_data(self, **kwargs):  # ⬅️ Метод класу
-    #     """
-    #     Додаємо статичну інформацію (закони та соц. показники) до контексту.
-    #     """
-    #     context = super().get_context_data(**kwargs)
-    #     # ... (логіка додавання social_indicators та laws_and_regulations)
-    #
-    #     # 1. Ключові соціальні показники
-    #     context['social_indicators'] = {
-    #         'current_year': timezone.now().year,
-    #         'min_salary_monthly': '8 000 грн',
-    #         'pm_for_able_bodied': '3 028 грн',
-    #         'pdfo_rate': '18%',
-    #         'vz_rate': '5%',  # Згідно з трудовим законодавством
-    #         'esv_rate': '22%',
-    #         }
+    def get_context_data(self, **kwargs):  # ⬅️ Метод класу
+        """
+        Додаємо статичну інформацію (закони та соц. показники) до контексту.
+        """
+        context = super().get_context_data(**kwargs)
+        social_indicators_db = SocialSettings.objects.latest('effective_from')
+
+        # 1. Ключові соціальні показники
+        context['social_indicators'] = {
+            'current_year': timezone.now().year,
+            'effective_from': social_indicators_db.effective_from,
+            'min_salary_monthly': f'{social_indicators_db.min_salary} грн',
+            'pm_for_able_bodied': f'{social_indicators_db.pm_able_bodied} грн',
+            'pdfo_rate': f'{social_indicators_db.pdfo_rate} %',
+            'vz_rate': f'{social_indicators_db.vz_rate} %',  # Згідно з трудовим законодавством
+            'esv_rate': f'{social_indicators_db.esv_rate} %',
+            }
     #
         # # 2. Основні закони та нормативи
         # context['laws_and_regulations'] = [
