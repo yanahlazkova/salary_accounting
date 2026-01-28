@@ -1,7 +1,7 @@
 from salary_accounting.ui.buttons import HTMXButton
 
 
-class HTMXButtons:
+class UIButtons:
 
     @staticmethod
     def create(url_name, name_app):

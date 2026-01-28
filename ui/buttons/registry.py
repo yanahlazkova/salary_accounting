@@ -1,7 +1,7 @@
 from ui.buttons.base import HTMXButton
 
 
-class HTMXButtons:
+class UIButtons:
 
     @staticmethod
     def create(url_name, app_icon):

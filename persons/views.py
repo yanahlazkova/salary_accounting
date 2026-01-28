@@ -5,7 +5,7 @@ from django.shortcuts import render
 
 from persons.forms import PersonForm
 from persons.models import Person, Orders
-from salary_accounting.ui.button_registry import HTMXButtons
+from salary_accounting.ui.button_registry import UIButtons
 
 
 def add_person(request):
@@ -17,8 +17,8 @@ def add_person(request):
         'current_user': request.user.username if request.user.is_authenticated else 'Гість',
         'form_action': 'add_person',
         'buttons': [
-            HTMXButtons.exit(url_name='personnel'),
-            HTMXButtons.save(url_name='edit_person', pk=1),
+            UIButtons.exit(url_name='personnel'),
+            UIButtons.save(url_name='edit_person', pk=1),
 
             # {
             #     'redirect_button': 'personnel',
@@ -85,7 +85,7 @@ def personnel(request):
         # 'button_add': 'add_person',
         # 'button_icon': "bi bi-person-add me-2 text-info",
         'buttons': [
-            HTMXButtons.create(url_name='add_person', name_app='person'),
+            UIButtons.create(url_name='add_person', name_app='person'),
         ],
         'contents': ['base_table.html'],
 
@@ -107,9 +107,9 @@ def view_person(request, pk):
         'current_user': request.user.username if request.user.is_authenticated else 'Гість',
         'form_action': 'add_social_settings',
         'buttons': [
-            HTMXButtons.exit(url_name='settings'),
-            button_view,
-            HTMXButtons.save(url_name='save', pk=1)
+            UIButtons.exit(url_name='settings'),
+            # UIButtons.view(url_name='view_person', pk=pk),
+            # UIButtons.save(url_name='save', pk=pk)
         ],
         'content_form': ['base_form.html'],
     }
