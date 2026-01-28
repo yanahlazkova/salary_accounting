@@ -15,15 +15,15 @@ RSS_URL = 'https://buhgalter.com.ua/rss-for-users.rss'
 NEWS_LIMIT = 20
 
 
-def index(request):
-    user = request.user.username if request.user.is_authenticated else 'Гість'
-    # ПЕРЕВІРКА: Чи це HTMX запит?
-    if request.headers.get('HX-Request'):
-        # Віддаємо тільки таблицю (без меню)
-        return render(request, 'index.html', {'current_user': user})
-
-    # Якщо звичайний запит — віддаємо сторінку, яка "огортає" таблицю в base.html
-    return render(request, 'home.html', {'current_user': user})
+# def index(request):
+#     user = request.user.username if request.user.is_authenticated else 'Гість'
+#     # ПЕРЕВІРКА: Чи це HTMX запит?
+#     if request.headers.get('HX-Request'):
+#         # Віддаємо тільки таблицю (без меню)
+#         return render(request, 'index.html', {'current_user': user})
+#
+#     # Якщо звичайний запит — віддаємо сторінку, яка "огортає" таблицю в base.html
+#     return render(request, 'home.html', {'current_user': user})
 
 
 class Home(ListView):
@@ -41,7 +41,6 @@ class Home(ListView):
 
         # Якщо в кеші немає, завантажуємо з RSS...
         feed = feedparser.parse(RSS_URL)
-        print(feed.entries)
 
         news_list = []
         today = date.today()  # ⬅️ Отримуємо поточну дату
@@ -75,23 +74,23 @@ class Home(ListView):
         cache.set('latest_rss_news', news_list, 3600)
         return news_list
 
-    def get_context_data(self, **kwargs):  # ⬅️ Метод класу
-        """
-        Додаємо статичну інформацію (закони та соц. показники) до контексту.
-        """
-        context = super().get_context_data(**kwargs)
-        # ... (логіка додавання social_indicators та laws_and_regulations)
-
-        # 1. Ключові соціальні показники
-        context['social_indicators'] = {
-            'current_year': timezone.now().year,
-            'min_salary_monthly': '8 000 грн',
-            'pm_for_able_bodied': '3 028 грн',
-            'pdfo_rate': '18%',
-            'vz_rate': '5%',  # Згідно з трудовим законодавством
-            'esv_rate': '22%',
-            }
-
+    # def get_context_data(self, **kwargs):  # ⬅️ Метод класу
+    #     """
+    #     Додаємо статичну інформацію (закони та соц. показники) до контексту.
+    #     """
+    #     context = super().get_context_data(**kwargs)
+    #     # ... (логіка додавання social_indicators та laws_and_regulations)
+    #
+    #     # 1. Ключові соціальні показники
+    #     context['social_indicators'] = {
+    #         'current_year': timezone.now().year,
+    #         'min_salary_monthly': '8 000 грн',
+    #         'pm_for_able_bodied': '3 028 грн',
+    #         'pdfo_rate': '18%',
+    #         'vz_rate': '5%',  # Згідно з трудовим законодавством
+    #         'esv_rate': '22%',
+    #         }
+    #
         # # 2. Основні закони та нормативи
         # context['laws_and_regulations'] = [
         #     {
