@@ -1,4 +1,4 @@
-from django.views.generic import ListView
+from django.views.generic import ListView, DetailView
 from ui.mixins.htmx import HTMXTemplateMixin
 
 
@@ -15,18 +15,22 @@ class UIListView(HTMXTemplateMixin, ListView):
     htmx_template_name = "base_content.html"
 
     # UI metadata (перевизначаються у нащадках)
-    page_title: str | None = None
-    page_icon: str | None = None
+    # page_title: str | None = None
+    # page_icon: str | None = None
     page_blocks: list[str] | None = None
     paginate_by: int | None = None
+    table_name: str | None = None
     table_titles: list[str] | None = None
     table_fields: list[str] | None = None
 
-    def get_page_title(self):
-        return self.page_title
+    # def get_page_title(self):
+    #     return self.page_title
+    #
+    # def get_page_icon(self):
+    #     return self.page_icon
 
-    def get_page_icon(self):
-        return self.page_icon
+    def get_table_name(self):
+        return self.table_name
 
     def get_page_blocks(self):
         return self.page_blocks
@@ -54,10 +58,45 @@ class UIListView(HTMXTemplateMixin, ListView):
     def get_context_data(self, **kwargs):
         ctx = super().get_context_data(**kwargs)
 
-        ctx["page_title"] = self.get_page_title()
-        ctx["page_icon"] = self.get_page_icon()
+        # ctx["page_title"] = self.get_page_title()
+        # ctx["page_icon"] = self.get_page_icon()
         ctx["page_blocks"] = self.get_page_blocks()
         ctx["table_titles"] = self.get_table_titles()
         ctx["table_action"] = self.get_table_action()
+        ctx["table_name"] = self.get_table_name()
+
+        return ctx
+
+class UIDetailView(HTMXTemplateMixin, DetailView):
+    """
+    Базовий список для всіх HTMX-екранів
+    """
+    context_object_name = 'form_data'
+
+    table_action = [] # набір кнопок
+
+    # Layout
+    template_name = "base_page_form.html"
+    htmx_template_name = "base_form_view.html"
+
+    # UI metadata (перевизначаються у нащадках)
+    form_content: list[str] | None = None
+    form_title: str | None = None
+
+    def get_form_content(self):
+        return self.form_content
+
+    def get_table_action(self):
+        return self.table_action
+
+    def get_form_title(self):
+        return self.form_title
+
+    def get_context_data(self, **kwargs):
+        ctx = super().get_context_data(**kwargs)
+
+        ctx["form_content"] = self.get_form_content()
+        ctx["table_action"] = self.get_table_action()
+        ctx["form_title"] = self.get_form_title()
 
         return ctx

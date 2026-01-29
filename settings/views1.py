@@ -52,7 +52,7 @@ def settings(request):
 
 def add_social_settings(request):
     print(f'add: {request.method}')
-    button_view = UIButtons.view(url_name='view', pk=1)
+    button_view = UIButtons.view(url_name='view_setting', pk=1)
     context = {
         'section_name': 'Налаштування соціальних показників',
         'icon_title': 'bi bi-gear me-2','title': 'Додати соціальні показники',
