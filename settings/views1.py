@@ -4,7 +4,7 @@ from django.shortcuts import render, redirect
 from django.urls import reverse
 from django.views import View
 
-from salary_accounting.ui.button_registry import HTMXButtons
+from ui.buttons.registry import UIButtons
 from .forms import SocialSettingsForm
 from .models import SocialSettings
 
@@ -27,7 +27,7 @@ def settings(request):
         'title': 'Налаштування соціальних показників',
         'icon_title': 'bi bi-gear me-2',
         'current_user': request.user.username if request.user.is_authenticated else 'Гість',
-        'buttons': [HTMXButtons.create(
+        'buttons': [UIButtons.create(
             url_name='add_social_settings',
             name_app='setting')
 
@@ -52,16 +52,16 @@ def settings(request):
 
 def add_social_settings(request):
     print(f'add: {request.method}')
-    button_view = HTMXButtons.view(url_name='view', pk=1)
+    button_view = UIButtons.view(url_name='view_setting', pk=1)
     context = {
         'section_name': 'Налаштування соціальних показників',
         'icon_title': 'bi bi-gear me-2','title': 'Додати соціальні показники',
         'current_user': request.user.username if request.user.is_authenticated else 'Гість',
         'form_action': 'add_social_settings',
         'buttons': [
-            HTMXButtons.exit(url_name='settings'),
+            UIButtons.exit(url_name='settings'),
             button_view,
-            HTMXButtons.save(url_name='save', pk=1)
+            UIButtons.save(url_name='save', pk=1)
         ],
         'content_form': ['base_form.html'],
     }
@@ -110,9 +110,9 @@ def edit_social_settings(request, pk):
         'form_action': 'edit',
         'data': data_db,
         'buttons': [
-            HTMXButtons.exit(url_name='settings'),
-            HTMXButtons.view(url_name='view', pk=pk),
-            HTMXButtons.save(url_name='save', pk=pk),
+            UIButtons.exit(url_name='settings'),
+            UIButtons.view(url_name='view', pk=pk),
+            UIButtons.save(url_name='save', pk=pk),
         ],
         'content_form': 'base_form.html',
     }
@@ -145,9 +145,9 @@ def view_social_settings(request, pk):
         'current_user': request.user.username if request.user.is_authenticated else 'Гість',
         'data': data_db,
         'buttons': [
-            HTMXButtons.exit(url_name='settings'),
-            HTMXButtons.edit(url_name='edit', pk=pk),
-            # HTMXButtons.copy(url_name='edit', pk=pk),
+            UIButtons.exit(url_name='settings'),
+            UIButtons.edit(url_name='edit', pk=pk),
+            # UIButtons.copy(url_name='edit', pk=pk),
         ],
         'content_form': ['base_form_view.html'],
     }
@@ -178,9 +178,9 @@ def save_social_settings(request, pk):
         'current_user': request.user.username if request.user.is_authenticated else 'Гість',
         'data': data_db,
         'buttons': [
-            HTMXButtons.exit(url_name='settings'),
-            HTMXButtons.edit(url_name='edit', pk=pk),
-            # HTMXButtons.copy(url_name='edit', pk=pk),
+            UIButtons.exit(url_name='settings'),
+            UIButtons.edit(url_name='edit', pk=pk),
+            # UIButtons.copy(url_name='edit', pk=pk),
         ],
         'content_form': ['base_form_view.html'],
     }

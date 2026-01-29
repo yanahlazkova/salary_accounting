@@ -1,9 +1,9 @@
 <div class="container">
-    <h1 class="mt-3 text-info">{{ title }}</h1>
+    <h1 class="mt-3 text-info">{{ table_name }}</h1>
     <hr>
 
     <div class="mb-3">
-        {% for button in buttons %}
+        {% for button in toolbar_buttons %}
         {% include "ui/htmx_button.html" with button=button %}
         {% endfor %}
     </div>
@@ -12,24 +12,27 @@
         <thead>
         <tr>
             {% for table_title in table_titles %}
-            <th>{{ table_title }}</th>
+            <th>{{ table_title|capfirst }}</th>
             {% endfor %}
         </tr>
         </thead>
         <tbody>
-        {% for table_row in table_rows %}
+        {% for row in table_rows %}
         <tr role="button"
             tabindex="0"
-            hx-get="{% url open table_row.id %}"
+            hx-get="{{ row.row_url }}"
             hx-target="#main-content"
             hx-push-url="true"
-            onkeypress="if(event.keyCode==13) window.location='{% url open table_row.id %}'"
+            onkeypress="if(event.key === 'Enter') this.click();"
             style="cursor: pointer;">
-            {% for value in table_row.values %}
+
+            {% for value in row.values %}
             <td>{{ value }}</td>
             {% endfor %}
+
         </tr>
         {% endfor %}
+
         </tbody>
     </table>
 </div>

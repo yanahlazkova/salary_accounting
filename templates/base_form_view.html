@@ -1,34 +1,41 @@
 <div class="container mt-4">
     <div class="card shadow">
         <div class="card-header bg-info text-white">
-            <h3 class="card-title mb-0"><i class="{{ icon_title }} me-2"></i>{{ section_name }}</h3>
+            <h3 class="card-title mb-0"><i class="{{ page_icon }}"></i>{{ page_title }}</h3>
         </div>
         <div class="card-body mt-4">
             <div class="mb-3">
-                {% for button in buttons %}
+                {% for button in toolbar_buttons %}
                 {% include "ui/htmx_button.html" with button=button %}
                 {% endfor %}
             </div>
             <hr>
-            <h2 class="mb-4 text-primary">💰 {{ title }} </h2>
+            <h2 class="mb-4 text-primary"> {{ form_title }} </h2>
             <div class="row mb-5">
                 <div class="col-md-6">
                     <ul class="list-group">
-                        <li class="list-group-item"><strong>Мінімальна заробітна плата
-                            (місячна):</strong> {{ social_indicators.min_salary_monthly }}
+                        <li class="list-group-item  text-info"><strong class="text-secondary">Діє з:</strong>
+                            {{ form_data.effective_from }}
                         </li>
-                        <li class="list-group-item"><strong>Прожитковий мінімум (для
-                            працездатних):</strong> {{ social_indicators.pm_for_able_bodied }}
+                        <li class="list-group-item text-info"><strong class="text-secondary">Мінімальна заробітна плата
+                            (місячна):</strong> {{ form_data.min_salary_monthly }}
+                        </li>
+                        <li class="list-group-item text-info"><strong class="text-secondary">Прожитковий мінімум (для
+                            працездатних):</strong> {{ form_data.pm_for_able_bodied }}
                         </li>
                     </ul>
                 </div>
                 <div class="col-md-6">
                     <ul class="list-group">
-                        <li class="list-group-item"><strong>Ставка ПДФО:</strong> {{ social_indicators.pdfo_rate }}</li>
-                        <li class="list-group-item"><strong>Ставка Військового збору:</strong> {{
-                            social_indicators.vz_rate }}
+                        <li class="list-group-item text-info"><strong class="text-secondary">Ставка ПДФО:</strong>
+                            {{ form_data.pdfo_rate }}
                         </li>
-                        <li class="list-group-item"><strong>Ставка ЄСВ:</strong> {{ social_indicators.esv_rate }}</li>
+                        <li class="list-group-item text-info"><strong class="text-secondary">Ставка Військового
+                            збору:</strong> {{ form_data.vz_rate }}
+                        </li>
+                        <li class="list-group-item text-info"><strong class="text-secondary">Ставка ЄСВ:</strong>
+                            {{ form_data.esv_rate }}
+                        </li>
                     </ul>
                 </div>
             </div>
