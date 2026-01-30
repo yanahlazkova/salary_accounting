@@ -73,13 +73,8 @@ class SocialSettingsListView(SocialSettingsBaseView, UIButtonMixin, UIListView):
 
 class SocialSettingsDetailView(SocialSettingsBaseView, UIDetailView):
     model = SocialSettings
-    #
-    # template_name = "base_form_view.html"
-    # htmx_template_name = "base_page_form.html"
 
     form_content = ['base_form_view.html']
-
-    form_title = '💰 Cоціальні показники на '
 
     toolbar_buttons = [
         UIButtons.exit(url_name='settings'),
@@ -89,7 +84,7 @@ class SocialSettingsDetailView(SocialSettingsBaseView, UIDetailView):
         context = super().get_context_data(**kwargs)
         social_indicators_db = SocialSettings.objects.get(id=self.kwargs['pk'])
 
-        context['form_title'] = f'{context['form_title']} {social_indicators_db}'
+        context['form_title'] = f'💰 {context['page_title']} на {social_indicators_db}'
         # 1. Ключові соціальні показники
         context['form_data'] = {
             # 'current_year': timezone.now().year,
@@ -105,8 +100,8 @@ class SocialSettingsDetailView(SocialSettingsBaseView, UIDetailView):
         #     UIButtons.view('edit_social_settings')
         #     # UIButtons.edit('view_setting', self.kwargs['pk'])
         # )
-        for a in context:
-            print(a)
+        # for a in context:
+        #     print(a)
         # print(f'form_data = {context['form_data']}')
         return context
 

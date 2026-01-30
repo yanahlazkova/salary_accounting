@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     'persons.apps.PersonsConfig',
     # 'directories.apps.DirectoriesConfig',
     'settings.apps.SettingsConfig',
+    'ui.apps.UiConfig',
 ]
 
 MIDDLEWARE = [
