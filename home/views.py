@@ -1,4 +1,4 @@
-# home/views.py
+# home/views1.py
 import feedparser
 from django.http import HttpResponseNotFound, HttpResponse
 from django.shortcuts import render
