@@ -1,4 +1,4 @@
-from ui.buttons.icons import ICONS
+from django.apps import apps
 from ui.mixins.section import AppSectionMixin
 
 
@@ -9,12 +9,12 @@ class SocialSettingsBaseView(AppSectionMixin):
 
     breadcrumbs = {
         'home': {
-            'name': 'home',
+            'name': 'Home',
             'url': 'home',
         },
         'settings': {
             'name': 'Налаштування',
-            'url': 'settings',
+            # 'url': 'settings:social_settings',
         }
     }
 
@@ -23,10 +23,10 @@ class SocialSettingsBaseView(AppSectionMixin):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
 
+        # config = self.get_section_config()
+
         context['page_title'] = self.page_title
-        context['page_icon'] = context['section']['icons']['main']
-        # context['toolbar_buttons'] = context['toolbar_buttons']
+        context['toolbar_buttons'] = context['toolbar_buttons']
         context['breadcrumbs'] = self.breadcrumbs
 
         return context
-

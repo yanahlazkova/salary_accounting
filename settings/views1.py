@@ -28,7 +28,7 @@ def settings(request):
         'icon_title': 'bi bi-gear me-2',
         'current_user': request.user.username if request.user.is_authenticated else 'Гість',
         'buttons': [UIButtons.create(
-            url_name='add_social_settings',
+            url_name='create',
             name_app='setting')
 
         ],
@@ -57,7 +57,7 @@ def add_social_settings(request):
         'section_name': 'Налаштування соціальних показників',
         'icon_title': 'bi bi-gear me-2','title': 'Додати соціальні показники',
         'current_user': request.user.username if request.user.is_authenticated else 'Гість',
-        'form_action': 'add_social_settings',
+        'form_action': 'create',
         'buttons': [
             UIButtons.exit(url_name='settings'),
             button_view,

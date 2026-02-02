@@ -34,11 +34,11 @@ class SocialSettingsListView(SocialSettingsBaseView, UIButtonMixin, UIListView):
                 'id': obj['id'],  # Звернення через дужки (словник)
                 'values': [obj.get(f.name) for f in SocialSettings._meta.fields],
                 # ⬇ URL для кліку по рядку
-                'row_url': reverse('view_setting', kwargs={'pk': obj['id']}),
+                'row_url': reverse('settings:view_social_settings', kwargs={'pk': obj['id']}),
                 # кнопки
                 'buttons': [
-                    UIButtons.edit('edit_setting', obj['id']),
-                    UIButtons.view('view_setting', obj['id']),
+                    UIButtons.edit('settings:edit_social_settings', obj['id']),
+                    UIButtons.view('settings:view_social_settings', obj['id']),
                 ]
             })
         return rows_data
@@ -46,7 +46,7 @@ class SocialSettingsListView(SocialSettingsBaseView, UIButtonMixin, UIListView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
 
-        context['toolbar_buttons'] = get_buttons(buttons_name='create', url_name='add_social_settings', icons=context['section']['icons']['main'])
+        # context['toolbar_buttons'] = get_buttons(buttons_name='create', url_name='add_social_settings', icons=context['section']['icons']['main'])
         #[
         #     UIButtons.create(
         #         url_name='add_social_settings',
@@ -67,6 +67,10 @@ class SocialSettingsListView(SocialSettingsBaseView, UIButtonMixin, UIListView):
             'esv_rate': f'{social_indicators_db.esv_rate} %',
         }
 
+        for i in context:
+            print(f'{i}: {context[i]}')
+        return context
+
         return context
 
 
@@ -81,7 +85,7 @@ class SocialSettingsDetailView(SocialSettingsBaseView, UIDetailView):
         context = super().get_context_data(**kwargs)
 
         icons = context['section']['icons']
-        buttons_name = context['section']['toolbar_buttons']
+        # buttons_name = context['section']['toolbar_buttons']
 
         # створити функцію яка повертає набір кнопок
         # context['toolbar_buttons'] = get_buttons(buttons_name, self.kwargs['pk'], icons)

@@ -1,6 +1,7 @@
 from django.apps import AppConfig
 
-from ui.buttons.icons import ICONS
+from ui.buttons.base import HTMXButton
+from ui.icons import ICONS
 
 
 class SettingsConfig(AppConfig):
@@ -8,18 +9,17 @@ class SettingsConfig(AppConfig):
     name = 'settings'
     verbose_name = 'Налаштування'
 
-    # іконка
-    icons = ICONS['settings']
+    # іконки
+    app_icons = ICONS['settings']
+    section_icon = app_icons['main']
 
     # набір кнопок
-    toolbar_button = ['create', 'edit', 'view', 'save', 'delete', 'exit']
+    section_buttons = [
+        HTMXButton(
+            label="Додати",
+            icon=ICONS['settings']['create'],
+            url_name="settings:create_social_settings",
+        )
+    ]
 
-    # icon = 'settings'
-    #
-    # actions = [
-    #     {
-    #         'label': 'Додати',
-    #         'icon': 'plus',
-    #         'url_name': 'settings:create',
-    #     },
-    # ]
+    toolbar_button = ['create', 'edit', 'view', 'save', 'delete', 'exit']

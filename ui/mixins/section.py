@@ -14,8 +14,9 @@ class AppSectionMixin:
 
         context['section'] = {
             'title': config.verbose_name,
-            'icons': getattr(config, 'icons', None),
-            'actions': getattr(config, 'actions', []),
+            'section_icon': getattr(config, 'section_icon', None),
+            'icons': getattr(config, 'app_icons', []),
+            'actions': getattr(config, 'section_buttons', []),
         }
 
         return context
