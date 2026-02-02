@@ -1,4 +1,3 @@
-
 from django.http import HttpResponse
 from django.urls import reverse
 from django.utils import timezone
@@ -11,8 +10,9 @@ from .models import SocialSettings
 from .view.base import SocialSettingsBaseView
 
 
-# icon = 'bi bi-gear me-2'
-# title = 'Налаштування соціальних показників'
+def get_buttons(buttons_name, url_name, pk=None, icons=None):
+    toolbar_buttons = [UIButtons(name_button=button_name, url_name=url_name, icon=icons[button_name], pk=pk) for button_name in buttons_name]
+    return toolbar_buttons
 
 class SocialSettingsListView(SocialSettingsBaseView, UIButtonMixin, UIListView):
     model = SocialSettings
@@ -22,15 +22,6 @@ class SocialSettingsListView(SocialSettingsBaseView, UIButtonMixin, UIListView):
     page_blocks = [
         'social_settings.html',
         'base_table.html'
-        ]
-
-    table_name = 'Соціальні показники'
-
-    # кнопки
-    toolbar_buttons = [
-        UIButtons.create(
-            url_name='add_social_settings',
-        )
     ]
 
     def get_queryset(self):
@@ -55,7 +46,15 @@ class SocialSettingsListView(SocialSettingsBaseView, UIButtonMixin, UIListView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
 
-        social_indicators_db = SocialSettings.objects.latest('effective_from')
+        context['toolbar_buttons'] = get_buttons(buttons_name='create', url_name='add_social_settings', icons=context['section']['icons']['main'])
+        #[
+        #     UIButtons.create(
+        #         url_name='add_social_settings',
+        #         icon=context['section']['icons']['create'],
+        #     ),
+        # ]
+
+        social_indicators_db = self.queryset.latest('effective_from')
 
         # 1. Ключові соціальні показники
         context['social_indicators'] = {
@@ -76,12 +75,17 @@ class SocialSettingsDetailView(SocialSettingsBaseView, UIDetailView):
 
     form_content = ['base_form_view.html']
 
-    toolbar_buttons = [
-        UIButtons.exit(url_name='settings'),
-    ]
+    toolbar_buttons = []
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+
+        icons = context['section']['icons']
+        buttons_name = context['section']['toolbar_buttons']
+
+        # створити функцію яка повертає набір кнопок
+        # context['toolbar_buttons'] = get_buttons(buttons_name, self.kwargs['pk'], icons)
+
         social_indicators_db = SocialSettings.objects.get(id=self.kwargs['pk'])
 
         context['form_title'] = f'💰 {context['page_title']} на {social_indicators_db}'
@@ -96,13 +100,9 @@ class SocialSettingsDetailView(SocialSettingsBaseView, UIDetailView):
             'esv_rate': f'{social_indicators_db.esv_rate} %',
         }
 
-        # context['toolbar_buttons'].append(
-        #     UIButtons.view('edit_social_settings')
-        #     # UIButtons.edit('view_setting', self.kwargs['pk'])
-        # )
-        # for a in context:
-        #     print(a)
-        # print(f'form_data = {context['form_data']}')
+        for i in context:
+            print(f'{i}: {context[i]}')
+
         return context
 
     # def get_queryset(self):
@@ -111,5 +111,3 @@ class SocialSettingsDetailView(SocialSettingsBaseView, UIDetailView):
 #
 # class SocialSettingsCreateView(SocialSettingsBaseView, CreateView):
 #     model = SocialSettings
-
-

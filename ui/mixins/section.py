@@ -3,15 +3,19 @@ from django.apps import apps
 class AppSectionMixin:
     app_label = None
 
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-
+    def get_section_config(self):
         if not self.app_label:
             raise ValueError("app_label is required")
+        return apps.get_app_config(self.app_label)
 
-        config = apps.get_app_config(self.app_label)
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        config = self.get_section_config()
 
-        context['section_title'] = config.verbose_name
-        context['section_icon'] = getattr(config, 'section_icon', None)
+        context['section'] = {
+            'title': config.verbose_name,
+            'icons': getattr(config, 'icons', None),
+            'actions': getattr(config, 'actions', []),
+        }
 
         return context
