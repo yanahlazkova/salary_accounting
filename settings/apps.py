@@ -22,4 +22,3 @@ class SettingsConfig(AppConfig):
         )
     ]
 
-    toolbar_button = ['create', 'edit', 'view', 'save', 'delete', 'exit']
