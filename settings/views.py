@@ -46,14 +46,6 @@ class SocialSettingsListView(SocialSettingsBaseView, UIButtonMixin, UIListView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
 
-        # context['toolbar_buttons'] = get_buttons(buttons_name='create', url_name='add_social_settings', icons=context['section']['icons']['main'])
-        #[
-        #     UIButtons.create(
-        #         url_name='add_social_settings',
-        #         icon=context['section']['icons']['create'],
-        #     ),
-        # ]
-
         social_indicators_db = self.queryset.latest('effective_from')
 
         # 1. Ключові соціальні показники
