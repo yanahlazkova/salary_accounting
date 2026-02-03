@@ -1,6 +1,6 @@
 from django.apps import AppConfig
 
-from ui.buttons.icons import ICONS
+from ui.icons import ICONS
 
 
 class PersonsConfig(AppConfig):
