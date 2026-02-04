@@ -1,6 +1,7 @@
 from django.apps import AppConfig
 
 from ui.buttons.base import HTMXButton
+from ui.buttons.registry import UIButtons
 from ui.icons import ICONS
 
 
@@ -15,8 +16,8 @@ class SettingsConfig(AppConfig):
 
     # набір кнопок
     section_buttons = [
-        HTMXButton(
-            label="Додати",
+        UIButtons.build(
+            name="create",
             icon=ICONS['settings']['create'],
             url_name="settings:create_social_settings",
         )

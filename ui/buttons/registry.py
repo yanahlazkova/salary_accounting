@@ -4,19 +4,26 @@ from ui.buttons.base import HTMXButton
 
 
 class UIButtons:
-    def __init__(self, name_button, url_name, icon=None, pk=None):
-        self.url_name = url_name
-        self.icon = icon
-        self.pk = pk
-        self.name_button = name_button
-        match self.name_button:
-            case 'create': self.create(self.url_name, self.icon)
-            case 'edit': self.edit(self.url_name, self.pk, self.icon)
-            case 'delete': self.delete(self.url_name, self.pk, self.icon)
-            case 'view': self.view(self.url_name, self.pk, self.icon)
-            case 'copy': self.copy(url_name, self.pk, self.icon)
-            case 'exit': self.exit(url_name, self.icon)
-            case 'save': self.save(url_name, self.pk, self.icon)
+    @staticmethod
+    def build(name, url_name, pk=None, icon=None):
+        match name:
+            case 'create':
+                return UIButtons.create(url_name, icon)
+            case 'edit':
+                return UIButtons.edit(url_name, pk, icon)
+            case 'delete':
+                return UIButtons.delete(url_name, pk, icon)
+            case 'view':
+                return UIButtons.view(url_name, pk, icon)
+            case 'copy':
+                return UIButtons.copy(url_name, pk, icon)
+            case 'exit':
+                return UIButtons.exit(url_name, icon)
+            case 'save':
+                return UIButtons.save(url_name, pk, icon)
+
+        print('Помилка - кнопки не існує')
+        return 'Error'
 
     @staticmethod
     def create(url_name, icon=None):
