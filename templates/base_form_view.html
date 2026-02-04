@@ -1,8 +1,22 @@
+<!--    навігація    -->
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        {% for nav in breadcrumbs.values %}
+        <li class="breadcrumb-item active" aria-current="page">
+            {% if nav.url %}
+            <a href="{% url nav.url %}">
+                {% endif %}
+                {{ nav.name }}</a>
+        </li>
+        {% endfor %}
+    </ol>
+</nav>
 <div class="container mt-4">
     <div class="card shadow">
         <div class="card-header bg-info text-white">
-            <h3 class="card-title mb-0"><i class="{{ page_icon }}"></i>{{ section_title }} - {{ page_title }}</h3>
+            <h3 class="card-title mb-0"><i class="{{ section.icon }}"></i>{{ page_title }}</h3>
         </div>
+
         <div class="card-body mt-4">
             <div class="mb-3">
                 {% for button in toolbar_buttons %}

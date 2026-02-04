@@ -2,8 +2,10 @@ from django.urls import path
 
 from persons.views1 import *
 
+app_name = 'personnel'
+
 urlpatterns = [
-    path('personnel/', personnel, name='personnel'),
+    path('personnel/', personnel, name='persons'),
     path('new_person/', add_person, name='add_person'),
     path('orders/', list_orders, name='orders'),
     path('new_order/', add_order, name='add_order'),
