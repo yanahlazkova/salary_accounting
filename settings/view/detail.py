@@ -7,6 +7,7 @@ from ui.buttons.base import HTMXButton
 class SocialSettingsDetailView(SocialSettingsBaseView, DetailView):
     model = SocialSettings
 
+
     def get_page_buttons(self):
         obj = self.get_object()
         return [

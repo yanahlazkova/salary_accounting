@@ -10,10 +10,6 @@ from .models import SocialSettings
 from .view.base import SocialSettingsBaseView
 
 
-def get_buttons(buttons_name, url_name, pk=None, icons=None):
-    toolbar_buttons = [UIButtons(name_button=button_name, url_name=url_name, icon=icons[button_name], pk=pk) for button_name in buttons_name]
-    return toolbar_buttons
-
 class SocialSettingsListView(SocialSettingsBaseView, UIButtonMixin, UIListView):
     model = SocialSettings
 
@@ -36,10 +32,10 @@ class SocialSettingsListView(SocialSettingsBaseView, UIButtonMixin, UIListView):
                 # ⬇ URL для кліку по рядку
                 'row_url': reverse('settings:view_social_settings', kwargs={'pk': obj['id']}),
                 # кнопки
-                'buttons': [
-                    UIButtons.edit('settings:edit_social_settings', obj['id']),
-                    UIButtons.view('settings:view_social_settings', obj['id']),
-                ]
+                # 'buttons': [
+                #     UIButtons.edit('settings:edit_social_settings', obj['id']),
+                #     UIButtons.view('settings:view_social_settings', obj['id']),
+                # ]
             })
         return rows_data
 
@@ -47,6 +43,17 @@ class SocialSettingsListView(SocialSettingsBaseView, UIButtonMixin, UIListView):
         context = super().get_context_data(**kwargs)
 
         social_indicators_db = self.queryset.latest('effective_from')
+
+        context['breadcrumbs'] = [
+            {
+                'name': context['all_page']['home']['name'],
+                'url': context['all_page']['home']['url'],
+            },
+            {
+                'name': context['all_page']['social_settings']['name'],
+                'url': context['all_page']['social_settings']['url'],
+            }
+        ]
 
         # 1. Ключові соціальні показники
         context['social_indicators'] = {
@@ -61,7 +68,6 @@ class SocialSettingsListView(SocialSettingsBaseView, UIButtonMixin, UIListView):
 
         for i in context:
             print(f'{i}: {context[i]}')
-        return context
 
         return context
 
@@ -76,7 +82,7 @@ class SocialSettingsDetailView(SocialSettingsBaseView, UIDetailView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
 
-        icons = context['section']['icons']
+        # icons = context['section']['icons']
         # buttons_name = context['section']['toolbar_buttons']
 
         # створити функцію яка повертає набір кнопок

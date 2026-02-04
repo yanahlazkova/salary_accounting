@@ -16,8 +16,7 @@ class AppSectionMixin:
             'title': config.verbose_name,
             'section_icon': getattr(config, 'section_icon', None),
             'icons': getattr(config, 'app_icons', []),
-            'actions': getattr(config, 'section_buttons', []),
-            # 'toolbar_button': getattr(config, 'toolbar_button', []),
+            'actions': getattr(config, 'section_buttons', {}),
         }
 
         return context

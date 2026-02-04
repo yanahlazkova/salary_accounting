@@ -3,16 +3,14 @@ from ui.mixins.section import AppSectionMixin
 
 
 class SocialSettingsBaseView(AppSectionMixin):
-    """ опис спільної поведінки для всіх сторінок додатка """
+    """ опис спільної поведінки для всіх сторінок
+     розділу Налаштування соціальних показників """
     app_label = 'settings'
 
     # назви розділів
-    page_title = {
-        'social_settings': "Налаштування соціальних показників",
-        'another': 'Інші налаштування',
-    }
+    page_title = "Налаштування соціальних показників"
 
-    breadcrumbs = {
+    all_page = {
         'home': {
             'name': 'Home',
             'url': 'home',
@@ -33,57 +31,34 @@ class SocialSettingsBaseView(AppSectionMixin):
             'name': 'Перегляд налаштувань за ',
             'url': 'settings:view_social_settings',
         },
-        'another': {
-            'name': 'Інші налаштування',
-            'url': 'settings:another_settings',
-        }
     }
 
-    table_name = {
-        'social_settings': 'Соціальні показники',
-        'another': 'Інші налаштування'
-    }
+    table_name = 'Соціальні показники'
 
     toolbar_button = {
         'create': {
             'action': 'create',
-            'url': {
-                'social_settings': 'settings:create_social_settings',
-                'another': 'settings:edit_social_settings',
-            },
+            'url': 'settings:create_social_settings'
         },
         'edit': {
             'action': 'edit',
-            'url': {
-                'social_settings': 'settings:edit_social_settings',
-                'another': '#'
-            },
+            'url': 'settings:create_social_settings',
         },
         'view': {
             'action': 'view',
-            'url': {
-                'social_settings': 'settings:view_social_settings',
-                'another': '#'
-            },
+            'url': 'settings:edit_social_settings',
         },
         'save': {
             'action': 'save',
-            'url': {
-                'social_settings': 'settings:save_social_settings',
-                'another': '#'
-            }, },
+            'url': 'settings:view_social_settings',
+        },
         'delete': {
             'action': 'delete',
-            'url': {
-                'social_settings': 'settings:delete_social_settings',
-                'another': '#'
-            }, },
+            'url': 'settings:save_social_settings',
+        },
         'exit': {
             'action': 'exit',
-            'url': {
-                'social_settings': 'settings:social_settings',
-                'another': '#'
-            },
+            'url': 'settings:delete_social_settings',
         }
     }
 
@@ -93,7 +68,51 @@ class SocialSettingsBaseView(AppSectionMixin):
         config = self.get_section_config()
 
         context['page_title'] = self.page_title
+        context['all_page'] = self.all_page
+        context['table_name'] = self.table_name
+        context['toolbar_button'] = self.toolbar_button
+
+        return context
+
+
+class AnotherSettingsBaseView(AppSectionMixin):
+    """ опис спільної поведінки для всіх сторінок
+     розділу Інші налаштування """
+    app_label = 'another'
+
+    # назви розділів
+    page_title = 'Інші налаштування'
+
+    breadcrumbs = {
+        'home': {
+            'name': 'Home',
+            'url': 'home',
+        },
+        'another': {
+            'name': 'Інші налаштування',
+            'url': 'settings:another_settings',
+        }
+    }
+
+    table_name = 'Інші налаштування'
+
+    toolbar_button = {
+        'create': {
+            'action': 'create',
+            'url': 'settings:create_another_settings',
+        },
+
+    }
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+
+        config = self.get_section_config()
+
+        context['section'] = config
+        context['page_title'] = self.page_title
         context['breadcrumbs'] = self.breadcrumbs
+        context['table_name'] = self.table_name
         context['toolbar_button'] = self.toolbar_button
 
         return context
