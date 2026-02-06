@@ -12,7 +12,7 @@ class SettingsConfig(AppConfig):
 
     # іконки
     app_icons = ICONS['settings']
-    section_icon = app_icons['main']
+    app_icon = app_icons['main']
 
     # набір кнопок
     section_buttons = {
@@ -21,10 +21,5 @@ class SettingsConfig(AppConfig):
                 icon=ICONS['settings']['create'],
                 url_name="settings:create_social_settings",
             ),
-            'another': UIButtons.build(
-                name="create",
-                icon=ICONS['settings']['create'],
-                url_name="settings:create_another_settings",
-            )
         }
 
