@@ -1,5 +1,3 @@
-from unittest import case
-
 from ui.buttons.base import HTMXButton
 
 
