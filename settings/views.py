@@ -8,17 +8,13 @@ from ui.mixins.context import UIButtonMixin
 from ui.views.base import UIListView, UIDetailView
 from .models import SocialSettings
 from .view.base import SocialSettingsBaseView
+from .view.list import SocialSettingsListView
 
 
-class SocialSettingsListView(SocialSettingsBaseView, UIButtonMixin, UIListView):
+class SocialSettingsList(SocialSettingsListView, UIButtonMixin, UIListView):
     model = SocialSettings
 
     queryset = SocialSettings.objects.order_by('-effective_from')
-
-    page_blocks = [
-        'social_settings.html',
-        'base_table.html'
-    ]
 
     def get_queryset(self):
         data_db = SocialSettings.objects.all().values()
@@ -44,16 +40,16 @@ class SocialSettingsListView(SocialSettingsBaseView, UIButtonMixin, UIListView):
 
         social_indicators_db = self.queryset.latest('effective_from')
 
-        context['breadcrumbs'] = [
-            {
-                'name': context['all_page']['home']['name'],
-                'url': context['all_page']['home']['url'],
-            },
-            {
-                'name': context['all_page']['social_settings']['name'],
-                'url': context['all_page']['social_settings']['url'],
-            }
-        ]
+        # context['breadcrumbs'] = [
+        #     {
+        #         'name': context['all_page']['home']['name'],
+        #         'url': context['all_page']['home']['url'],
+        #     },
+        #     {
+        #         'name': context['all_page']['social_settings']['name'],
+        #         'url': context['all_page']['social_settings']['url'],
+        #     }
+        # ]
 
         # 1. Ключові соціальні показники
         context['social_indicators'] = {

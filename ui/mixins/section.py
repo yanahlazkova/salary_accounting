@@ -1,5 +1,6 @@
 from django.apps import apps
 
+
 class AppSectionMixin:
     app_label = None
 
@@ -14,9 +15,8 @@ class AppSectionMixin:
 
         context['section'] = {
             'title': config.verbose_name,
-            'section_icon': getattr(config, 'section_icon', None),
-            'icons': getattr(config, 'app_icons', []),
-            'actions': getattr(config, 'section_buttons', {}),
+            'icon': getattr(config, 'app_icon', None),
+            # 'set_icons': getattr(config, 'app_icons', None),
         }
 
         return context
