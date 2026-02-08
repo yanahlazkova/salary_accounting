@@ -6,7 +6,7 @@ from ui.icons import ICONS
 
 
 class SettingsConfig(AppConfig):
-    """ загальні дані розділу Налаштування"""
+    """ загальні дані розділу Кадри"""
     name = 'settings'
     verbose_name = 'Налаштування'
 
@@ -14,12 +14,4 @@ class SettingsConfig(AppConfig):
     app_icons = ICONS['settings']
     app_icon = app_icons['main']
 
-    # набір кнопок
-    section_buttons = {
-            'social_settings': UIButtons.build(
-                name="create",
-                icon=ICONS['settings']['create'],
-                url_name="settings:create_social_settings",
-            ),
-        }
 

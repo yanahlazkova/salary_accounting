@@ -5,6 +5,7 @@ from django.urls import reverse
 
 @dataclass
 class HTMXButton:
+    name: str
     label: str
     icon: str
     url_name: str

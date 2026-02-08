@@ -2,101 +2,121 @@ from ui.buttons.base import HTMXButton
 
 
 class UIButtons:
-    @staticmethod
-    def build(name, url_name, pk=None, icon=None):
-        match name:
+    DEFAULT_CSS_CLASS = 'btn btn-outline-info me-2'
+
+    def __init__(self, name: str):
+        self.name = name
+        self.url_name = '#'
+        self.pk = None
+        self.icon = None
+        self.css_class = self.DEFAULT_CSS_CLASS
+
+    def get_name(self):
+        return self.name
+
+    def set_url_name(self, url_name):
+        self.url_name = url_name
+        return self
+
+    def set_pk(self, pk):
+        self.pk = pk
+        return self
+
+    def set_icon(self, icon):
+        self.icon = icon
+        return self
+
+    def set_css_class(self, css_class):
+        self.css_class = css_class
+        return self
+
+        # --------- factory ---------
+
+    def build(self) -> HTMXButton:
+        match self.name:
             case 'create':
-                return UIButtons.create(url_name, icon)
+                return self._create()
             case 'edit':
-                return UIButtons.edit(url_name, pk, icon)
+                return self._edit()
             case 'delete':
-                return UIButtons.delete(url_name, pk, icon)
+                return self._delete()
             case 'view':
-                return UIButtons.view(url_name, pk, icon)
+                return self._view()
             case 'copy':
-                return UIButtons.copy(url_name, pk, icon)
+                return self._copy()
             case 'exit':
-                return UIButtons.exit(url_name, icon)
+                return self._exit()
             case 'save':
-                return UIButtons.save(url_name, pk, icon)
+                return self._save()
 
-        print('Помилка - кнопки не існує')
-        return 'Error'
+        raise ValueError(f'Кнопка "{self.name}" не існує')
 
-    @staticmethod
-    def create(url_name, icon=None):
+    def _create(self):
         return HTMXButton(
+            name='create',
             label="Додати",
-            icon=icon or 'bi bi-plus-circle',
-            url_name=url_name,
-            # css_class=css_class,
-            # hx_target=target,
+            icon=self.icon or "bi bi-plus-circle",
+            url_name=self.url_name,
+            css_class=self.css_class,
         )
 
-    @staticmethod
-    def edit(url_name, pk, icon=None):
+    def _edit(self):
         return HTMXButton(
+            name='edit',
             label="Редагувати",
-            icon=icon or "bi bi-pencil me-2",
-            url_name=url_name,
-            url_kwargs={"pk": pk},
-#             css_class=css_class,
-#             hx_target=target,
+            icon=self.icon or "bi bi-pencil",
+            url_name=self.url_name,
+            url_kwargs={"pk": self.pk},
+            css_class=self.css_class,
         )
 
-    @staticmethod
-    def delete(url_name, pk, icon=None):
+    def _delete(self):
         return HTMXButton(
+            name='delete',
             label="Видалити",
-            icon=icon or "bi bi-trash",
-            url_name=url_name,
-            url_kwargs={"pk": pk},
-#             css_class="btn btn-sm btn-outline-danger",
+            icon=self.icon or "bi bi-trash",
+            url_name=self.url_name,
+            url_kwargs={"pk": self.pk},
+            css_class=self.css_class,
             hx_method="delete",
             confirm="Видалити запис?",
-#             hx_target=target,
         )
 
-    @staticmethod
-    def view(url_name, pk, icon=None):
+    def _view(self):
         return HTMXButton(
+            name='veiw',
             label="Перегляд",
-            icon=icon or "bi bi-eye",
-            url_name=url_name,
-            url_kwargs={"pk": pk},
-#             css_class=css_class,
-#             hx_target=target,
+            icon=self.icon or "bi bi-eye",
+            url_name=self.url_name,
+            url_kwargs={"pk": self.pk},
+            css_class=self.css_class,
         )
 
-    @staticmethod
-    def copy(url_name, pk, icon=None):
+    def _copy(self):
         return HTMXButton(
+            name='copy',
             label="Копіювати",
-            icon=icon or "bi bi-copy",
-            url_name=url_name,
-            url_kwargs={"pk": pk},
-#             css_class=css_class,
-#             hx_target=target,
+            icon=self.icon or "bi bi-copy",
+            url_name=self.url_name,
+            url_kwargs={"pk": self.pk},
+            css_class=self.css_class,
         )
 
-    @staticmethod
-    def exit(url_name, icon=None):
+    def _exit(self):
         return HTMXButton(
+            name='exit',
             label="Закрити",
-            icon=icon or "bi bi-arrow-left-square",
-            url_name=url_name,
-            # url_kwargs={"pk": pk}, # для відображення раніше обраного у таблиці
-#             css_class=css_class,
-#             hx_target=target,
+            icon=self.icon or "bi bi-arrow-left-square",
+            url_name=self.url_name,
+            css_class=self.css_class,
         )
 
-    @staticmethod
-    def save(url_name, pk, icon=None):
+    def _save(self):
         return HTMXButton(
+            name='save',
             label="Зберегти",
-            icon=icon or "bi bi-floppy",
-            url_name=url_name,
-            url_kwargs={"pk": pk},
-#             css_class=css_class,
-#             hx_target=target,
+            icon=self.icon or "bi bi-floppy",
+            url_name=self.url_name,
+            url_kwargs={"pk": self.pk} if self.pk else {},
+            css_class=self.css_class,
         )

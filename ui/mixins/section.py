@@ -1,7 +1,8 @@
 from django.apps import apps
 
 
-class AppSectionMixin:
+class AppSectionMetaMixin:
+    """ міксин загальних даних для розділів (додатків) """
     app_label = None
 
     def get_section_config(self):
@@ -16,7 +17,7 @@ class AppSectionMixin:
         context['section'] = {
             'title': config.verbose_name,
             'icon': getattr(config, 'app_icon', None),
-            # 'set_icons': getattr(config, 'app_icons', None),
+            'set_icons': getattr(config, 'app_icons', None),
         }
 
         return context

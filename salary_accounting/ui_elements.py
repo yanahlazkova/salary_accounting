@@ -18,5 +18,5 @@ BUTTON_REGISTRY = {
     'exit': ButtonConfig(title_button='Закрити', icon_button='bi bi-arrow-left-square me-2'),
     'edit': ButtonConfig(title_button='Редагувати', icon_button='bi bi-pencil-fill me-2'),
     'copy': ButtonConfig(title_button='Копіювати', icon_button='bi bi-copy me-2'),
-    'view': ButtonConfig(title_button='Перегляд', icon_button='bi bi-binoculars me-2'),
+    'views': ButtonConfig(title_button='Перегляд', icon_button='bi bi-binoculars me-2'),
 }
