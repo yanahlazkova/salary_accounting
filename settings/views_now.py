@@ -4,15 +4,16 @@ from django.utils import timezone
 from django.views.generic import DetailView
 
 from ui.buttons.registry import UIButtons
-from ui.mixins.context import UIButtonMixin
-from ui.views.base import UIListView, UIDetailView
+from ui.views.detail import UIDetailView
+from ui.views.list import UIListView
 from .models import SocialSettings
-from .view.base import SocialSettingsBaseView
-from .view.list import SocialSettingsListView
+from .views.base import SocialSettingsBaseView
+from .views.list import SocialSettingsListView
 
 
-class SocialSettingsList(SocialSettingsListView, UIButtonMixin, UIListView):
+class SocialSettingsList(SocialSettingsListView, UIListView):
     model = SocialSettings
+
 
     queryset = SocialSettings.objects.order_by('-effective_from')
 
@@ -28,10 +29,9 @@ class SocialSettingsList(SocialSettingsListView, UIButtonMixin, UIListView):
                 # ⬇ URL для кліку по рядку
                 'row_url': reverse('settings:view_social_settings', kwargs={'pk': obj['id']}),
                 # кнопки
-                # 'buttons': [
-                #     UIButtons.edit('settings:edit_social_settings', obj['id']),
-                #     UIButtons.view('settings:view_social_settings', obj['id']),
-                # ]
+                'buttons': [
+                    UIButtons.view('settings:view_social_settings', obj['id']),
+                ]
             })
         return rows_data
 

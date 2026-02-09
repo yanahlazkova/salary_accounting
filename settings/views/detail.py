@@ -1,7 +1,7 @@
 from django.views.generic import DetailView
 
 from settings.models import SocialSettings
-from settings.view.base import SocialSettingsBaseView
+from settings.views.base import SocialSettingsBaseView
 from ui.buttons.base import HTMXButton
 
 class SocialSettingsDetailView(SocialSettingsBaseView, DetailView):

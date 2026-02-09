@@ -38,7 +38,7 @@ def settings(request):
         ],
         'table_titles': table_titles,
         'table_rows': rows_data,
-        'open': 'view',
+        'open': 'views',
     }
 
     # ПЕРЕВІРКА: Чи це HTMX запит?
@@ -111,7 +111,7 @@ def edit_social_settings(request, pk):
         'data': data_db,
         'buttons': [
             UIButtons.exit(url_name='settings'),
-            UIButtons.view(url_name='view', pk=pk),
+            UIButtons.view(url_name='views', pk=pk),
             UIButtons.save(url_name='save', pk=pk),
         ],
         'content_form': 'base_form.html',
@@ -136,7 +136,7 @@ def edit_social_settings(request, pk):
 
 
 def view_social_settings(request, pk):
-    print(f'view: {request.method}')
+    print(f'views: {request.method}')
     data_db = SocialSettings.objects.get(id=pk)
     context = {
         'section_name': 'Налаштування соціальних показників',

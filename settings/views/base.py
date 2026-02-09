@@ -1,61 +1,43 @@
-from django.apps import apps
-
-from ui.buttons.registry import UIButtons
-from ui.mixins.page_toolbar import SectionPageToolbarMixin
-from ui.mixins.section import AppSectionMixin
+from ui.mixins.section import AppSectionMetaMixin
+from ui.views.base import UIBaseView
 
 
-class SocialSettingsBaseView(AppSectionMixin, SectionPageToolbarMixin):
+class SocialSettingsBaseView(AppSectionMetaMixin, UIBaseView):
     """ опис спільної поведінки для всіх сторінок
      розділу Налаштування соціальних показників """
     app_label = 'settings'
 
     # назви розділів
     page_title = "Налаштування соціальних показників"
+    page_icon: str
 
-    # all_page = {
-    #     'home': {
-    #         'name': 'Home',
-    #         'url': 'home',
-    #     },
-    #     'social_settings': {
-    #         'name': 'Налаштування',
-    #         'url': 'settings:social_settings',
-    #     },
-    #     'create_social_settings': {
-    #         'name': 'Додавання нових налаштувань',
-    #         'url': 'settings:create_social_settings',
-    #     },
-    #     'edit_social_settings': {
-    #         'name': 'Редагування налаштувань за ',
-    #         'url': 'settings:edit_social_settings',
-    #     },
-    #     'view_social_settings': {
-    #         'name': 'Перегляд налаштувань за ',
-    #         'url': 'settings:view_social_settings',
-    #     },
-    # }
-
-    table_name = 'Соціальні показники'
-
-    # toolbar_buttons = (
-    #     {'action': 'create', 'url': 'settings:create_social_settings'},
-    #     {'action': 'edit', 'url': 'settings:create_social_settings'},
-    #     {'action': 'view', 'url': 'settings:edit_social_settings'},
-    #     {'action': 'save', 'url': 'settings:view_social_settings'},
-    #     {'action': 'delete', 'url': 'settings:save_social_settings'},
-    #     {'action': 'exit', 'url': 'settings:delete_social_settings'}
-    # )
+    section_pages = {
+        'main': {
+            'name': 'Соціальні показники',
+            'url': 'settings:social_settings',
+        },
+        'create': {
+            'name': 'Додавання нових налаштувань',
+            'url': 'settings:create_social_settings',
+        },
+        'edit': {
+            'name': 'Редагування налаштувань за ',
+            'url': 'settings:edit_social_settings',
+        },
+        'view': {
+            'name': 'Перегляд налаштувань за ',
+            'url': 'settings:view_social_settings',
+        },
+    }
 
     def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
+        ctx = super().get_context_data(**kwargs)
 
-        # config = self.get_section_config()
+        ctx['page_title'] = self.page_title
+        ctx['page_icon'] = ctx['section']['icon']
+        ctx['toolbar_buttons'] = self.get_toolbar_buttons(self.page_actions)
 
-        context['page_title'] = self.page_title
-        context['table_name'] = self.table_name
-
-        return context
+        return ctx
 
 
 # class AnotherSettingsBaseView(AppSectionMixin):
@@ -82,7 +64,7 @@ class SocialSettingsBaseView(AppSectionMixin, SectionPageToolbarMixin):
 #     toolbar_buttons = (
 #         {'action': 'create', 'url': 'settings:create_social_settings'},
 #         {'action': 'edit', 'url': 'settings:edit_social_settings'},
-#         {'action': 'view', 'url': 'settings:view_social_settings'},
+#         {'action': 'views', 'url': 'settings:view_social_settings'},
 #         {'action': 'save', 'url': 'settings:save_social_settings'},
 #         {'action': 'delete', 'url': 'settings:delete_social_settings'},
 #         {'action': 'exit', 'url': 'settings:exit_social_settings'}
