@@ -84,7 +84,7 @@ class UIButtons:
 
     def _view(self):
         return HTMXButton(
-            name='veiw',
+            name='view',
             label="Перегляд",
             icon=self.icon or "bi bi-eye",
             url_name=self.url_name,

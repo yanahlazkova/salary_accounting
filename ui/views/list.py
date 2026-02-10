@@ -1,6 +1,7 @@
 from django.views.generic import ListView
 
 from ui.mixins.htmx import HTMXTemplateMixin
+from ui.mixins.page_toolbar import SectionPageToolbarMixin
 
 
 class UIListView(HTMXTemplateMixin, ListView):
@@ -8,8 +9,6 @@ class UIListView(HTMXTemplateMixin, ListView):
     Базовий список для всіх HTMX-екранів
     """
     context_object_name = 'table_rows'
-
-    section_pages: dict | None = None
 
     # Layout
     template_name = "base_page.html"
@@ -39,11 +38,6 @@ class UIListView(HTMXTemplateMixin, ListView):
         return [
             f.verbose_name for f in self.model._meta.fields
         ]
-
-    def get_page(self, page_name):
-        if self.section_pages is not None:
-            return self.section_pages[page_name]
-        return f'Error: сторінка {page_name} не знайдена.'
 
     def get_context_data(self, **kwargs):
         ctx = super().get_context_data(**kwargs)

@@ -11,61 +11,61 @@ from .views.base import SocialSettingsBaseView
 from .views.list import SocialSettingsListView
 
 
-class SocialSettingsList(SocialSettingsListView, UIListView):
-    model = SocialSettings
-
-
-    queryset = SocialSettings.objects.order_by('-effective_from')
-
-    def get_queryset(self):
-        data_db = SocialSettings.objects.all().values()
-
-        # Створюємо список списків (ID + значення полів)
-        rows_data = []
-        for obj in data_db:
-            rows_data.append({
-                'id': obj['id'],  # Звернення через дужки (словник)
-                'values': [obj.get(f.name) for f in SocialSettings._meta.fields],
-                # ⬇ URL для кліку по рядку
-                'row_url': reverse('settings:view_social_settings', kwargs={'pk': obj['id']}),
-                # кнопки
-                'buttons': [
-                    UIButtons.view('settings:view_social_settings', obj['id']),
-                ]
-            })
-        return rows_data
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-
-        social_indicators_db = self.queryset.latest('effective_from')
-
-        # context['breadcrumbs'] = [
-        #     {
-        #         'name': context['all_page']['home']['name'],
-        #         'url': context['all_page']['home']['url'],
-        #     },
-        #     {
-        #         'name': context['all_page']['social_settings']['name'],
-        #         'url': context['all_page']['social_settings']['url'],
-        #     }
-        # ]
-
-        # 1. Ключові соціальні показники
-        context['social_indicators'] = {
-            'current_year': timezone.now().year,
-            'effective_from': social_indicators_db.effective_from,
-            'min_salary_monthly': f'{social_indicators_db.min_salary} грн',
-            'pm_for_able_bodied': f'{social_indicators_db.pm_able_bodied} грн',
-            'pdfo_rate': f'{social_indicators_db.pdfo_rate} %',
-            'vz_rate': f'{social_indicators_db.vz_rate} %',  # Згідно з трудовим законодавством
-            'esv_rate': f'{social_indicators_db.esv_rate} %',
-        }
-
-        for i in context:
-            print(f'{i}: {context[i]}')
-
-        return context
+# class SocialSettingsList(SocialSettingsListView, UIListView):
+#     model = SocialSettings
+#
+#
+#     queryset = SocialSettings.objects.order_by('-effective_from')
+#
+#     def get_queryset(self):
+#         data_db = SocialSettings.objects.all().values()
+#
+#         # Створюємо список списків (ID + значення полів)
+#         rows_data = []
+#         for obj in data_db:
+#             rows_data.append({
+#                 'id': obj['id'],  # Звернення через дужки (словник)
+#                 'values': [obj.get(f.name) for f in SocialSettings._meta.fields],
+#                 # ⬇ URL для кліку по рядку
+#                 'row_url': reverse('settings:view_social_settings', kwargs={'pk': obj['id']}),
+#                 # кнопки
+#                 'buttons': [
+#                     UIButtons.view('settings:view_social_settings', obj['id']),
+#                 ]
+#             })
+#         return rows_data
+#
+#     def get_context_data(self, **kwargs):
+#         context = super().get_context_data(**kwargs)
+#
+#         social_indicators_db = self.queryset.latest('effective_from')
+#
+#         # context['breadcrumbs'] = [
+#         #     {
+#         #         'name': context['all_page']['home']['name'],
+#         #         'url': context['all_page']['home']['url'],
+#         #     },
+#         #     {
+#         #         'name': context['all_page']['social_settings']['name'],
+#         #         'url': context['all_page']['social_settings']['url'],
+#         #     }
+#         # ]
+#
+#         # 1. Ключові соціальні показники
+#         context['social_indicators'] = {
+#             'current_year': timezone.now().year,
+#             'effective_from': social_indicators_db.effective_from,
+#             'min_salary_monthly': f'{social_indicators_db.min_salary} грн',
+#             'pm_for_able_bodied': f'{social_indicators_db.pm_able_bodied} грн',
+#             'pdfo_rate': f'{social_indicators_db.pdfo_rate} %',
+#             'vz_rate': f'{social_indicators_db.vz_rate} %',  # Згідно з трудовим законодавством
+#             'esv_rate': f'{social_indicators_db.esv_rate} %',
+#         }
+#
+#         for i in context:
+#             print(f'{i}: {context[i]}')
+#
+#         return context
 
 
 class SocialSettingsDetailView(SocialSettingsBaseView, UIDetailView):

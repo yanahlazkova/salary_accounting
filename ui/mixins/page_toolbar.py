@@ -1,34 +1,45 @@
-from ui.buttons.registry import UIButtons
-
-
+from django.apps import apps
 from ui.buttons.registry import UIButtons
 
 
 class SectionPageToolbarMixin:
-    toolbar_buttons = ()
+    """ Формує toolbar-кнопки на основі app_icons додатку """
 
-    def get_toolbar_buttons(self, actions):
+    app_label: str = None
+    toolbar_buttons: dict = []  # ['create', 'edit', 'delete']
+
+    def get_app_icons(self) -> dict:
+        if not self.app_label:
+            return {}
+
+        config = apps.get_app_config(self.app_label)
+        return getattr(config, 'app_icons', {}) or {}
+
+    def get_toolbar_buttons(self):
+        icons = self.get_app_icons()
         buttons = []
-        # print(f'toolbar_buttons: {self.toolbar_buttons}')
 
-        if self.toolbar_buttons:
-            for name in self.toolbar_buttons:
-                buttons.append(UIButtons(name).build())
-            return buttons
+        pk = getattr(self.object, 'pk', None)
 
-        if actions:
-            for action in actions:
-                btn = UIButtons(action['action'])
-
-                if 'url' in action:
-                    btn.set_url_name(action['url'])
-
-                buttons.append(btn.build())
-
-            return buttons
+        for name in self.toolbar_buttons:
+            button = (
+                UIButtons(name)
+                .set_url_name(self.get_toolbar_url(name))
+                .set_pk(pk)
+                .set_icon(icons.get(name))
+                .build()
+            )
+            buttons.append(button)
 
         return buttons
 
+    def get_toolbar_url(self, name: str) -> str:
+        """ Конвенція імен URL:
+               settings:create
+               settings:edit
+               settings:delete """
+
+        return f'{self.app_label}:{name}'
 
 # class SectionPageToolbarMixin:
 #     toolbar_buttons = ()
