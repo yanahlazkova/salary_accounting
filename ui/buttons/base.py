@@ -5,6 +5,7 @@ from django.urls import reverse
 
 @dataclass
 class HTMXButton:
+    name: str
     label: str
     icon: str
     url_name: str
@@ -16,7 +17,7 @@ class HTMXButton:
     hx_push_url: str = "true"
     hx_swap: str = "innerHTML"
 
-    confirm: Optional[str] = None
+    confirm: Optional[str] = None # текст підтвердження
     disabled: bool = False
 
     def url(self) -> str:
