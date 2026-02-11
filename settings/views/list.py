@@ -1,7 +1,5 @@
 from django.urls import reverse
 from django.utils import timezone
-from django.views.generic import ListView
-
 from ui.buttons.registry import UIButtons
 
 from ui.mixins.page_toolbar import SectionPageToolbarMixin
@@ -9,7 +7,7 @@ from ui.views.list import UIListView
 from .base import SocialSettingsBaseView
 from ..models import SocialSettings
 
-class SocialSettingsListView(SocialSettingsBaseView, UIListView):
+class SocialSettingsListView(SocialSettingsBaseView, SectionPageToolbarMixin, UIListView):
     model = SocialSettings
 
     queryset = SocialSettings.objects.order_by('-effective_from')
@@ -31,7 +29,7 @@ class SocialSettingsListView(SocialSettingsBaseView, UIListView):
         {'action': 'exit', 'url': 'settings:create_social_settings'}
     ]
     # table_name = 'Соціальні показники'
-    toolbar_buttons = []
+    actions = ['create', 'exit']
 
     def get_queryset(self):
         data_db = SocialSettings.objects.all().values()
@@ -42,6 +40,7 @@ class SocialSettingsListView(SocialSettingsBaseView, UIListView):
             rows_data.append({
                 'id': obj['id'],  # Звернення через дужки (словник)
                 'values': [obj.get(f.name) for f in SocialSettings._meta.fields],
+                # 'values': [obj.get(f) for f in self.table_titles],
                 # ⬇ URL для кліку по рядку
                 'row_url': reverse('settings:view_social_settings', kwargs={'pk': obj['id']}),
                 # кнопки
@@ -53,6 +52,8 @@ class SocialSettingsListView(SocialSettingsBaseView, UIListView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+
+        print('context:', context)
 
         social_indicators_db = self.queryset.latest('effective_from')
         # 1. Ключові соціальні показники
@@ -66,10 +67,10 @@ class SocialSettingsListView(SocialSettingsBaseView, UIListView):
             'esv_rate': f'{social_indicators_db.esv_rate} %',
         }
 
-        if context['toolbar_buttons']:
-            for button in context['toolbar_buttons']:
-                button.icon = context['section']['set_icons'][button.name]
+        # if context['toolbar_buttons']:
+        #     for button in context['toolbar_buttons']:
+        #         button.icon = context['section']['set_icons'][button.name]
 
-        context['table_name'] = self.get_page('main')['name']
+        # context['table_name'] = self.get_page('main')['name']
 
         return context

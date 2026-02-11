@@ -17,7 +17,7 @@ class AppSectionMetaMixin:
         context['section'] = {
             'title': config.verbose_name,
             'icon': getattr(config, 'app_icon', None),
-            'set_icons': getattr(config, 'app_icons', None),
+            'set_icons': getattr(config, 'app_icons', {}),
         }
 
         return context

@@ -1,32 +1,32 @@
+from ui.mixins.page_toolbar import SectionPageToolbarMixin
 from ui.mixins.section import AppSectionMetaMixin
 from ui.views.base import UIBaseView
 
 
-class SocialSettingsBaseView(AppSectionMetaMixin, UIBaseView):
+class SocialSettingsBaseView(UIBaseView):
     """ опис спільної поведінки для всіх сторінок
      розділу Налаштування соціальних показників """
     app_label = 'settings'
 
     # назви розділів
     page_title = "Налаштування соціальних показників"
-    page_icon: str
 
-    section_pages = {
+    toolbar_buttons = {
         'main': {
             'name': 'Соціальні показники',
-            'url': 'settings:social_settings',
+            'url': 'social_settings',
         },
         'create': {
             'name': 'Додавання нових налаштувань',
-            'url': 'settings:create_social_settings',
+            'url': 'create_social_settings',
         },
         'edit': {
             'name': 'Редагування налаштувань за ',
-            'url': 'settings:edit_social_settings',
+            'url': 'edit_social_settings',
         },
         'view': {
             'name': 'Перегляд налаштувань за ',
-            'url': 'settings:view_social_settings',
+            'url': 'view_social_settings',
         },
     }
 
@@ -35,7 +35,7 @@ class SocialSettingsBaseView(AppSectionMetaMixin, UIBaseView):
 
         ctx['page_title'] = self.page_title
         ctx['page_icon'] = ctx['section']['icon']
-        ctx['toolbar_buttons'] = self.get_toolbar_buttons(self.page_actions)
+        ctx['toolbar_buttons'] = self.get_toolbar_buttons()
 
         return ctx
 
