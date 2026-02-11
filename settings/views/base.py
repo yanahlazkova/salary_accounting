@@ -1,41 +1,37 @@
 from ui.mixins.page_toolbar import SectionPageToolbarMixin
 from ui.mixins.section import AppSectionMetaMixin
-from ui.views.base import UIBaseView
 
 
-class SocialSettingsBaseView(UIBaseView):
+class SocialSettingsBaseView(AppSectionMetaMixin):
     """ опис спільної поведінки для всіх сторінок
      розділу Налаштування соціальних показників """
     app_label = 'settings'
 
-    # назви розділів
-    page_title = "Налаштування соціальних показників"
-
-    toolbar_buttons = {
-        'main': {
-            'name': 'Соціальні показники',
-            'url': 'social_settings',
-        },
-        'create': {
-            'name': 'Додавання нових налаштувань',
-            'url': 'create_social_settings',
-        },
-        'edit': {
-            'name': 'Редагування налаштувань за ',
-            'url': 'edit_social_settings',
-        },
-        'view': {
-            'name': 'Перегляд налаштувань за ',
-            'url': 'view_social_settings',
-        },
-    }
+    # назви сторінок та їх адреси
+    # toolbar_buttons = {
+    #     'main': {
+    #         'name': 'Соціальні показники',
+    #         'url': 'social_settings',
+    #     },
+    #     'create': {
+    #         'name': 'Додавання нових налаштувань',
+    #         'url': 'create_social_settings',
+    #     },
+    #     'edit': {
+    #         'name': 'Редагування налаштувань за ',
+    #         'url': 'edit_social_settings',
+    #     },
+    #     'view': {
+    #         'name': 'Перегляд налаштувань за ',
+    #         'url': 'view_social_settings',
+    #     },
+    # }
 
     def get_context_data(self, **kwargs):
         ctx = super().get_context_data(**kwargs)
-
-        ctx['page_title'] = self.page_title
-        ctx['page_icon'] = ctx['section']['icon']
-        ctx['toolbar_buttons'] = self.get_toolbar_buttons()
+        for c in ctx:
+            print(f'{c}: {ctx[c]}')
+        # ctx['toolbar_buttons'] = self.get_toolbar_buttons()
 
         return ctx
 

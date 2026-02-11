@@ -16,8 +16,11 @@ class AppSectionMetaMixin:
 
         context['section'] = {
             'title': config.verbose_name,
+            'page_title': getattr(config, 'page_title', ''),
             'icon': getattr(config, 'app_icon', None),
             'set_icons': getattr(config, 'app_icons', {}),
+            'actions': getattr(config, 'actions', {}),
+            'table_name': getattr(config, 'table_name', ''),
         }
 
         return context

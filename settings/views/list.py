@@ -16,20 +16,19 @@ class SocialSettingsListView(SocialSettingsBaseView, SectionPageToolbarMixin, UI
         'social_settings.html',
         'base_table.html'
     ]
-
-    page_actions = [
-        {
-            'action': 'create',
-            'url': 'settings:create_social_settings',
-        },
+    # page_actions = [
+    #     {
+    #         'action': 'create',
+    #         'url': 'settings:create_social_settings',
+    #     },
     #     {'action': 'edit', 'url': 'settings:create_social_settings'},
     #     {'action': 'views', 'url': 'settings:edit_social_settings'},
     #     {'action': 'save', 'url': 'settings:view_social_settings'},
     #     {'action': 'delete', 'url': 'settings:save_social_settings'},
-        {'action': 'exit', 'url': 'settings:create_social_settings'}
-    ]
+    #     {'action': 'exit', 'url': 'settings:create_social_settings'}
+    # ]
     # table_name = 'Соціальні показники'
-    actions = ['create', 'exit']
+    toolbar_button = ['create', 'exit']
 
     def get_queryset(self):
         data_db = SocialSettings.objects.all().values()
@@ -42,18 +41,19 @@ class SocialSettingsListView(SocialSettingsBaseView, SectionPageToolbarMixin, UI
                 'values': [obj.get(f.name) for f in SocialSettings._meta.fields],
                 # 'values': [obj.get(f) for f in self.table_titles],
                 # ⬇ URL для кліку по рядку
-                'row_url': reverse('settings:view_social_settings', kwargs={'pk': obj['id']}),
+                'row_url': reverse('settings:view', kwargs={'pk': obj['id']}),
                 # кнопки
                 'buttons': [
-                    UIButtons('view').set_url_name('settings:view_social_settings').set_pk(obj['id']),
+                    UIButtons('view').set_url_name('settings:view').set_pk(obj['id']),
                 ]
             })
         return rows_data
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-
-        print('context:', context)
+        #
+        # for ctx in context:
+        #     print(ctx, context[ctx])
 
         social_indicators_db = self.queryset.latest('effective_from')
         # 1. Ключові соціальні показники
@@ -67,10 +67,7 @@ class SocialSettingsListView(SocialSettingsBaseView, SectionPageToolbarMixin, UI
             'esv_rate': f'{social_indicators_db.esv_rate} %',
         }
 
-        # if context['toolbar_buttons']:
-        #     for button in context['toolbar_buttons']:
-        #         button.icon = context['section']['set_icons'][button.name]
-
-        # context['table_name'] = self.get_page('main')['name']
-
+        context['toolbar_button'] = self.get_toolbar_buttons()
+        for ctx in context:
+            print(f'{ctx}: {context[ctx]}')
         return context
