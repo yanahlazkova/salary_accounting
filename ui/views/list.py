@@ -17,10 +17,10 @@ class UIListView(HTMXTemplateMixin, ListView):
     # UI metadata (перевизначаються у нащадках)
     page_blocks: list[str] | None = None
     # paginate_by: int | None = None
-    # page_subtitle: str | None = None
+    page_subtitle: str | None = None
     table_titles: list[str] | None = None
     table_fields: list[str] | None = None
-    toolbar_button: list[str] | None = None
+    toolbar_buttons: list[str] | None = None
 
     def get_table_titles(self):
         """

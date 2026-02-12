@@ -16,19 +16,8 @@ class SocialSettingsListView(SocialSettingsBaseView, SectionPageToolbarMixin, UI
         'social_settings.html',
         'base_table.html'
     ]
-    # page_actions = [
-    #     {
-    #         'action': 'create',
-    #         'url': 'settings:create_social_settings',
-    #     },
-    #     {'action': 'edit', 'url': 'settings:create_social_settings'},
-    #     {'action': 'views', 'url': 'settings:edit_social_settings'},
-    #     {'action': 'save', 'url': 'settings:view_social_settings'},
-    #     {'action': 'delete', 'url': 'settings:save_social_settings'},
-    #     {'action': 'exit', 'url': 'settings:create_social_settings'}
-    # ]
-    # table_name = 'Соціальні показники'
-    toolbar_button = ['create', 'exit']
+
+    toolbar_buttons = ['create', 'exit']
 
     def get_queryset(self):
         data_db = SocialSettings.objects.all().values()
@@ -51,9 +40,6 @@ class SocialSettingsListView(SocialSettingsBaseView, SectionPageToolbarMixin, UI
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        #
-        # for ctx in context:
-        #     print(ctx, context[ctx])
 
         social_indicators_db = self.queryset.latest('effective_from')
         # 1. Ключові соціальні показники
@@ -67,7 +53,8 @@ class SocialSettingsListView(SocialSettingsBaseView, SectionPageToolbarMixin, UI
             'esv_rate': f'{social_indicators_db.esv_rate} %',
         }
 
-        context['toolbar_button'] = self.get_toolbar_buttons()
-        for ctx in context:
-            print(f'{ctx}: {context[ctx]}')
+        context['page_subtitle'] = self.get_page_subtitle('main')
+        context['toolbar_buttons'] = self.get_toolbar_buttons()
+        # for ctx in context:
+        #     print(f'{ctx}: {context[ctx]}')
         return context

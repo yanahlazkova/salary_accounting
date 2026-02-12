@@ -45,7 +45,7 @@ def add_person(request):
     else:
         # Якщо звичайний запит — віддаємо сторінку, яка "огортає" таблицю в base.html
         print('page_form_social_settings')
-        return render(request, 'base_page_form.html', context)
+        return render(request, 'base_page.html', context)
 
 
 def add_order(request):

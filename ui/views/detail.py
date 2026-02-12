@@ -10,30 +10,22 @@ class UIDetailView(HTMXTemplateMixin, DetailView):
     """
     context_object_name = 'form_data'
 
-    table_action = [] # набір кнопок
-
     # Layout
-    template_name = "base_page_form.html"
+    template_name = "base_page.html"
     htmx_template_name = "base_form_view.html"
 
     # UI metadata (перевизначаються у нащадках)
+    page_blocks: list[str] | None = None
     form_content: list[str] | None = None
+    page_subtitle: str | None = None
     form_title: str | None = None
 
-    def get_form_content(self):
-        return self.form_content
-
-    def get_table_action(self):
-        return self.table_action
-
-    def get_form_title(self):
-        return self.form_title
+    # набір кнопок
+    toolbar_buttons: list[str] | None = None
 
     def get_context_data(self, **kwargs):
         ctx = super().get_context_data(**kwargs)
 
-        ctx["form_content"] = self.get_form_content()
-        ctx["table_action"] = self.get_table_action()
-        ctx["form_title"] = self.get_form_title()
+        ctx["page_blocks"] = self.page_blocks
 
         return ctx

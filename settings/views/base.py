@@ -1,3 +1,5 @@
+from django.apps import apps
+
 from ui.mixins.page_toolbar import SectionPageToolbarMixin
 from ui.mixins.section import AppSectionMetaMixin
 
@@ -7,30 +9,22 @@ class SocialSettingsBaseView(AppSectionMetaMixin):
      розділу Налаштування соціальних показників """
     app_label = 'settings'
 
-    # назви сторінок та їх адреси
-    # toolbar_buttons = {
-    #     'main': {
-    #         'name': 'Соціальні показники',
-    #         'url': 'social_settings',
-    #     },
-    #     'create': {
-    #         'name': 'Додавання нових налаштувань',
-    #         'url': 'create_social_settings',
-    #     },
-    #     'edit': {
-    #         'name': 'Редагування налаштувань за ',
-    #         'url': 'edit_social_settings',
-    #     },
-    #     'view': {
-    #         'name': 'Перегляд налаштувань за ',
-    #         'url': 'view_social_settings',
-    #     },
-    # }
+    def get_section_config(self):
+        if not self.app_label:
+            raise ValueError("app_label is required")
+        return apps.get_app_config(self.app_label)
+
+    def get_page_subtitle(self, page_name):
+        config = self.get_section_config()
+        page_subtitle = getattr(config, 'page_subtitle', {})
+        if page_subtitle:
+            return page_subtitle[page_name]
+        return ''
 
     def get_context_data(self, **kwargs):
         ctx = super().get_context_data(**kwargs)
-        for c in ctx:
-            print(f'{c}: {ctx[c]}')
+        # for c in ctx:
+        #     print(f'{c}: {ctx[c]}')
         # ctx['toolbar_buttons'] = self.get_toolbar_buttons()
 
         return ctx

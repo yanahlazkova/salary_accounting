@@ -1,6 +1,6 @@
 from django.urls import path
 
-from settings import views_now
+from settings import detail
 from settings.views.list import SocialSettingsListView
 
 from settings.views1 import *
@@ -12,6 +12,6 @@ urlpatterns = [
     path('', SocialSettingsListView.as_view(), name='social_settings'),
     path('new/', add_social_settings, name='create'),
     path('edit/<int:pk>/', edit_social_settings, name='edit'),
-    path('views/<int:pk>/', views_now.SocialSettingsDetailView.as_view(), name='view'),
+    path('views/<int:pk>/', detail.SocialSettingsDetailView.as_view(), name='view'),
 #     path('views/<int:pk>/', save_social_settings, name='save'),
 ]

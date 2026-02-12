@@ -96,7 +96,7 @@ def add_social_settings(request):
         else:
             # Якщо звичайний запит — віддаємо сторінку, яка "огортає" таблицю в base.html
             print('base_page_form')
-            return render(request, 'base_page_form.html', context)
+            return render(request, 'base_page_form_old.html', context)
 
 
 def edit_social_settings(request, pk):
@@ -128,7 +128,7 @@ def edit_social_settings(request, pk):
         else:
             # Якщо звичайний запит — віддаємо сторінку, яка "огортає" таблицю в base.html
             print('base_page_form')
-            return render(request, 'base_page_form.html', context)
+            return render(request, 'base_page_form_old.html', context)
 
     elif request.method == 'POST':
         print(f'method = {request.method}')
@@ -162,7 +162,7 @@ def view_social_settings(request, pk):
         else:
             # Якщо звичайний запит — віддаємо сторінку, яка "огортає" таблицю в base.html
             print('base_page_form')
-            return render(request, 'base_page_form.html', context)
+            return render(request, 'base_page_form_old.html', context)
     elif request.method == 'POST':
         print(f'method = {request.method}')
 
@@ -195,7 +195,7 @@ def save_social_settings(request, pk):
         else:
             # Якщо звичайний запит — віддаємо сторінку, яка "огортає" таблицю в base.html
             print('base_page_form')
-            return render(request, 'base_page_form.html', context)
+            return render(request, 'base_page_form_old.html', context)
     elif request.method == 'POST':
         print(f'method = {request.method}')
 
