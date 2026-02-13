@@ -52,17 +52,12 @@ def settings(request):
 
 def add_social_settings(request):
     print(f'add: {request.method}')
-    button_view = UIButtons.view(url_name='view_setting', pk=1)
+    toolbar_buttons = ['exit', 'view']
     context = {
         'section_name': 'Налаштування соціальних показників',
         'icon_title': 'bi bi-gear me-2','title': 'Додати соціальні показники',
         'current_user': request.user.username if request.user.is_authenticated else 'Гість',
         'form_action': 'create',
-        'buttons': [
-            UIButtons.exit(url_name='settings'),
-            button_view,
-            UIButtons.save(url_name='save', pk=1)
-        ],
         'content_form': ['base_form.html'],
     }
 
@@ -96,7 +91,7 @@ def add_social_settings(request):
         else:
             # Якщо звичайний запит — віддаємо сторінку, яка "огортає" таблицю в base.html
             print('base_page_form')
-            return render(request, 'base_page_form.html', context)
+            return render(request, 'base_page_form_old.html', context)
 
 
 def edit_social_settings(request, pk):
@@ -128,7 +123,7 @@ def edit_social_settings(request, pk):
         else:
             # Якщо звичайний запит — віддаємо сторінку, яка "огортає" таблицю в base.html
             print('base_page_form')
-            return render(request, 'base_page_form.html', context)
+            return render(request, 'base_page_form_old.html', context)
 
     elif request.method == 'POST':
         print(f'method = {request.method}')
@@ -162,7 +157,7 @@ def view_social_settings(request, pk):
         else:
             # Якщо звичайний запит — віддаємо сторінку, яка "огортає" таблицю в base.html
             print('base_page_form')
-            return render(request, 'base_page_form.html', context)
+            return render(request, 'base_page_form_old.html', context)
     elif request.method == 'POST':
         print(f'method = {request.method}')
 
@@ -195,7 +190,7 @@ def save_social_settings(request, pk):
         else:
             # Якщо звичайний запит — віддаємо сторінку, яка "огортає" таблицю в base.html
             print('base_page_form')
-            return render(request, 'base_page_form.html', context)
+            return render(request, 'base_page_form_old.html', context)
     elif request.method == 'POST':
         print(f'method = {request.method}')
 

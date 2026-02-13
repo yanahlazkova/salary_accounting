@@ -10,14 +10,21 @@ class AppSectionMetaMixin:
             raise ValueError("app_label is required")
         return apps.get_app_config(self.app_label)
 
+    def get_page_subtitle(self, page_name):
+        config = self.get_section_config()
+        page_subtitle = getattr(config, 'page_subtitle', {})
+        if page_subtitle:
+            return page_subtitle[page_name]
+        return ''
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         config = self.get_section_config()
 
         context['section'] = {
             'title': config.verbose_name,
+            'page_title': getattr(config, 'page_title', ''),
             'icon': getattr(config, 'app_icon', None),
-            'set_icons': getattr(config, 'app_icons', {}),
         }
 
         return context

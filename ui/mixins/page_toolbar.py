@@ -6,20 +6,25 @@ class SectionPageToolbarMixin:
     """ Формує toolbar-кнопки на основі app_icons додатку """
 
     app_label: str = None
-    toolbar_buttons: dict = []  # ['create', 'edit', 'delete']
+    toolbar_buttons: list[str] = []  # ['create', 'edit', 'delete']
+
+    def get_section_config(self):
+        if not self.app_label:
+            raise ValueError("app_label is required")
+        return apps.get_app_config(self.app_label)
 
     def get_app_icons(self) -> dict:
         if not self.app_label:
             return {}
 
-        config = apps.get_app_config(self.app_label)
+        config = self.get_section_config()
         return getattr(config, 'app_icons', {}) or {}
 
     def get_toolbar_buttons(self):
         icons = self.get_app_icons()
         buttons = []
 
-        pk = getattr(self.object, 'pk', None)
+        pk = getattr(getattr(self, "object", None), "pk", None)
 
         for name in self.toolbar_buttons:
             button = (
@@ -38,8 +43,11 @@ class SectionPageToolbarMixin:
                settings:create
                settings:edit
                settings:delete """
-
-        return f'{self.app_label}:{name}'
+        if not self.app_label:
+            return '#'
+        config = self.get_section_config()
+        urls = getattr(config, 'app_urls', {}) or {}
+        return f'{self.app_label}:{urls[name]}'
 
 # class SectionPageToolbarMixin:
 #     toolbar_buttons = ()
