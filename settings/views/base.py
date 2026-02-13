@@ -14,17 +14,11 @@ class SocialSettingsBaseView(AppSectionMetaMixin):
             raise ValueError("app_label is required")
         return apps.get_app_config(self.app_label)
 
-    def get_page_subtitle(self, page_name):
-        config = self.get_section_config()
-        page_subtitle = getattr(config, 'page_subtitle', {})
-        if page_subtitle:
-            return page_subtitle[page_name]
-        return ''
-
     def get_context_data(self, **kwargs):
         ctx = super().get_context_data(**kwargs)
-        # for c in ctx:
-        #     print(f'{c}: {ctx[c]}')
+        for c in ctx:
+            print()
+            print(f'{c}: {ctx[c]}')
         # ctx['toolbar_buttons'] = self.get_toolbar_buttons()
 
         return ctx

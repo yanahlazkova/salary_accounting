@@ -17,11 +17,10 @@
     <div class="card shadow">
         {% include 'ui/base_header.html' %}
 
-
         <div class="card-body" id="main-content">
 
-            {% for block in page_blocks %}
-            {% include block %}
+            {% for block in page_content %}
+                {% include block %}
             {% endfor %}
         </div>
     </div>

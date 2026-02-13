@@ -12,7 +12,7 @@ class SocialSettingsListView(SocialSettingsBaseView, SectionPageToolbarMixin, UI
 
     queryset = SocialSettings.objects.order_by('-effective_from')
 
-    page_blocks = [
+    page_content = [
         'social_settings.html',
         'base_table.html'
     ]

@@ -10,14 +10,10 @@ class UIListView(HTMXTemplateMixin, ListView):
     """
     context_object_name = 'table_rows'
 
-    # Layout
-    template_name = "base_page.html"
-    htmx_template_name = "base_content.html"
-
     # UI metadata (перевизначаються у нащадках)
-    page_blocks: list[str] | None = None
+    page_content: list[str] | None = None
     # paginate_by: int | None = None
-    page_subtitle: str | None = None
+    # page_subtitle: str | None = None
     table_titles: list[str] | None = None
     table_fields: list[str] | None = None
     toolbar_buttons: list[str] | None = None
@@ -42,7 +38,7 @@ class UIListView(HTMXTemplateMixin, ListView):
     def get_context_data(self, **kwargs):
         ctx = super().get_context_data(**kwargs)
 
-        ctx["page_blocks"] = self.page_blocks
+        ctx["page_content"] = self.page_content
         ctx["table_titles"] = self.get_table_titles()
 
         return ctx

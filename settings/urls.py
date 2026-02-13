@@ -1,6 +1,6 @@
 from django.urls import path
 
-from settings import detail
+from settings.views import detail
 from settings.views.list import SocialSettingsListView
 
 from settings.views1 import *
