@@ -1,5 +1,4 @@
 from django.urls import path
-
 from settings.views import detail
 from settings.views.list import SocialSettingsListView
 
@@ -12,6 +11,7 @@ urlpatterns = [
     path('', SocialSettingsListView.as_view(), name='social_settings'),
     path('new/', add_social_settings, name='create'),
     path('edit/<int:pk>/', edit_social_settings, name='edit'),
-    path('views/<int:pk>/', detail.SocialSettingsDetailView.as_view(), name='view'),
+    path('views/<slug:slug_setting>/', detail.ShowSocialSettings.as_view(), name='view'),
+    # path('views/<int:pk>/', detail.ShowSocialSettings.as_view(), name='view'),
 #     path('views/<int:pk>/', save_social_settings, name='save'),
 ]
