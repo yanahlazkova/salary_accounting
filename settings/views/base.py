@@ -9,6 +9,9 @@ class SocialSettingsBaseView(AppSectionMetaMixin):
      розділу Налаштування соціальних показників """
     app_label = 'settings'
 
+    slug_field = "effective_from"
+    slug_url_kwarg = "date"
+
     def get_section_config(self):
         if not self.app_label:
             raise ValueError("app_label is required")
@@ -16,6 +19,7 @@ class SocialSettingsBaseView(AppSectionMetaMixin):
 
     def get_context_data(self, **kwargs):
         ctx = super().get_context_data(**kwargs)
+
         # for c in ctx:
         #     print()
         #     print(f'{c}: {ctx[c]}')
