@@ -26,14 +26,16 @@ class SocialSettingsListView(SocialSettingsBaseView, SectionPageToolbarMixin, UI
         rows_data = []
         for obj in data_db:
             rows_data.append({
-                'id': obj['id'],  # Звернення через дужки (словник)
+                'id': obj['id'],
                 'values': [obj.get(f.name) for f in SocialSettings._meta.fields],
                 # 'values': [obj.get(f) for f in self.table_titles],
                 # ⬇ URL для кліку по рядку
-                'row_url': reverse('settings:view', kwargs={'pk': obj['id']}),
+                'row_url': reverse('settings:view', kwargs={'slug_setting': obj['effective_from']}),
+                # 'row_url': reverse('settings:view', kwargs={'pk': obj['id']}),
                 # кнопки
                 'buttons': [
-                    UIButtons('view').set_url_name('settings:view').set_pk(obj['id']),
+                    UIButtons('view').set_url_name('settings:view').set_slug_url_name(obj['effective_from']),
+                    # UIButtons('view').set_url_name('settings:view').set_pk(obj['id']),
                 ]
             })
         return rows_data

@@ -1,0 +1,17 @@
+<!--    навігація    -->
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        {% for nav in breadcrumbs.values %}
+        <li class="breadcrumb-item active" aria-current="page">
+            {% if nav.url %}
+            <a href="{% url nav.url %}"
+               class="nav-link active bg-info"
+               hx-get="{% url nav.url %}"
+               hx-target="#main-content"
+               hx-push-url="true">
+                {{ nav.name }}</a>
+                {% endif %}
+        </li>
+        {% endfor %}
+    </ol>
+</nav>

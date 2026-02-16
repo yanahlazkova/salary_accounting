@@ -1,16 +1,4 @@
-<!--    навігація    -->
-<nav aria-label="breadcrumb">
-    <ol class="breadcrumb">
-        {% for nav in breadcrumbs.values %}
-        <li class="breadcrumb-item active" aria-current="page">
-            {% if nav.url %}
-            <a href="{% url nav.url %}">
-                {% endif %}
-                {{ nav.name }}</a>
-        </li>
-        {% endfor %}
-    </ol>
-</nav>
+{% include 'ui/base_nav.html' %}
 
 <div class="container mt-4">
     <div class="card shadow">

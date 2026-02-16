@@ -16,10 +16,9 @@ class SocialSettingsBaseView(AppSectionMetaMixin):
 
     def get_context_data(self, **kwargs):
         ctx = super().get_context_data(**kwargs)
-        for c in ctx:
-            print()
-            print(f'{c}: {ctx[c]}')
-        # ctx['toolbar_buttons'] = self.get_toolbar_buttons()
+        # for c in ctx:
+        #     print()
+        #     print(f'{c}: {ctx[c]}')
 
         return ctx
 

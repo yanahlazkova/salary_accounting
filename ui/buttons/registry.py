@@ -22,6 +22,10 @@ class UIButtons:
         self.pk = pk
         return self
 
+    def set_slug_url_name(self, slug_url_name):
+        self.url_name = slug_url_name
+        return self
+
     def set_icon(self, icon):
         self.icon = icon
         return self

@@ -4,40 +4,39 @@ from settings.models import SocialSettings
 from settings.views.base import SocialSettingsBaseView
 
 
-class SocialSettingsDetailView(SocialSettingsBaseView, SectionPageToolbarMixin, UIDetailView):
+class ShowSocialSettings(SocialSettingsBaseView, SectionPageToolbarMixin, UIDetailView):
     model = SocialSettings
+
+    # slug_url_kwarg = 'pk'
+    slug_field = 'effective_from'
+    slug_url_kwarg = 'slug_setting'
 
     page_content = ['base_form_view.html']
 
     toolbar_buttons = ['exit', 'edit']
 
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
 
-
-        social_indicators_db = SocialSettings.objects.get(id=self.kwargs['pk'])
-
-        # for i in context:
-        #     print(f'{i}: {context[i]}')
-        context['form_title'] = f'💰 {self.get_page_subtitle('view')} {social_indicators_db.effective_from}'
-        # 1. Ключові соціальні показники
-        context['form_data'] = {
-            # 'current_year': timezone.now().year,
-            'effective_from': social_indicators_db.effective_from,
-            'min_salary_monthly': f'{social_indicators_db.min_salary} грн',
-            'pm_for_able_bodied': f'{social_indicators_db.pm_able_bodied} грн',
-            'pdfo_rate': f'{social_indicators_db.pdfo_rate} %',
-            'vz_rate': f'{social_indicators_db.vz_rate} %',  # Згідно з трудовим законодавством
-            'esv_rate': f'{social_indicators_db.esv_rate} %',
-        }
-
-        context['toolbar_buttons'] = self.get_toolbar_buttons()
+        # context['page_subtitle'] = self.get_page_subtitle('view')
+        context['form_title'] = f'💰 {self.get_page_subtitle('view')} {context['object']}'
 
         return context
 
-    # def get_queryset(self):
-    #     return SocialSettings.objects.filter(id=self.kwargs['pk']).values()
 
-#
-# class SocialSettingsCreateView(SocialSettingsBaseView, CreateView):
-#     model = SocialSettings
+class EditSocialSettings(SocialSettingsBaseView, SectionPageToolbarMixin, UIDetailView):
+    model = SocialSettings
+    slug_field = 'effective_from'
+    slug_url_kwarg = 'slug_setting'
+    page_content = ['base_form.html']
+    toolbar_buttons = ['exit', 'view']
+
+    def get_context_data(self, **kwargs):
+        ctx = super().get_context_data(**kwargs)
+        ctx['form_title'] = f'{self.get_page_subtitle('edit')} {ctx['object']}'
+        for c in ctx:
+            print(f'{c}: {ctx[c]}')
+        return ctx
+
+
