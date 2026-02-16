@@ -1,11 +1,17 @@
 from django.views.generic import DetailView
 
 from settings.models import SocialSettings
-from settings.view.base import SocialSettingsBaseView
+from settings.views.base import SocialSettingsBaseView
 from ui.buttons.base import HTMXButton
+from ui.views.detail import UIDetailView
 
-class SocialSettingsDetailView(SocialSettingsBaseView, DetailView):
+
+class SocialSettingsDetailView(SocialSettingsBaseView, UIDetailView):
     model = SocialSettings
+    page_content = [
+        'base_form_view.html',
+    ]
+
 
     def get_page_buttons(self):
         obj = self.get_object()

@@ -4,8 +4,8 @@ class HTMXTemplateMixin:
     Якщо ні — повну сторінку
     """
 
-    template_name = None
-    htmx_template_name = None
+    template_name = "base_page.html"
+    htmx_template_name = 'base_content.html'
 
     def get_template_names(self):
         if self.request.headers.get("HX-Request") and self.htmx_template_name:

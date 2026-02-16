@@ -1,29 +1,14 @@
 {# тільки контент (без меню) #}
 <!--    навігація    -->
-<nav aria-label="breadcrumb">
-    <ol class="breadcrumb">
-        {% for nav in breadcrumbs.values %}
-        <li class="breadcrumb-item active" aria-current="page">
-            {% if nav.url %}
-            <a href="{% url nav.url %}">
-                {% endif %}
-                {{ nav.name }}</a>
-        </li>
-        {% endfor %}
-    </ol>
-</nav>
-
+{% include 'ui/base_nav.html' %}
 <div class="container mt-4">
     <div class="card shadow">
-        <div class="card-header bg-info text-white">
-            <h3 class="card-title mb-0"><i class='{{ section.section_icon }}'></i>{{ page_title }}</h3>
-        </div>
-
+        {% include 'ui/base_header.html' %}
 
         <div class="card-body" id="main-content">
 
-            {% for block in page_blocks %}
-            {% include block %}
+            {% for block in page_content %}
+                {% include block %}
             {% endfor %}
         </div>
     </div>

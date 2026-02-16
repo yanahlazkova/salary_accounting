@@ -45,7 +45,7 @@ def add_person(request):
     else:
         # Якщо звичайний запит — віддаємо сторінку, яка "огортає" таблицю в base.html
         print('page_form_social_settings')
-        return render(request, 'base_page_form.html', context)
+        return render(request, 'base_page.html', context)
 
 
 def add_order(request):
@@ -84,9 +84,9 @@ def personnel(request):
         # 'editing': 'edit_personnel',  # вказує яку функцію визивати у шаблоні
         # 'button_add': 'add_person',
         # 'button_icon': "bi bi-person-add me-2 text-info",
-        'buttons': [
-            UIButtons.create(url_name='add_person', name_app='person'),
-        ],
+        # 'buttons': [
+        #     UIButtons.create(url_name='add_person', name_app='person'),
+        # ],
         'contents': ['base_table.html'],
 
     }
@@ -108,7 +108,7 @@ def view_person(request, pk):
         'form_action': 'add_social_settings',
         'buttons': [
             UIButtons.exit(url_name='settings'),
-            # UIButtons.view(url_name='view_person', pk=pk),
+            # UIButtons.views(url_name='view_person', pk=pk),
             # UIButtons.save(url_name='save', pk=pk)
         ],
         'content_form': ['base_form.html'],
