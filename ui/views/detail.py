@@ -29,7 +29,7 @@ class UIDetailView(HTMXTemplateMixin, DetailView):
         ctx = super().get_context_data(**kwargs)
 
         ctx["page_content"] = self.page_content
-        ctx['page_subtitle'] = self.get_page_subtitle('view')
+        # ctx['page_subtitle'] = self.get_page_subtitle('view')
         ctx['toolbar_buttons'] = self.get_toolbar_buttons()
 
 
