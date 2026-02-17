@@ -40,5 +40,6 @@ class UIListView(HTMXTemplateMixin, ListView):
 
         ctx["page_content"] = self.page_content
         ctx["table_titles"] = self.get_table_titles()
+        ctx['current_user'] = 'Гість' if str(self.request.user) == 'AnonymousUser' else self.request.user
 
         return ctx

@@ -9,9 +9,6 @@ class UIDetailView(HTMXTemplateMixin, DetailView):
     Базовий список для всіх HTMX-екранів
     """
     context_object_name = 'form_data'
-    # pk_url_kwarg = 'pk'
-    # slug_url_kwarg = 'slug'
-    # lookup_url_kwarg = 'data'
 
     # UI metadata (перевизначаються у нащадках)
     page_content: list[str] | None = None
