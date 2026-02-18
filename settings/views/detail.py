@@ -14,25 +14,12 @@ class ShowSocialSettings(SocialSettingsBaseView, SectionPageToolbarMixin, UIDeta
     def get_context_data(self, **kwargs):
 
         context = super().get_context_data(**kwargs)
-
-        context['form_title'] = f'💰 {self.get_page_subtitle('view')} {context['object']}'
+        context['form_title'] = self.get_form_title('view')
+        # return context
         # for c in context:
         #     print(f'{c}: {context[c]}')
 
         return context
 
 
-class EditSocialSettings(SocialSettingsBaseView, SectionPageToolbarMixin, UIDetailView):
-    model = SocialSettings
 
-    page_content = ['ui/base_form.html']
-
-    toolbar_buttons = ['exit', 'view']
-
-    def get_context_data(self, **kwargs):
-        ctx = super().get_context_data(**kwargs)
-        ctx['form_title'] = f'💰 {self.get_page_subtitle('edit')} {ctx['object']}'
-        ctx['form_action_url'] = reverse('settings:create')
-        # for c in ctx:
-        #     print(f'{c}: {ctx[c]}')
-        return ctx

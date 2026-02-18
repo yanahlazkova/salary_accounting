@@ -51,10 +51,8 @@ class SocialSettingsListView(SocialSettingsBaseView, SectionPageToolbarMixin, UI
             'esv_rate': f'{social_indicators_db.esv_rate} %',
         }
         # контент складається з двох блоків. Додамо до загального блоку ще один
-        content = self.set_page_content('social_settings.html')
-        context['page_content'] = self.get_page_content()
-
-        context['page_subtitle'] = self.get_page_subtitle('main')
+        context['page_content'].insert(0, 'social_settings.html')
+        context['table_name'] = self.get_page_subtitle('main')
         # for ctx in context:
         #     print(f'{ctx}: {context[ctx]}')
         return context
