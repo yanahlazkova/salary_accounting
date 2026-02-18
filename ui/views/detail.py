@@ -9,8 +9,6 @@ class UIDetailView(HTMXTemplateMixin, DetailView):
     Базовий список для всіх HTMX-екранів
     """
     context_object_name = 'form_data'
-    # pk_url_kwarg = 'pk'
-    # slug_url_kwarg = 'slug'
 
     # UI metadata (перевизначаються у нащадках)
     page_content: list[str] | None = None
@@ -27,6 +25,8 @@ class UIDetailView(HTMXTemplateMixin, DetailView):
 
     def get_context_data(self, **kwargs):
         ctx = super().get_context_data(**kwargs)
+        # obj = super().get_object()
+        # print(f'obj: {obj}')
 
         ctx["page_content"] = self.page_content
         # ctx['page_subtitle'] = self.get_page_subtitle('view')
