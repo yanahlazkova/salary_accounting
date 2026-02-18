@@ -9,8 +9,6 @@ from settings.views.base import SocialSettingsBaseView
 class ShowSocialSettings(SocialSettingsBaseView, SectionPageToolbarMixin, UIDetailView):
     model = SocialSettings
 
-    page_content = ['base_form_view.html']
-
     toolbar_buttons = ['exit', 'edit']
 
     def get_context_data(self, **kwargs):
