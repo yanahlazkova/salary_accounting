@@ -5,7 +5,7 @@ from ui.forms.base import BaseHTMXForm
 from ui.mixins.htmx import HTMXTemplateMixin
 
 
-class UIEditView(HTMXTemplateMixin, BaseHTMXForm, UpdateView):
+class UIEditView(HTMXTemplateMixin, UpdateView):
     """ Базовий клас для редагування об'єктів """
     context_object_name = 'form_data'
     page_content: tuple[str] | None = ('base_form.html',)
