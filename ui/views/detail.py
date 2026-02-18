@@ -11,7 +11,7 @@ class UIDetailView(HTMXTemplateMixin, DetailView):
     context_object_name = 'form_data'
 
     # UI metadata (перевизначаються у нащадках)
-    page_content: list[str] | None = None
+    page_content: list[str] | None = ['base_form_view.html']
     # form_content: list[str] | None = None
     page_subtitle: dict | None = None
     # form_title: str | None = None
@@ -31,6 +31,7 @@ class UIDetailView(HTMXTemplateMixin, DetailView):
         ctx["page_content"] = self.page_content
         # ctx['page_subtitle'] = self.get_page_subtitle('view')
         ctx['toolbar_buttons'] = self.get_toolbar_buttons()
+        ctx['current_user'] = 'Гість' if str(self.request.user) == 'AnonymousUser' else self.request.user
 
 
         return ctx

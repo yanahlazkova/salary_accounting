@@ -12,12 +12,8 @@ class SocialSettingsListView(SocialSettingsBaseView, SectionPageToolbarMixin, UI
 
     queryset = SocialSettings.objects.order_by('-effective_from')
 
-    page_content = [
-        'social_settings.html',
-        'base_table.html'
-    ]
-
     toolbar_buttons = ['create', 'exit']
+
 
     def get_queryset(self):
         data_db = SocialSettings.objects.all().values()
@@ -54,9 +50,11 @@ class SocialSettingsListView(SocialSettingsBaseView, SectionPageToolbarMixin, UI
             'vz_rate': f'{social_indicators_db.vz_rate} %',  # Згідно з трудовим законодавством
             'esv_rate': f'{social_indicators_db.esv_rate} %',
         }
+        # контент складається з двох блоків. Додамо до загального блоку ще один
+        content = self.set_page_content('social_settings.html')
+        context['page_content'] = self.get_page_content()
 
         context['page_subtitle'] = self.get_page_subtitle('main')
-        context['toolbar_buttons'] = self.get_toolbar_buttons()
         # for ctx in context:
         #     print(f'{ctx}: {context[ctx]}')
         return context
