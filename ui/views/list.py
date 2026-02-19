@@ -11,20 +11,24 @@ class UIListView(HTMXTemplateMixin, ListView):
     context_object_name = 'table_rows'
 
     # UI metadata (перевизначаються у нащадках)
-    page_content: list[str] | None =  [
-        'base_table.html'
-    ]
-    # paginate_by: int | None = None
-    # page_subtitle: str | None = None
+    table_name: str | None = None
+    # Використовуємо кортеж (tuple), він незмінний — це безпечніше
+    page_content: tuple[str] = ('base_table.html',)
     table_titles: list[str] | None = None
     table_fields: list[str] | None = None
     toolbar_buttons: list[str] | None = None
 
     def get_page_content(self):
-        return self.page_content
+        # Перетворюємо на список тільки при виклику, щоб не псувати базовий атрибут
+        return list(self.page_content)
 
-    def set_page_content(self, content_name):
-        self.page_content.insert(0, content_name)
+    def get_toolbar_buttons(self):
+        return []  # Заглушка, щоб не було помилки
+
+    # def set_page_content(self, content_name):
+    #     # content = self.get_page_content()
+    #     self.page_content = tuple(self.get_page_content().insert(0, content_name))
+    #     print(f'UIListView: {self.page_content}')
 
     def get_table_titles(self):
         """
@@ -33,22 +37,20 @@ class UIListView(HTMXTemplateMixin, ListView):
         if self.table_titles is not None:
             return self.table_titles
 
-        if self.table_fields is not None:
-            return [
-                self.model._meta.get_field(f).verbose_name
-                for f in self.table_fields
-            ]
-
+        fields_to_check = self.table_fields or [f.name for f in self.model._meta.fields]
         return [
-            f.verbose_name for f in self.model._meta.fields
+            self.model._meta.get_field(f).verbose_name
+            for f in fields_to_check
         ]
 
     def get_context_data(self, **kwargs):
         ctx = super().get_context_data(**kwargs)
 
-        ctx["page_content"] = self.get_page_content()
-        ctx["table_titles"] = self.get_table_titles()
-        ctx['toolbar_buttons'] = self.get_toolbar_buttons()
-        ctx['current_user'] = 'Гість' if str(self.request.user) == 'AnonymousUser' else self.request.user
+        ctx.update({
+            "page_content": self.get_page_content(),
+            "table_titles": self.get_table_titles(),
+            "toolbar_buttons": self.get_toolbar_buttons(),
+            "table_names": self.table_name,
+        })
 
         return ctx

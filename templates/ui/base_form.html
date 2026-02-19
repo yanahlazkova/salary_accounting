@@ -11,10 +11,10 @@
 {% endif %}
 
 <form method="post"
-      {% comment %}
       hx-post="{{ form_action_url }}"
-      {% endcomment %}
+      {% comment %}
       hx-post="{{ request.path }}"
+      {% endcomment %}
       hx-target="#main-content"
       hx-swap="innerHTML"
       hx-push-url="true">
