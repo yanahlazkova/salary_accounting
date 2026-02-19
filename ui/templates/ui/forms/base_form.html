@@ -1,13 +1,54 @@
-<form method="post"
-      hx-post="."
-      hx-target="{{ form.hx_target }}"
-      hx-push-url="{{ form.hx_push_url }}"
-      hx-swap="{{ form.hx_swap }}"
->
-    {% csrf_token %}
-    {{ form.as_p }}
+{% load static %}
 
-    <button class="{{ form.submit_class }}">
-        {{ form.submit_label }}
-    </button>
+<h2 class="mb-4 text-primary">{{ page_title }}</h2>
+
+{% if toolbar_buttons %}
+<div class="mb-3">
+    {% for button in toolbar_buttons %}
+        {% include 'ui/htmx_button.html' with button=button %}
+    {% endfor %}
+</div>
+<hr>
+{% endif %}
+
+<form method="post"
+      hx-post="{{ request.path }}"
+      hx-target="#main-content"
+      hx-swap="innerHTML"
+      hx-push-url="true">
+
+    {% csrf_token %}
+
+    <div class="row">
+        {% for field in form %}
+        <div class="col-md-6 mb-3">
+            <label class="form-label fw-semibold text-info">
+                {{ field.label }}
+
+                {% if field.help_text %}
+                <span class="ms-1"
+                      data-bs-toggle="tooltip"
+                      title="{{ field.help_text }}">
+                    <i class="bi bi-question-circle text-info"></i>
+                </span>
+                {% endif %}
+            </label>
+
+            {{ field }}
+
+            {% if field.errors %}
+                <div class="text-danger small mt-1">
+                    {{ field.errors }}
+                </div>
+            {% endif %}
+        </div>
+        {% endfor %}
+    </div>
+
+    <div class="mt-4">
+        <button type="submit" class="btn btn-success">
+            <i class="bi bi-save me-2"></i>
+            Зберегти
+        </button>
+    </div>
 </form>

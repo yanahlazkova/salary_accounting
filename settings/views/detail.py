@@ -6,16 +6,15 @@ from settings.models import SocialSettings
 from settings.views.base import SocialSettingsBaseView
 
 
-class ShowSocialSettings(SocialSettingsBaseView, SectionPageToolbarMixin, UIDetailView):
+class ShowSocialSettingsView(SocialSettingsBaseView, SectionPageToolbarMixin, UIDetailView):
     model = SocialSettings
 
-    toolbar_buttons = ['exit', 'edit']
+    toolbar_buttons = ['exit', 'edit', 'copy']
 
     def get_context_data(self, **kwargs):
 
         context = super().get_context_data(**kwargs)
         context['form_title'] = self.get_form_title('view')
-        # return context
         # for c in context:
         #     print(f'{c}: {context[c]}')
 
