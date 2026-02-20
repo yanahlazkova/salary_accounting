@@ -1,19 +1,18 @@
-from django.views.generic import ListView, DetailView
+from django.contrib.auth.models import User
+from django.urls import reverse_lazy
+from django.utils.log import request_logger
+from django.views.generic import UpdateView
 
-from ui.buttons.registry import UIButtons
+from ui.forms.base import BaseHTMXForm
 from ui.mixins.htmx import HTMXTemplateMixin
 
 
-class UIDetailView(HTMXTemplateMixin, DetailView):
-    """
-    Базовий список для всіх HTMX-екранів
-    Виводить детальну інформацію обраного об'єкта
-    """
+class UIEditView(HTMXTemplateMixin, UpdateView):
+    """ Базовий клас для редагування об'єктів """
     context_object_name = 'form_data'
-
-    # UI metadata (перевизначаються у нащадках)
-    page_content: tuple[str] | None = ('base_form_view.html',)
+    page_content: tuple[str] | None = ('ui/base_form.html',)
     page_subtitle: dict | None = None
+    template_name_suffix = '_update'
 
     # набір кнопок
     toolbar_buttons: list[str] | None = None
@@ -23,17 +22,14 @@ class UIDetailView(HTMXTemplateMixin, DetailView):
         return list(self.page_content)
 
     def get_toolbar_buttons(self):
-        return []  # Заглушка, щоб не було помилки
+        return [] # заглушка
 
     def get_context_data(self, **kwargs):
         ctx = super().get_context_data(**kwargs)
-        # obj = super().get_object()
-        # print(f'obj: {obj}')
 
         ctx.update({
             "page_content": self.get_page_content(),
             'page_subtitle': self.page_subtitle,
             'toolbar_buttons': self.get_toolbar_buttons(),
         })
-
         return ctx

@@ -7,7 +7,7 @@ class UIButtons:
     def __init__(self, name: str):
         self.name = name
         self.url_name = '#'
-        self.pk = None
+        self.kwargs  = {}
         self.icon = None
         self.css_class = self.DEFAULT_CSS_CLASS
 
@@ -18,13 +18,13 @@ class UIButtons:
         self.url_name = url_name
         return self
 
-    def set_pk(self, pk):
-        self.pk = pk
+    def set_kwargs(self, kwargs: dict):
+        self.kwargs = kwargs or {}
         return self
 
-    def set_slug_url_name(self, slug_url_name):
-        self.url_name = slug_url_name
-        return self
+    # def set_lookup_url_name(self, lookup_url_name):
+    #     self.url_name = lookup_url_name
+    #     return self
 
     def set_icon(self, icon):
         self.icon = icon
@@ -70,7 +70,7 @@ class UIButtons:
             label="Редагувати",
             icon=self.icon or "bi bi-pencil",
             url_name=self.url_name,
-            url_kwargs={"pk": self.pk},
+            url_kwargs=self.kwargs,
             css_class=self.css_class,
         )
 
@@ -80,7 +80,7 @@ class UIButtons:
             label="Видалити",
             icon=self.icon or "bi bi-trash",
             url_name=self.url_name,
-            url_kwargs={"pk": self.pk},
+            url_kwargs=self.kwargs,
             css_class=self.css_class,
             hx_method="delete",
             confirm="Видалити запис?",
@@ -92,7 +92,7 @@ class UIButtons:
             label="Перегляд",
             icon=self.icon or "bi bi-eye",
             url_name=self.url_name,
-            url_kwargs={"pk": self.pk},
+            url_kwargs=self.kwargs,
             css_class=self.css_class,
         )
 
@@ -102,7 +102,7 @@ class UIButtons:
             label="Копіювати",
             icon=self.icon or "bi bi-copy",
             url_name=self.url_name,
-            url_kwargs={"pk": self.pk},
+            url_kwargs=self.kwargs,
             css_class=self.css_class,
         )
 
@@ -121,6 +121,6 @@ class UIButtons:
             label="Зберегти",
             icon=self.icon or "bi bi-floppy",
             url_name=self.url_name,
-            url_kwargs={"pk": self.pk} if self.pk else {},
+            url_kwargs=self.kwargs if self.kwargs else {},
             css_class=self.css_class,
         )

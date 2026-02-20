@@ -1,21 +1,15 @@
-from django.views.generic import ListView, DetailView
+from django.views.generic import CreateView, DetailView
 
-from ui.buttons.registry import UIButtons
+from settings.models import SocialSettings
 from ui.mixins.htmx import HTMXTemplateMixin
 
 
-class UIDetailView(HTMXTemplateMixin, DetailView):
-    """
-    Базовий список для всіх HTMX-екранів
-    Виводить детальну інформацію обраного об'єкта
-    """
+class UICopyView(HTMXTemplateMixin, DetailView, CreateView):
     context_object_name = 'form_data'
 
-    # UI metadata (перевизначаються у нащадках)
-    page_content: tuple[str] | None = ('base_form_view.html',)
-    page_subtitle: dict | None = None
+    page_content: tuple[str] | None = ('base_form.html',)
+    page_subtitle: str | None = None
 
-    # набір кнопок
     toolbar_buttons: list[str] | None = None
 
     def get_page_content(self):
@@ -27,13 +21,14 @@ class UIDetailView(HTMXTemplateMixin, DetailView):
 
     def get_context_data(self, **kwargs):
         ctx = super().get_context_data(**kwargs)
-        # obj = super().get_object()
-        # print(f'obj: {obj}')
 
         ctx.update({
             "page_content": self.get_page_content(),
             'page_subtitle': self.page_subtitle,
             'toolbar_buttons': self.get_toolbar_buttons(),
         })
+
+        for c in ctx:
+            print(f'{c}: {ctx[c]}')
 
         return ctx

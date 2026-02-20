@@ -19,6 +19,7 @@ class SettingsConfig(AppConfig):
         'create': 'Створення соціальних показників',
         'edit': 'Редагування соціальних показників за',
         'view': 'Соціальні показники на',
+        'copy': 'Створення соціальних показників',
     }
 
 
@@ -27,4 +28,5 @@ class SettingsConfig(AppConfig):
         'create': 'create',
         'edit': 'edit',
         'view': 'view',
+        'copy': 'copy',
     }
