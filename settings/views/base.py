@@ -24,7 +24,10 @@ class SocialSettingsBaseView(AppSectionMetaMixin):
         return apps.get_app_config(self.app_label)
 
     def get_form_title(self, form_name):
-        return f'💰 {self.get_page_subtitle(form_name)} {self.kwargs[self.slug_url_kwarg]}' # {self.kwargs['date']}'
+        if self.kwargs:
+            return f'💰 {self.get_page_subtitle(form_name)} {self.kwargs[self.slug_url_kwarg]}' # {self.kwargs['date']}'
+        else:
+            return f'💰 {self.get_page_subtitle(form_name)}'
 
 
 # class AnotherSettingsBaseView(AppSectionMixin):

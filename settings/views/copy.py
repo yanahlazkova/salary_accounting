@@ -11,13 +11,12 @@ from ui.views.copy import UICopyView
 class CopySocialSettingsView(SocialSettingsBaseView, SectionPageToolbarMixin, UICopyView):
 
     toolbar_buttons = ['exit']
-    # success_url = reverse_lazy('settings:view')
     copy_exclude_fields = ['effective_from', 'min_salary', 'pm_able_bodied']
 
     def get_context_data(self, **kwargs):
         ctx = super().get_context_data(**kwargs)
         ctx.update({
-            'form_title': self.get_page_subtitle('copy'),
+            'form_title': self.get_form_title('copy'),
         })
 
         # for c in ctx:

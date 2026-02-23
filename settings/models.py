@@ -45,7 +45,7 @@ class SocialSettings(models.Model):
     #                                        default=8.41)
 
     # Дати створення/оновлення запису
-    time_created = models.DateTimeField(auto_now_add=True)  # дата при створені запису
+    time_created = models.DateTimeField(auto_now_add=True)  # дата при створенні запису
     time_updated = models.DateTimeField(auto_now=True)  # дата при зміні запису
     # user_created - користувач, який створив запис
     # user_updated - останній користувач, який змінив запис

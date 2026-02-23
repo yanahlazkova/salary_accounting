@@ -4,7 +4,9 @@ from ui.mixins.htmx import HTMXTemplateMixin
 
 
 class UICreateView(HTMXTemplateMixin, CreateView):
-    page_content: tuple[str] | None = ('base_form.html',)
+    context_object_name = 'form_data'
+
+    page_content: tuple[str] | None = ('ui/base_form.html',)
     page_subtitle: tuple[str] | None = None
 
     toolbar_buttons: list[str] | None = None
@@ -24,3 +26,4 @@ class UICreateView(HTMXTemplateMixin, CreateView):
             'page_subtitle': self.page_subtitle,
             'toolbar_buttons': self.get_toolbar_buttons(),
         })
+        return ctx

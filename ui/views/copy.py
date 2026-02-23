@@ -60,7 +60,7 @@ class UICopyView(HTMXTemplateMixin, CreateView):
             'page_subtitle': self.page_subtitle,
             'toolbar_buttons': self.get_toolbar_buttons(),
         })
-        for c in ctx:
-            print(f'{c}: {ctx[c]}')
+        # for c in ctx:
+        #     print(f'{c}: {ctx[c]}')
 
         return ctx
