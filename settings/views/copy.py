@@ -11,7 +11,7 @@ from ui.views.copy import UICopyView
 class CopySocialSettingsView(SocialSettingsBaseView, SectionPageToolbarMixin, UICopyView):
 
     toolbar_buttons = ['exit']
-    copy_exclude_fields = ['effective_from', 'min_salary', 'pm_able_bodied']
+    # copy_exclude_fields = ['effective_from', 'min_salary', 'pm_able_bodied']
 
     def get_context_data(self, **kwargs):
         ctx = super().get_context_data(**kwargs)
