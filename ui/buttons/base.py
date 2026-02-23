@@ -21,7 +21,7 @@ class HTMXButton:
     disabled: bool = False
 
     def url(self) -> str:
-        return reverse(self.url_name, kwargs=self.url_kwargs)
+        return reverse(self.url_name, kwargs=self.url_kwargs) if self.url_name else "#"
 
     def htmx_attrs(self) -> Dict[str, str]:
         attrs = {

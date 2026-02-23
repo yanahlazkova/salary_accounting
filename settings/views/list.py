@@ -12,12 +12,8 @@ class SocialSettingsListView(SocialSettingsBaseView, SectionPageToolbarMixin, UI
 
     queryset = SocialSettings.objects.order_by('-effective_from')
 
-    page_content = [
-        'social_settings.html',
-        'base_table.html'
-    ]
-
     toolbar_buttons = ['create', 'exit']
+
 
     def get_queryset(self):
         data_db = SocialSettings.objects.all().values()
@@ -30,11 +26,11 @@ class SocialSettingsListView(SocialSettingsBaseView, SectionPageToolbarMixin, UI
                 'values': [obj.get(f.name) for f in SocialSettings._meta.fields],
                 # 'values': [obj.get(f) for f in self.table_titles],
                 # ⬇ URL для кліку по рядку
-                'row_url': reverse('settings:view', kwargs={'slug_setting': obj['effective_from']}),
+                'row_url': reverse('settings:view', kwargs={'date': obj['effective_from']}),
                 # 'row_url': reverse('settings:view', kwargs={'pk': obj['id']}),
                 # кнопки
                 'buttons': [
-                    UIButtons('view').set_url_name('settings:view').set_slug_url_name(obj['effective_from']),
+                    UIButtons('view').set_url_name('settings:view').set_kwargs({'date': obj['effective_from']}),
                     # UIButtons('view').set_url_name('settings:view').set_pk(obj['id']),
                 ]
             })
@@ -54,9 +50,9 @@ class SocialSettingsListView(SocialSettingsBaseView, SectionPageToolbarMixin, UI
             'vz_rate': f'{social_indicators_db.vz_rate} %',  # Згідно з трудовим законодавством
             'esv_rate': f'{social_indicators_db.esv_rate} %',
         }
-
-        context['page_subtitle'] = self.get_page_subtitle('main')
-        context['toolbar_buttons'] = self.get_toolbar_buttons()
+        # контент складається з двох блоків. Додамо до загального блоку ще один
+        context['page_content'].insert(0, 'social_settings.html')
+        context['table_name'] = self.get_page_subtitle('main')
         # for ctx in context:
         #     print(f'{ctx}: {context[ctx]}')
         return context

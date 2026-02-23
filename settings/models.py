@@ -2,6 +2,7 @@ from decimal import Decimal
 
 from django.core.validators import MinValueValidator, DecimalValidator, MaxValueValidator
 from django.db import models
+from django.urls import reverse
 
 
 class SocialSettings(models.Model):
@@ -44,13 +45,17 @@ class SocialSettings(models.Model):
     #                                        default=8.41)
 
     # Дати створення/оновлення запису
-    time_created = models.DateTimeField(auto_now_add=True)  # дата при створені запису
+    time_created = models.DateTimeField(auto_now_add=True)  # дата при створенні запису
     time_updated = models.DateTimeField(auto_now=True)  # дата при зміні запису
     # user_created - користувач, який створив запис
     # user_updated - останній користувач, який змінив запис
 
     def __str__(self):
         return str(self.effective_from)
+
+    def get_absolute_url(self):
+        """ щоб після будь-якої дії з об'єктом (створення, редагування) Django знав, куди "йти" """
+        return reverse('settings:view', kwargs={'date': self.effective_from})
 
     class Meta:
         db_table = 'social_settings'

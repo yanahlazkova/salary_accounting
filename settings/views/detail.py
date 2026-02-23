@@ -4,21 +4,19 @@ from settings.models import SocialSettings
 from settings.views.base import SocialSettingsBaseView
 
 
-class ShowSocialSettings(SocialSettingsBaseView, SectionPageToolbarMixin, UIDetailView):
-    model = SocialSettings
+class ShowSocialSettingsView(SocialSettingsBaseView, SectionPageToolbarMixin, UIDetailView):
 
-    # slug_url_kwarg = 'pk'
-    slug_field = 'effective_from'
-    slug_url_kwarg = 'slug_setting'
-
-    page_content = ['base_form_view.html']
-
-    toolbar_buttons = ['exit', 'edit']
-
+    toolbar_buttons = ['exit', 'edit', 'copy']
 
     def get_context_data(self, **kwargs):
+
         context = super().get_context_data(**kwargs)
 
-        context['form_title'] = f'💰 {self.get_page_subtitle('view')} {context['object']}'
+        context['form_title'] = self.get_form_title('view')
+        # for c in context:
+        #     print(f'{c}: {context[c]}')
 
         return context
+
+
+
