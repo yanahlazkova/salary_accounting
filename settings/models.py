@@ -2,6 +2,7 @@ from decimal import Decimal
 
 from django.core.validators import MinValueValidator, DecimalValidator, MaxValueValidator
 from django.db import models
+from django.urls import reverse
 
 
 class SocialSettings(models.Model):
@@ -51,6 +52,10 @@ class SocialSettings(models.Model):
 
     def __str__(self):
         return str(self.effective_from)
+
+    def get_absolute_url(self):
+        """ щоб після будь-якої дії з об'єктом (створення, редагування) Django знав, куди "йти" """
+        return reverse('settings:view', kwargs={'date': self.effective_from})
 
     class Meta:
         db_table = 'social_settings'

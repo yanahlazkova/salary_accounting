@@ -36,4 +36,5 @@ class UIDetailView(HTMXTemplateMixin, DetailView):
             'toolbar_buttons': self.get_toolbar_buttons(),
         })
 
+
         return ctx
