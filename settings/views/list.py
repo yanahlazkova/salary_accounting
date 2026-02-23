@@ -10,36 +10,55 @@ from ..models import SocialSettings
 class SocialSettingsListView(SocialSettingsBaseView, SectionPageToolbarMixin, UIListView):
     model = SocialSettings
 
-    queryset = SocialSettings.objects.order_by('-effective_from')
-
     toolbar_buttons = ['create', 'exit']
 
 
     def get_queryset(self):
-        data_db = SocialSettings.objects.all().values()
+        data_db = SocialSettings.objects.order_by('-effective_from')
 
         # Створюємо список списків (ID + значення полів)
         rows_data = []
         for obj in data_db:
             rows_data.append({
-                'id': obj['id'],
-                'values': [obj.get(f.name) for f in SocialSettings._meta.fields],
-                # 'values': [obj.get(f) for f in self.table_titles],
+                'id': obj.id,
+                'values': [
+                    obj.id,
+                    obj.effective_from.strftime("%d.%m.%Y"),
+                    obj.min_salary,
+                    obj.pm_able_bodied,
+                    obj.pdfo_rate,
+                    obj.vz_rate,
+                    obj.esv_rate,
+                    obj.time_created.strftime("%d.%m.%Y"),
+                    obj.time_updated.strftime("%d.%m.%Y"),
+                ],
                 # ⬇ URL для кліку по рядку
-                'row_url': reverse('settings:view', kwargs={'date': obj['effective_from']}),
-                # 'row_url': reverse('settings:view', kwargs={'pk': obj['id']}),
+                # 'row_url': reverse('settings:view', kwargs={'date': obj['effective_from']}),
+                'row_url': reverse('settings:view', kwargs={self.slug_url_kwarg: getattr(obj, self.slug_field).isoformat()}),
                 # кнопки
                 'buttons': [
-                    UIButtons('view').set_url_name('settings:view').set_kwargs({'date': obj['effective_from']}),
-                    # UIButtons('view').set_url_name('settings:view').set_pk(obj['id']),
+                    # UIButtons('view').set_url_name('settings:view').set_kwargs({'date': obj['effective_from']}),
+                    UIButtons('view')
+                    .set_url_name('settings:view')
+                    .set_kwargs({
+                        self.slug_url_kwarg: getattr(obj, self.slug_field).isoformat()
+                    }),
                 ]
             })
+            # print(f'**: {self.slug_url_kwarg}: {obj[self.slug_field]}')
         return rows_data
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        today = timezone.now().date()
 
-        social_indicators_db = self.queryset.latest('effective_from')
+        social_indicators_db = (
+            SocialSettings.objects
+            .filter(effective_from__lte=today)
+            .order_by('-effective_from')
+            .first()
+        )
+        # social_indicators_db = self.queryset.latest('effective_from')
         # 1. Ключові соціальні показники
         context['social_indicators'] = {
             'current_year': timezone.now().year,

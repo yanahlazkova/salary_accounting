@@ -41,6 +41,8 @@ class UICopyView(HTMXTemplateMixin, CreateView):
             obj_data.pop(source_obj._meta.pk.name, None)
 
             exclude_fields = self.get_copy_exclude_fields()
+            print(len(exclude_fields))
+
             for field in exclude_fields:
                 obj_data[field] = None
 
