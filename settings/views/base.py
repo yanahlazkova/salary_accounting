@@ -1,6 +1,7 @@
 from django.apps import apps
 
-from ui.mixins.page_toolbar import SectionPageToolbarMixin
+from settings.forms import SocialSettingsForm
+from settings.models import SocialSettings
 from ui.mixins.section import AppSectionMetaMixin
 
 
@@ -11,6 +12,10 @@ class SocialSettingsBaseView(AppSectionMetaMixin):
 
     slug_field = "effective_from"
     slug_url_kwarg = "date"
+
+    form_class = SocialSettingsForm
+    model = SocialSettings
+
     form_title: str | None = None
 
     def get_section_config(self):
@@ -19,16 +24,10 @@ class SocialSettingsBaseView(AppSectionMetaMixin):
         return apps.get_app_config(self.app_label)
 
     def get_form_title(self, form_name):
-        return f'💰 {self.get_page_subtitle(form_name)} {self.kwargs[self.slug_url_kwarg]}' # {self.kwargs['date']}'
-
-    def get_context_data(self, **kwargs):
-        ctx = super().get_context_data(**kwargs)
-
-        # for c in ctx:
-        #     print()
-        #     print(f'{c}: {ctx[c]}')
-
-        return ctx
+        if self.kwargs:
+            return f'💰 {self.get_page_subtitle(form_name)} {self.kwargs[self.slug_url_kwarg]}' # {self.kwargs['date']}'
+        else:
+            return f'💰 {self.get_page_subtitle(form_name)}'
 
 
 # class AnotherSettingsBaseView(AppSectionMixin):

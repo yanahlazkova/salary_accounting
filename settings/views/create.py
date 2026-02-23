@@ -1,17 +1,18 @@
 from django.urls import reverse
 
+from ui.mixins.page_toolbar import SectionPageToolbarMixin
 from ui.views.create import UICreateView
+from .base import SocialSettingsBaseView
 from ..forms import SocialSettingsForm
 from ..models import SocialSettings
 
 
-class CreateSocialSettingsView(UICreateView):
-    # template_name = "ui/base_form.html"
-    model = SocialSettings
-    form_class = SocialSettingsForm
+class CreateSocialSettingsView(SocialSettingsBaseView, SectionPageToolbarMixin,UICreateView):
+    toolbar_buttons = ['exit']
 
     def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        # context["form_title"] = "Створення налаштування"
-        context["form_action_url"] = reverse("social:create")
-        return context
+        ctx = super().get_context_data(**kwargs)
+        ctx.update({
+            'form_title': self.get_form_title('create'),
+        })
+        return ctx
