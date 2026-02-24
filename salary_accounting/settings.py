@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     # 'directories.apps.DirectoriesConfig',
     'settings.apps.SettingsConfig',
     'ui.apps.UiConfig',
+    'ustanova.apps.UstanovaConfig',
 ]
 
 MIDDLEWARE = [

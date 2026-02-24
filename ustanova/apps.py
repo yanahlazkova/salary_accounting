@@ -1,15 +1,15 @@
 from django.apps import AppConfig
+
 from ui.icons import ICONS
 
 
-class SettingsConfig(AppConfig):
-    """ загальні дані розділу Кадри"""
+class UstanovaConfig(AppConfig):
     default_auto_field = 'django.db.models.BigAutoField'
-    name = 'settings'
-    verbose_name = 'Налаштування'
+    name = 'ustanova'
 
-    page_title = "Налаштування соціальних показників"
-    # table_name = 'Соціальні показники'
+    verbose_name = 'Дані установи'
+
+    page_title = "Встановлення даних установи"
 
     # іконки
     app_icons = ICONS['settings']
@@ -23,7 +23,6 @@ class SettingsConfig(AppConfig):
         'copy': 'Створення соціальних показників',
     }
 
-
     app_urls = {
         'exit': 'social_settings',
         'create': 'create',
@@ -31,3 +30,5 @@ class SettingsConfig(AppConfig):
         'view': 'view',
         'copy': 'copy',
     }
+
+
