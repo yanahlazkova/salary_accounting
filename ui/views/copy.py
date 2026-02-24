@@ -16,29 +16,34 @@ class UICopyView(HTMXTemplateMixin, CreateView):
     toolbar_buttons: list[str] | None = None
 
     # Поля, які ми не хочемо копіювати
-    copy_exclude_fields: list[str] = []
+    copy_exclude_fields: tuple[str] = []
 
     # Параметри для пошуку оригіналу в URL (наприклад, 'date' або 'pk')
     copy_lookup_field: str = 'pk'
     copy_url_kwarg: str = 'pk'
+
+    def get_copy_exclude_fields(self):
+        return list(self.copy_exclude_fields)
 
     def get_initial(self):
         """ дістаємо об'єкт-джерело і перетворюємо його на початкові дані форми """
         initial = super().get_initial()
 
         # 1. Отримуємо значення з URL (наприклад, дату '2026-01-01')
-        lookup_value = self.kwargs.get(self.copy_url_kwarg)
+        lookup_value = self.kwargs[self.slug_url_kwarg]
 
         if lookup_value:
-            source_obj = get_object_or_404(self.model, **{self.copy_lookup_field: lookup_value}).objects.get()
-
+            source_obj = get_object_or_404(self.model, **{self.slug_field: self.kwargs[self.slug_url_kwarg]})
             obj_data = model_to_dict(source_obj)
 
             # Видаляємо технічні поля (ID, pk)
             obj_data.pop('id', None)
             obj_data.pop(source_obj._meta.pk.name, None)
 
-            for field in self.copy_exclude_fields:
+            exclude_fields = self.get_copy_exclude_fields()
+            print(len(exclude_fields))
+
+            for field in exclude_fields:
                 obj_data[field] = None
 
             initial.update(obj_data)
