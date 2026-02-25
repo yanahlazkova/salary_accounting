@@ -10,7 +10,7 @@ from ..models import SocialSettings
 class SocialSettingsListView(SocialSettingsBaseView, SectionPageToolbarMixin, UIListView):
     model = SocialSettings
 
-    toolbar_buttons = ['create', 'exit']
+    toolbar_buttons = ['create']
 
 
     def get_queryset(self):

@@ -13,7 +13,10 @@ class SocialSettings(models.Model):
     effective_from = models.DateField(
         verbose_name="Діє з (дата)",
         unique=True,
-        help_text="Оберіть дату, з якої ці показники стають актуальними",
+        help_text='Оберіть дату, з якої ці показники стають актуальними.',
+        error_messages={
+            'unique': 'Показник з такою датою вже існує',
+        }
     )
 
     # Показники

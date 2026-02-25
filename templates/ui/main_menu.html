@@ -116,7 +116,12 @@
                        hx-target="#main-content"
                        hx-push-url="true">
                     Соціальні показники</a></li>
-                <li><a href="#" class="nav-link small">Дані установи</a></li>
+                <li><a href="{% url 'organization:settings' %}"
+                       class="nav-link small"
+                       hx-get="{% url 'organization:settings' %}"
+                       hx-target="#main-content"
+                       hx-push-url="true">
+                    Дані установи</a></li>
             </ul>
         </li>
         <li>

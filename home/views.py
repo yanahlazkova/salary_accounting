@@ -106,6 +106,9 @@ class Home(ListView):
         #         'link': '#',
         #     },
         # ]
+        context['section'] = {
+            'page_title': 'page_title'
+        }
 
         return context
 
