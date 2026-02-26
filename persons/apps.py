@@ -6,7 +6,7 @@ from ui.icons import ICONS
 
 class PersonsConfig(AppConfig):
     """ загальні дані розділу Налаштування"""
-    # default_auto_field = 'django.db.models.BigAutoField'
+    default_auto_field = 'django.db.models.BigAutoField'
 
     name = 'persons'
     verbose_name = 'Кадри'

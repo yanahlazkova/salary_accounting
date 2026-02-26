@@ -25,6 +25,7 @@ urlpatterns = [
     path('staff/', include('persons.urls', namespace='personnel')), # кадри
     # path('directories', include('directories.urls')),
     path('settings/', include('settings.urls', namespace='settings')),
+    path('organization/', include('organization.urls', namespace='organization')),
     path('admin/', admin.site.urls),
 ]
 

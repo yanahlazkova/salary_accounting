@@ -116,20 +116,17 @@
                        hx-target="#main-content"
                        hx-push-url="true">
                     Соціальні показники</a></li>
-                <li><a href="#" class="nav-link small">Інше</a></li>
+                <li><a href="{% url 'organization:settings' %}"
+                       class="nav-link small"
+                       hx-get="{% url 'organization:settings' %}"
+                       hx-target="#main-content"
+                       hx-push-url="true">
+                    Дані установи</a></li>
             </ul>
         </li>
         <li>
             <hr>
             <div class="dropdown">
-                {% comment %}
-                <a href="#dropdownUser"
-                   class="nav-link d-flex align-items-center text-decoration-none dropdown-toggle"
-                   data-bs-toggle="dropdown" aria-expanded="false">
-                    <i class="bi bi-person-circle fs-4 me-2"></i>
-                    <strong>Бухгалтер</strong>
-                </a>
-                {% endcomment %}
                 <a class="nav-link d-flex justify-content-between" data-bs-toggle="collapse"
                    href="#dropdownUser">
                     <strong><i class="bi bi-person-circle me-2 text-info"></i>Бухгалтер - {{ user.username|default:"Гість" }}
