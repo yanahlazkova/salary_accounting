@@ -1,5 +1,6 @@
 from django.core.exceptions import ValidationError
 from django.db import models
+from django.urls import reverse
 
 
 class Organization(models.Model):
@@ -43,7 +44,7 @@ class Ustanova(models.Model):
     name = models.CharField(max_length=500)
     kpk = models.PositiveIntegerField(
         max_length=7,
-        name='КПК')
+        verbose_name='КПК')
 
     class Meta:
         verbose_name = 'Налаштування установи'
@@ -52,6 +53,9 @@ class Ustanova(models.Model):
     def __str__(self):
         return self.kpk
 
+    def get_absolute_url(self):
+        """ щоб після будь-якої дії з об'єктом (створення, редагування) Django знав, куди "йти" """
+        return reverse('organization:settings')
 
 
 class BankAccount(models.Model):
@@ -63,12 +67,13 @@ class BankAccount(models.Model):
 
     account = models.CharField(
         max_length=500,
+        verbose_name='Рахунок',
         db_comment='Рахунок в форматі IBAN',
         unique=True,
     )
     fund = models.CharField(
         choices=FUND_CHOICES,
-        name='Фонд коштів',
+        verbose_name='Фонд коштів',
         db_comment='Назва фонду коштів (загальний, спецкошти)'
     )
     ustanova = models.ForeignKey(

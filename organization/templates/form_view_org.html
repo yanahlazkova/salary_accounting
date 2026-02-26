@@ -1,0 +1,12 @@
+<h2 class="mb-4 text-primary">{{ org.title}}</h2>
+<div class="row mb-5">
+    <div class="col">
+        <ul class="list-group">
+            {% for field in org_fields %}
+            <li class="list-group-item  text-info"><strong class="text-secondary">{{ field }}:</strong> {{ social_indicators.effective_from }}
+            </li>
+            {% endfor %}
+        </ul>
+    </div>
+</div>
+<hr>

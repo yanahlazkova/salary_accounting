@@ -1,3 +1,5 @@
+from dataclasses import fields
+
 from django.apps import apps
 from django.shortcuts import render
 from django.views import View
@@ -27,7 +29,7 @@ class SettingsOrgBaseView(AppSectionMetaMixin):
         return apps.get_app_config(self.app_label)
 
     def get_form_title(self, form_name):
-        if form_name == 'create':
+        if form_name == 'create' or form_name == 'main':
             return self.get_page_subtitle(form_name)
         else:
             return f'{self.get_page_subtitle(form_name)} {self.kwargs[self.slug_url_kwarg]}'
@@ -40,13 +42,15 @@ class SettingsOrgView(SettingsOrgBaseView, SectionPageToolbarMixin, UIListView):
     model = Organization
     context_object_name = 'org'
 
-    toolbar_buttons = ['edit']
+    toolbar_buttons = ['exit']
 
     queryset = Organization.objects.all()
 
     def get_context_data(self, **kwargs):
         ctx = super().get_context_data(**kwargs)
         ctx['page_content'].insert(0, 'form_view_org.html')
+
+        ctx['org_fields'] = [field.verbose_name for field in Organization._meta.fields if field.name != 'id']
 
         for c in ctx:
             print(f'{c}: {ctx[c]}')
