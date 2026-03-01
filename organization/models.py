@@ -7,34 +7,38 @@ class Organization(models.Model):
     """ Дані організації (ЄДРПОУ, МФО, назва) """
 
     name = models.CharField(
-        'Назва організації',
+        verbose_name='Назва організації',
         max_length=500,
         # name='Назва установи'
     )
     edrpou = models.PositiveIntegerField(
-        'ЄДРПОУ',
-        max_length=8,
+        verbose_name='ЄДРПОУ',
 #         name='ЄДРПОУ',
     )
     mfo = models.PositiveIntegerField(
-        'МФО',
-        max_length=6,
+        verbose_name='МФО',
 #         name='МФО'
     )
     address = models.TextField(
-        "Юридична адреса",
+        verbose_name="Юридична адреса",
         blank=True
     )
+    time_created = models.DateTimeField(auto_now_add=True, )  # дата при створенні запису
+    time_updated = models.DateTimeField(auto_now=True)  # дата при зміні запису
+
+    # user_created - користувач, який створив запис
+    # user_updated - останній користувач, який змінив запис
+
 
     class Meta:
         verbose_name = "Налаштування організації"
         verbose_name_plural = "Налаштування організації"
 
-    def save(self, *args, **kwargs):
-        # Забороняємо створювати більше одного запису
-        if not self.pk and Organization.objects.exists():
-            raise ValidationError("Можна створити лише один запис з налаштуваннями.")
-        return super().save(*args, **kwargs)
+    # def save(self, *args, **kwargs):
+    #     # Забороняємо створювати більше одного запису
+    #     if not self.pk and Organization.objects.exists():
+    #         raise ValidationError("Можна створити лише один запис з налаштуваннями.")
+    #     return super().save(*args, **kwargs)
 
     def __str__(self):
         return self.name
@@ -43,8 +47,13 @@ class Organization(models.Model):
 class Ustanova(models.Model):
     name = models.CharField(max_length=500)
     kpk = models.PositiveIntegerField(
-        max_length=7,
         verbose_name='КПК')
+    time_created = models.DateTimeField(auto_now_add=True, )  # дата при створенні запису
+    time_updated = models.DateTimeField(auto_now=True)  # дата при зміні запису
+
+    # user_created - користувач, який створив запис
+    # user_updated - останній користувач, який змінив запис
+
 
     class Meta:
         verbose_name = 'Налаштування установи'
@@ -85,15 +94,17 @@ class BankAccount(models.Model):
         null=True,
         blank=True,
     )
+    time_created = models.DateTimeField(auto_now_add=True, )  # дата при створенні запису
+    time_updated = models.DateTimeField(auto_now=True)  # дата при зміні запису
+    # user_created - користувач, який створив запис
+    # user_updated - останній користувач, який змінив запис
 
 
 class KEKV(models.Model):
     name = models.PositiveSmallIntegerField(
-        max_length=4,
         unique=True,
     )
     about = models.TextField(
-        max_length=250,
         blank=True,
         null=True,
     )

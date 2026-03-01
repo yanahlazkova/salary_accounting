@@ -9,14 +9,14 @@ class OrganizationConfig(AppConfig):
 
     verbose_name = 'Дані організації'
 
-    page_title = "Встановлення даних організації"
+    page_title = "Налаштування даних організації"
 
     # іконки
     app_icons = ICONS['settings']
     app_icon = app_icons['main']
 
     page_subtitle = {
-        'main': 'Налаштування даних організації',
+        'main': 'Данні організації',
         'create': 'Створення установи',
         'edit': 'Редагування установи',
         'edit_org': 'Редагування даних організації',
