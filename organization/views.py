@@ -4,9 +4,12 @@ from django.apps import apps
 from django.shortcuts import render
 from django.views import View
 
+from organization import OrganizationForm
 from organization.models import Ustanova, Organization
 from ui.mixins.page_toolbar import SectionPageToolbarMixin
 from ui.mixins.section import AppSectionMetaMixin
+from ui.views.copy import UICopyView
+from ui.views.create import UICreateView
 from ui.views.edit import UIEditView
 from ui.views.list import UIListView
 
@@ -17,7 +20,7 @@ class SettingsOrgBaseView(AppSectionMetaMixin):
     slug_field = 'kpk'
     slug_url_kwarg = 'ustanova'
 
-    # form_class = SettingsOrg
+    form_class = OrganizationForm
     model = Ustanova
 
     form_title: str | None = None
@@ -37,15 +40,10 @@ class SettingsOrgBaseView(AppSectionMetaMixin):
 class SettingsOrgView(SettingsOrgBaseView, SectionPageToolbarMixin, UIListView):
     # model = Organization
 
-    toolbar_buttons = ['exit', 'edit_org']
-    obj_buttons = ['edit_org']
-
     def get_context_data(self, **kwargs):
         ctx = super().get_context_data(**kwargs)
 
         data_org = Organization.objects.last()
-
-        print(f'obj_buttons: {self.obj_buttons}')
 
         ctx['page_content'].insert(0, 'form_view_org.html')
         ctx['org'] = {
@@ -54,16 +52,18 @@ class SettingsOrgView(SettingsOrgBaseView, SectionPageToolbarMixin, UIListView):
             'fields': [f.verbose_name for f in Organization._meta.fields if f.name != 'id'],
         }
 
+        # кнопки для організації
+        if not data_org:
+            self.toolbar_buttons = ['create_org']
+        else:
+            self.toolbar_buttons = ['edit_org']
 
+        ctx['org'].update({
+            'buttons': self.get_toolbar_buttons()
+        })
 
-        # розподілемо кнопки по розділам
-        for url_name in self.obj_buttons:
-            ctx['org'].update({
-                'buttons': [button for button in ctx['toolbar_buttons'] if
-                            button.url_name == f'{self.app_label}:{url_name}']
-            })
-            # видаляємо не потрібні для таблиці
-            self.toolbar_buttons.remove(url_name)
+        # кнопки для таблиці
+        self.toolbar_buttons = ['exit']
 
         ctx.update({
             'toolbar_buttons': self.get_toolbar_buttons(),
@@ -74,10 +74,28 @@ class SettingsOrgView(SettingsOrgBaseView, SectionPageToolbarMixin, UIListView):
         return ctx
 
 
-class SettingsOrgEditView(SettingsOrgView, SectionPageToolbarMixin, UIEditView):
+class SettingsOrgEditView(SettingsOrgView, SectionPageToolbarMixin, UICopyView):
     model = Organization
-    for
     def get_context_data(self, **kwargs):
         ctx = super().get_context_data(**kwargs)
         ctx['form_title'] = self.get_form_title('edit_org')
         return ctx
+
+
+class SettingsOrgCreateView(SettingsOrgView, SectionPageToolbarMixin, UICreateView):
+    model = Organization
+    toolbar_buttons = ['exit']
+
+    id_field = 'id'
+    id_url_kwarg = 'id'
+
+    form_class = OrganizationForm
+
+    def get_context_data(self, **kwargs):
+        ctx = super().get_context_data(**kwargs)
+        ctx['form_title'] = self.get_form_title('create_org')
+        for c in ctx:
+            print(f'{c}: {ctx[c]}')
+        return ctx
+
+

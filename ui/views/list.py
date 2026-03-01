@@ -19,9 +19,6 @@ class UIListView(HTMXTemplateMixin, ListView):
     # Кнопки для таблиці
     toolbar_buttons: list[str] | None = None
 
-    # Кнопки для одного виведеного об'єкта
-    obj_buttons: list[str] | None = None
-
     def get_page_content(self):
         # Перетворюємо на список тільки при виклику, щоб не псувати базовий атрибут
         return list(self.page_content)
