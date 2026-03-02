@@ -1,6 +1,6 @@
 from django.apps import apps
 
-from organization import OrganizationForm
+from organization.forms import OrganizationForm
 from organization.models import Ustanova
 from ui.mixins.section import AppSectionMetaMixin
 

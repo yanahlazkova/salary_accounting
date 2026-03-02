@@ -10,7 +10,7 @@ from ui.views.list import UIListView
 class SocialSettingsListView(SocialSettingsBaseView,
                              SectionPageToolbarMixin,
                              UIListView):
-    model = SocialSettings
+    # model = SocialSettings
 
     toolbar_buttons = ['create']
 
