@@ -26,7 +26,7 @@
             onkeypress="if(event.key === 'Enter') this.click();"
             style="cursor: pointer;">
 
-            {% for value in row.values %}
+            {% for key, value in row.values.items %}
             <td>{{ value }}</td>
             {% endfor %}
 

@@ -1,7 +1,6 @@
 from django.views.generic import ListView
 
 from ui.mixins.htmx import HTMXTemplateMixin
-from ui.mixins.page_toolbar import SectionPageToolbarMixin
 
 
 class UIListView(HTMXTemplateMixin, ListView):
@@ -16,6 +15,8 @@ class UIListView(HTMXTemplateMixin, ListView):
     page_content: tuple[str] = ('base_table.html',)
     table_titles: list[str] | None = None
     table_fields: list[str] | None = None
+
+    # Кнопки для таблиці
     toolbar_buttons: list[str] | None = None
 
     def get_page_content(self):

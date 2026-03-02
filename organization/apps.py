@@ -9,15 +9,16 @@ class OrganizationConfig(AppConfig):
 
     verbose_name = 'Дані організації'
 
-    page_title = "Встановлення даних організації"
+    page_title = "Налаштування даних організації"
 
     # іконки
     app_icons = ICONS['settings']
     app_icon = app_icons['main']
 
     page_subtitle = {
-        'main': 'Налаштування даних організації',
+        'main': 'Данні організації',
         'create': 'Створення установи',
+        'create_org': 'Введення даних організації',
         'edit': 'Редагування установи',
         'edit_org': 'Редагування даних організації',
         'view': 'Перегляд установи ',
@@ -27,6 +28,7 @@ class OrganizationConfig(AppConfig):
     app_urls = {
         'exit': 'settings',
         'create': 'create',
+        'create_org': 'create_org',
         'edit': 'edit',
         'edit_org': 'edit_org',
         'view': 'view',
