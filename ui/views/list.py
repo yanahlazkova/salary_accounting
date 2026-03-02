@@ -14,6 +14,7 @@ class UIListView(HTMXTemplateMixin, ListView):
     # Використовуємо кортеж (tuple), він незмінний — це безпечніше
     page_content: tuple[str] = ('base_table.html',)
     table_titles: list[str] | None = None
+    # Список імен полів моделі, які потрібно вивести в таблиці
     table_fields: list[str] | None = None
 
     # Кнопки для таблиці
@@ -49,9 +50,11 @@ class UIListView(HTMXTemplateMixin, ListView):
 
         ctx.update({
             "page_content": self.get_page_content(),
+        })
+        ctx['table'] = {
+            'name': self.table_name,
             "table_titles": self.get_table_titles(),
             "toolbar_buttons": self.get_toolbar_buttons(),
-            "table_names": self.table_name,
-        })
+        }
 
         return ctx
