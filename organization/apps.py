@@ -17,6 +17,7 @@ class OrganizationConfig(AppConfig):
 
     page_subtitle = {
         'main': 'Данні організації',
+        'table_name': 'Установи організації',
         'create': 'Створення установи',
         'create_org': 'Введення даних організації',
         'edit': 'Редагування установи',

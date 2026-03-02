@@ -12,7 +12,6 @@ class SocialSettingsListView(SocialSettingsBaseView,
                              UIListView):
     model = SocialSettings
 
-
     toolbar_buttons = ['create']
 
     def get_queryset(self):
@@ -59,7 +58,9 @@ class SocialSettingsListView(SocialSettingsBaseView,
         }
         # контент складається з двох блоків. Додамо до загального блоку ще один
         context['page_content'].insert(0, 'social_settings.html')
-        context['table_name'] = self.get_page_subtitle('main')
+        context['table'].update({
+            'name': self.get_page_subtitle('main'),
+        })
         # for ctx in context:
         #     print(f'{ctx}: {context[ctx]}')
 
