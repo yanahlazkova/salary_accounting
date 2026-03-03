@@ -12,10 +12,12 @@ class UIDashboardView(HTMXTemplateMixin, TemplateView):
     # другий - таблиці даних вказаної моделі (може бути інша модель)
     page_content: tuple[str] = ('ui/base_form_dashboard.html', 'base_table.html',)
 
+    object = None
+
     # блок сторінки з одним елементом
     page_subtitle: dict | None = None # заголовок
     obj_model = None
-    obj_fields = None # поля об'єкта
+    obj_fields: list[str] | None = None # поля об'єкта
     obj_data = None # дані об'єкта
     toolbar_buttons_own_object: list[str] | None = None
 
@@ -65,7 +67,7 @@ class UIDashboardView(HTMXTemplateMixin, TemplateView):
         if self.table_titles is not None:
             return self.table_titles
 
-        fields_to_check = [f.name for f in self.table_model._meta.fields if f.name != ('time_created' or 'time_updated')]
+        fields_to_check = [f.name for f in self.table_model._meta.fields]
         return [
             self.table_model._meta.get_field(f).verbose_name
             for f in fields_to_check

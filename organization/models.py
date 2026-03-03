@@ -13,6 +13,7 @@ class Organization(models.Model):
     )
     edrpou = models.PositiveIntegerField(
         verbose_name='ЄДРПОУ',
+        # unique=True,
 #         name='ЄДРПОУ',
     )
     mfo = models.PositiveIntegerField(
@@ -42,6 +43,10 @@ class Organization(models.Model):
 
     def __str__(self):
         return self.name
+
+    def get_absolute_url(self):
+        """ щоб після будь-якої дії з об'єктом (створення, редагування) Django знав, куди "йти" """
+        return reverse('organization:settings')
 
 
 class Ustanova(models.Model):

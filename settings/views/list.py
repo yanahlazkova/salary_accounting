@@ -15,10 +15,17 @@ class SocialSettingsListView(SocialSettingsBaseView,
     toolbar_buttons = ['create']
 
     def get_queryset(self):
-        queryset = SocialSettings.objects.order_by('-effective_from')
+        queryset = (
+            SocialSettings.objects
+            .order_by('-effective_from')
+            .values(*[
+                f.name for f in SocialSettings._meta.fields
+                if f.name != 'id'
+            ])
+        )
         rows_data = []
 
-        for obj in queryset.values():
+        for obj in queryset:
             rows_data.append({
                 'values': obj,
                 'row_url': reverse('settings:view', kwargs={self.slug_url_kwarg: obj[self.slug_field].isoformat()}),

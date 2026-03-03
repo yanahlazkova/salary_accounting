@@ -33,46 +33,46 @@ from ui.views.list import UIListView
 #             return f'{self.get_page_subtitle(form_name)} {self.kwargs[self.slug_url_kwarg]}'
 
 
-class SettingsOrgView(SettingsOrgBaseView, SectionPageToolbarMixin, UIListView):
-    model = Ustanova
-
-    def get_context_data(self, **kwargs):
-        ctx = super().get_context_data(**kwargs)
-
-        data_org = Organization.objects.last()
-
-        ctx['page_content'].insert(0, 'ui/base_form_dashboard.html')
-        ctx['obj'] = {
-            'items': data_org,
-            'title': self.get_form_title('main'),
-            'fields': [f.verbose_name for f in Organization._meta.fields if f.name != 'id'],
-        }
-
-        # кнопки для організації
-        if not data_org:
-            self.toolbar_buttons = ['create_org']
-        else:
-            self.toolbar_buttons = ['edit_org']
-
-        ctx['obj'].update({
-            'buttons': self.get_toolbar_buttons()
-        })
-
-        # кнопки для таблиці
-        self.toolbar_buttons = ['exit']
-
-        ctx.update({
-            'toolbar_buttons': self.get_toolbar_buttons(),
-        })
-
-        ctx['table'].update({
-            'name': self.get_page_subtitle('table_name'),
-            'table_titles': self.get_table_titles()
-        })
-        # for c in ctx:
-        #     print(f'{c}: {ctx[c]}')
-
-        return ctx
+# class SettingsOrgView(SettingsOrgBaseView, SectionPageToolbarMixin, UIListView):
+#     model = Ustanova
+#
+#     def get_context_data(self, **kwargs):
+#         ctx = super().get_context_data(**kwargs)
+#
+#         data_org = Organization.objects.last()
+#
+#         ctx['page_content'].insert(0, 'ui/base_form_dashboard.html')
+#         ctx['obj'] = {
+#             'items': data_org,
+#             'title': self.get_form_title('main'),
+#             'fields': [f.verbose_name for f in Organization._meta.fields if f.name != 'id'],
+#         }
+#
+#         # кнопки для організації
+#         if not data_org:
+#             self.toolbar_buttons = ['create_org']
+#         else:
+#             self.toolbar_buttons = ['edit_org']
+#
+#         ctx['obj'].update({
+#             'buttons': self.get_toolbar_buttons()
+#         })
+#
+#         # кнопки для таблиці
+#         self.toolbar_buttons = ['exit']
+#
+#         ctx.update({
+#             'toolbar_buttons': self.get_toolbar_buttons(),
+#         })
+#
+#         ctx['table'].update({
+#             'name': self.get_page_subtitle('table_name'),
+#             'table_titles': self.get_table_titles()
+#         })
+#         # for c in ctx:
+#         #     print(f'{c}: {ctx[c]}')
+#
+#         return ctx
 
 
 class SettingsOrgEditView(SettingsOrgBaseView, SectionPageToolbarMixin, UICopyView):
@@ -91,14 +91,13 @@ class SettingsOrgCreateView(SettingsOrgBaseView, SectionPageToolbarMixin, UICrea
     model = Organization
     toolbar_buttons = ['exit']
 
-
     form_class = OrganizationForm
 
     def get_context_data(self, **kwargs):
         ctx = super().get_context_data(**kwargs)
         ctx['form_title'] = self.get_form_title('create_org')
-        for c in ctx:
-            print(f'{c}: {ctx[c]}')
+        # for c in ctx:
+        #     print(f'{c}: {ctx[c]}')
         return ctx
 
 class SettingsUstanovaCreateView(SettingsOrgBaseView, SectionPageToolbarMixin, UICreateView):

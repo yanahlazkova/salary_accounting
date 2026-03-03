@@ -24,7 +24,9 @@
             hx-target="#main-content"
             hx-push-url="true"
             onkeypress="if(event.key === 'Enter') this.click();"
-            style="cursor: pointer;">
+            style="cursor: pointer;"
+        >
+            <td style="color: lightblue">{{ forloop.counter }}</td>
 
             {% for key, value in row.values.items %}
             <td>{{ value }}</td>
