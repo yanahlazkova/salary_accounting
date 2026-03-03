@@ -3,7 +3,7 @@
     <hr>
 
     <div class="mb-3">
-        {% for button in toolbar_buttons %}
+        {% for button in table.toolbar_buttons %}
         {% include "ui/htmx_button.html" with button=button %}
         {% endfor %}
     </div>
