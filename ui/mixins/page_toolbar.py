@@ -51,11 +51,12 @@ class SectionPageToolbarMixin:
 
         buttons = []
 
-        # pk = getattr(getattr(self, "object", None), "pk", None)
-
         for name in self.toolbar_buttons:
+            # Назва кнопки не повинна мати знак "_",
+            # тому приберемо його, а для url - залишимо
+            button_name = name[: name.find('_')] if name.find('_') != -1 else name
             button = (
-                UIButtons(name)
+                UIButtons(button_name)
                 .set_url_name(self.get_toolbar_url(name))
                 .set_kwargs(kwargs)
                 # .set_pk(pk)
