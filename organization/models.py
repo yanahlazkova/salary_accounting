@@ -35,11 +35,11 @@ class Organization(models.Model):
         verbose_name = "Налаштування організації"
         verbose_name_plural = "Налаштування організації"
 
-    # def save(self, *args, **kwargs):
-    #     # Забороняємо створювати більше одного запису
-    #     if not self.pk and Organization.objects.exists():
-    #         raise ValidationError("Можна створити лише один запис з налаштуваннями.")
-    #     return super().save(*args, **kwargs)
+    def save(self, *args, **kwargs):
+        # Забороняємо створювати більше одного запису
+        if not self.pk and Organization.objects.exists():
+            raise ValidationError("Можна створити лише один запис з налаштуваннями.")
+        return super().save(*args, **kwargs)
 
     def __str__(self):
         return self.name

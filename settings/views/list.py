@@ -49,7 +49,7 @@ class SocialSettingsListView(SocialSettingsBaseView,
 
         social_indicators_db = (
             SocialSettings.objects
-            .filter(effective_from__lte=today)
+            .filter(effective_from__lte=today) # Діє з <= поточної дати
             .order_by('-effective_from')
             .first()
         )
