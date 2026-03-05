@@ -16,24 +16,34 @@ class OrganizationConfig(AppConfig):
     app_icon = app_icons['main']
 
     page_subtitle = {
-        'main': 'Данні організації',
+        'org_name': 'Данні організації',
         'table_name': 'Установи організації',
-        'create': 'Створення установи',
+        'create_ust': 'Створення установи',
         'create_org': 'Введення даних організації',
-        'edit': 'Редагування установи',
+        'edit_ust': 'Редагування установи',
         'edit_org': 'Редагування даних організації',
-        'view': 'Перегляд установи ',
-        'copy': 'Копіювання даних установи від ',
+        'view_ust': 'Перегляд установи ',
+        'copy_ust': 'Копіювання даних установи від ',
     }
 
     app_urls = {
+        # 'organization': {
+        #     'create': 'create_org',
+        #     'edits': 'edit_org',
+        # },
+        # 'ustanova': {
+        #     'create': 'create_ust',
+        #     'edit': 'edit_ust',
+        #     'view': 'view_ust',
+        #     'copy': 'copy_ust',
+        # },
         'exit': 'settings',
-        'create': 'create',
         'create_org': 'create_org',
-        'edit': 'edit',
-        'edit_org': 'edit_org',
-        'view': 'view',
-        'copy': 'copy',
+        'edits_org': 'edit_org',
+        'create_ust': 'create_ust',
+        'edit_ust': 'edit_ust',
+        'view_ust': 'view_ust',
+        'copy_ust': 'copy_ust',
     }
 
 

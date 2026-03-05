@@ -13,6 +13,7 @@ class Organization(models.Model):
     )
     edrpou = models.PositiveIntegerField(
         verbose_name='ЄДРПОУ',
+        # unique=True,
 #         name='ЄДРПОУ',
     )
     mfo = models.PositiveIntegerField(
@@ -34,14 +35,18 @@ class Organization(models.Model):
         verbose_name = "Налаштування організації"
         verbose_name_plural = "Налаштування організації"
 
-    # def save(self, *args, **kwargs):
-    #     # Забороняємо створювати більше одного запису
-    #     if not self.pk and Organization.objects.exists():
-    #         raise ValidationError("Можна створити лише один запис з налаштуваннями.")
-    #     return super().save(*args, **kwargs)
+    def save(self, *args, **kwargs):
+        # Забороняємо створювати більше одного запису
+        if not self.pk and Organization.objects.exists():
+            raise ValidationError("Можна створити лише один запис з налаштуваннями.")
+        return super().save(*args, **kwargs)
 
     def __str__(self):
         return self.name
+
+    def get_absolute_url(self):
+        """ щоб після будь-якої дії з об'єктом (створення, редагування) Django знав, куди "йти" """
+        return reverse('organization:settings')
 
 
 class Ustanova(models.Model):

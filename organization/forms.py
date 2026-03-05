@@ -1,7 +1,7 @@
 from django.forms import ModelForm
 from django import forms
 
-from organization.models import Organization
+from organization.models import Organization, Ustanova
 
 
 class OrganizationForm(ModelForm):
@@ -28,7 +28,7 @@ class OrganizationForm(ModelForm):
 
 class UstanovaForm(ModelForm):
     class Meta:
-        model = Organization
+        model = Ustanova
         fields = [
             'name',
             'kpk',

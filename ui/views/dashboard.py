@@ -1,7 +1,69 @@
 from django.views.generic import TemplateView
 
 from ui.mixins.htmx import HTMXTemplateMixin
+from ui.mixins.page_toolbar import SectionPageToolbarMixin
 
+
+class BlockOneObject:
+    def __init__(self, model_obj):
+        self.model = model_obj
+        self._data = None
+        self._fields = None
+        self._title = None
+        self._toolbar_buttons: list[str] | None = None
+
+    @property
+    def data(self):
+        return self._data
+
+    @data.setter
+    def data(self, data):
+        self._data = data
+
+    @property
+    def title(self):
+        return self._title
+
+    @title.setter
+    def title(self, name):
+        self._title = name
+
+    @property
+    def fields(self):
+        return self._fields
+
+    @fields.setter
+    def fields(self, fields):
+        self._fields = fields
+
+    @property
+    def toolbar_buttons(self):
+        return self._toolbar_buttons
+
+    @toolbar_buttons.setter
+    def toolbar_buttons(self, buttons):
+        self._toolbar_buttons = self.build_toolbar_buttons(buttons, self._data)
+
+    def __dict__(self):
+        return {
+            'title': self._title,
+            # 'data': self.model.objects.last(),
+            'fields': self.get_fields(),
+            'toolbar_buttons': self._toolbar_buttons,
+        }
+
+    def __str__(self):
+        return str(self.__dict__())
+
+    def get_fields(self, exclude_fields=None):
+        if self.fields is not None:
+            return self.fields
+
+        fields_to_check = self.fields or [f.name for f in self.model._meta.fields if f.name != 'id' and f.name != 'time_created' and f.name != 'time_updated']
+
+        return [
+            self.model._meta.get_field(f).verbose_name for f in fields_to_check
+        ]
 
 class UIDashboardView(HTMXTemplateMixin, TemplateView):
     """ UI для головної сторінки розділу меню, де відображаються окремо дані однієї моделі
@@ -13,21 +75,19 @@ class UIDashboardView(HTMXTemplateMixin, TemplateView):
     page_content: tuple[str] = ('ui/base_form_dashboard.html', 'base_table.html',)
 
     # блок сторінки з одним елементом
-    page_subtitle: dict | None = None # заголовок
-    obj_model = None
-    obj_fields = None # поля об'єкта
-    obj_data = None # дані об'єкта
-    toolbar_buttons_own_object: list[str] | None = None
+    # block_obj_title: dict | None = None # заголовок
+    block_obj_model = None
+    block_obj = None
+    # obj_fields: list[str] | None = None # поля об'єкта
+    # obj_data = None # дані об'єкта
+    block_obj_toolbar_buttons: list[str] | None = None
 
     # Дані таблиці
     table_model = None
-    table_name: str = None
+    block_table_name: str = None
     table_titles: list[str] | None = None
     table_rows: list[str] | None = None
     toolbar_buttons_table: list[str] | None = None
-
-    # набір кнопок для всіх блоків сторінки
-    toolbar_buttons: list[str] | None = None
 
     def get_page_content(self):
         # Перетворюємо на список тільки при виклику, щоб не псувати базовий атрибут
@@ -43,19 +103,7 @@ class UIDashboardView(HTMXTemplateMixin, TemplateView):
             self.obj_model._meta.get_field(f).verbose_name for f in fields_to_check
         ]
 
-    def get_toolbar_buttons_own_object(self):
-        if self.toolbar_buttons_own_object is not None:
-            self.toolbar_buttons = self.toolbar_buttons_own_object
-            return self.get_toolbar_buttons()
-        return []
-
-    def get_toolbar_buttons_table(self):
-        if self.toolbar_buttons_table is not None:
-            self.toolbar_buttons = self.toolbar_buttons_table
-            return self.get_toolbar_buttons()
-        return []
-
-    def get_toolbar_buttons(self):
+    def build_toolbar_buttons(self,button_names=None, obj=None):
         return []  # Заглушка, щоб не було помилки
 
     def get_table_titles(self):
@@ -65,32 +113,32 @@ class UIDashboardView(HTMXTemplateMixin, TemplateView):
         if self.table_titles is not None:
             return self.table_titles
 
-        fields_to_check = [f.name for f in self.table_model._meta.fields if f.name != ('time_created' or 'time_updated')]
+        fields_to_check = [f.name for f in self.table_model._meta.fields]
         return [
             self.table_model._meta.get_field(f).verbose_name
             for f in fields_to_check
         ]
 
-    # def get_table_buttons(self):
-    #     self.toolbar_buttons = self.toolbar_buttons_table if self.toolbar_buttons_table is not None else []
-    #     return self.get_toolbar_buttons()
-    #
     def get_context_data(self, **kwargs):
         ctx = super().get_context_data(**kwargs)
 
         ctx.update({
             "page_content": self.get_page_content(),
         })
+
+        # ctx['obj'] = {
+        #     'title': self.block_obj_title,
+        #     'fields': self.get_obj_fields(),
+        #     'toolbar_buttons': self.bild_toolbar_buttons(),
+        # }
+        self.block_obj = BlockOneObject(self.block_obj_model)
+        # self.block_obj.buttons = self.bild_toolbar_buttons()
+        # ctx['obj'] = self.block_obj
+
         ctx['table'] = {
-            'name': self.table_name,
+            'name': self.block_table_name,
             "table_titles": self.get_table_titles(),
             # "toolbar_buttons": self.get_toolbar_buttons_table(),
-        }
-
-        ctx['obj'] = {
-            'title': self.page_subtitle,
-            'fields': self.get_obj_fields(),
-            # 'toolbar_buttons': self.get_toolbar_buttons_own_object(),
         }
 
         return ctx

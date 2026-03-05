@@ -1,7 +1,7 @@
 from django.urls import path
 
 from organization.views.dashboard import DashboardOrgView
-from organization.views1 import SettingsOrgView, SettingsOrgEditView, SettingsOrgCreateView, SettingsUstanovaCreateView
+from organization.views1 import SettingsOrgEditView, SettingsOrgCreateView, SettingsUstanovaCreateView
 
 app_name = 'organization'
 
