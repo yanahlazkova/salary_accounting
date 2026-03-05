@@ -76,47 +76,47 @@ from ui.views.list import UIListView
 #         return ctx
 
 
-class SettingsOrgEditView(SettingsOrgBaseView, SectionPageToolbarMixin, UIEditView):
-    model = Organization
-
-    slug_field = 'edrpou'
-    slug_url_kwarg = 'edrpou'
-
-    def get_context_data(self, **kwargs):
-        ctx = super().get_context_data(**kwargs)
-        ctx['form_title'] = self.get_form_title('edit_org')
-        return ctx
-
-
-class SettingsOrgCreateView(SettingsOrgBaseView, SectionPageToolbarMixin, UICreateView):
-    model = Organization
-
-    slug_field = 'edrpou'
-    slug_url_kwarg = 'edrpou'
-
-    toolbar_buttons = ['exit']
-
-    form_class = OrganizationForm
-
-    def get_context_data(self, **kwargs):
-        ctx = super().get_context_data(**kwargs)
-        ctx['form_title'] = self.get_form_title('create_org')
-        # for c in ctx:
-        #     print(f'{c}: {ctx[c]}')
-        return ctx
-
-class SettingsUstanovaCreateView(SettingsOrgBaseView, SectionPageToolbarMixin, UICreateView):
-    model = Ustanova
-    toolbar_buttons = ['exit']
+# class SettingsOrgEditView(SettingsOrgBaseView, SectionPageToolbarMixin, UIEditView):
+#     model = Organization
+#
+#     slug_field = 'edrpou'
+#     slug_url_kwarg = 'edrpou'
+#
+#     def get_context_data(self, **kwargs):
+#         ctx = super().get_context_data(**kwargs)
+#         ctx['form_title'] = self.get_form_title('edit_org')
+#         return ctx
 
 
-    form_class = UstanovaForm
-
-    def get_context_data(self, **kwargs):
-        ctx = super().get_context_data(**kwargs)
-        ctx['form_title'] = self.get_form_title('create')
-        for c in ctx:
-            print(f'{c}: {ctx[c]}')
-        return ctx
+# class SettingsOrgCreateView(SettingsOrgBaseView, SectionPageToolbarMixin, UICreateView):
+#     model = Organization
+#
+#     slug_field = 'edrpou'
+#     slug_url_kwarg = 'edrpou'
+#
+#     toolbar_buttons = ['exit']
+#
+#     form_class = OrganizationForm
+#
+#     def get_context_data(self, **kwargs):
+#         ctx = super().get_context_data(**kwargs)
+#         ctx['form_title'] = self.get_form_title('create_org')
+#         # for c in ctx:
+#         #     print(f'{c}: {ctx[c]}')
+#         return ctx
+#
+# class SettingsUstanovaCreateView(SettingsOrgBaseView, SectionPageToolbarMixin, UICreateView):
+#     model = Ustanova
+#     toolbar_buttons = ['exit']
+#
+#
+#     form_class = UstanovaForm
+#
+#     def get_context_data(self, **kwargs):
+#         ctx = super().get_context_data(**kwargs)
+#         ctx['form_title'] = self.get_form_title('create')
+#         for c in ctx:
+#             print(f'{c}: {ctx[c]}')
+#         return ctx
 
 
