@@ -7,6 +7,7 @@ from ui.mixins.page_toolbar import SectionPageToolbarMixin
 from ui.mixins.section import AppSectionMetaMixin
 from ui.views.copy import UICopyView
 from ui.views.create import UICreateView
+from ui.views.edit import UIEditView
 from ui.views.list import UIListView
 
 
@@ -75,11 +76,11 @@ from ui.views.list import UIListView
 #         return ctx
 
 
-class SettingsOrgEditView(SettingsOrgBaseView, SectionPageToolbarMixin, UICopyView):
+class SettingsOrgEditView(SettingsOrgBaseView, SectionPageToolbarMixin, UIEditView):
     model = Organization
 
-    id_field = 'id'
-    id_url_kwarg = 'id'
+    slug_field = 'edrpou'
+    slug_url_kwarg = 'edrpou'
 
     def get_context_data(self, **kwargs):
         ctx = super().get_context_data(**kwargs)
@@ -89,6 +90,10 @@ class SettingsOrgEditView(SettingsOrgBaseView, SectionPageToolbarMixin, UICopyVi
 
 class SettingsOrgCreateView(SettingsOrgBaseView, SectionPageToolbarMixin, UICreateView):
     model = Organization
+
+    slug_field = 'edrpou'
+    slug_url_kwarg = 'edrpou'
+
     toolbar_buttons = ['exit']
 
     form_class = OrganizationForm

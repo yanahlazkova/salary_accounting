@@ -30,6 +30,19 @@ class SectionPageToolbarMixin:
         # 2️⃣ Якщо використовується pk
         return {"pk": obj.pk}
 
+    def get_object_url_kwargs_for(self, obj):
+        if not obj:
+            return {}
+
+        # 1️⃣ Якщо використовується slug
+        if hasattr(self, "slug_field") and hasattr(self, "slug_url_kwarg"):
+            slug_value = getattr(obj, self.slug_field, None)
+            if slug_value:
+                return {self.slug_url_kwarg: slug_value}
+
+        # 2️⃣ Якщо використовується pk
+        return {"pk": obj.pk}
+
     def get_section_config(self):
         if not self.app_label:
             raise ValueError("app_label is required")
@@ -79,7 +92,7 @@ class SectionPageToolbarMixin:
     def build_toolbar_buttons(self, button_names: list[str], obj=None):
         icons = self.get_app_icons()
 
-        kwargs = self.get_object_url_kwargs_for(obj) if obj else {}
+        kwargs = self.get_object_url_kwargs_for(obj)
 
         buttons = []
 

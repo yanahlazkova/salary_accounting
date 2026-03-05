@@ -11,28 +11,24 @@ class DashboardOrgView(SettingsOrgBaseView, SectionPageToolbarMixin, UIDashboard
     table_model = Ustanova
 
     def get_obj_organization(self):
+        self.slug_field = 'edrpou'
+        self.slug_url_kwarg = 'edrpou'
         self.block_obj.data = self.block_obj_model.objects.last()
+        self.block_obj.fields = self.get_obj_fields() if self.block_obj.data is not None else None
         self.block_obj.title = self.get_page_subtitle('org_name')
-        # buttons = ["create"] if self.block_obj.data is None else ["edit"]
-        self.block_obj.toolbar_buttons = ["create_org"] if self.block_obj.data is None else ["edit_org"]
+        buttons = ["create_org"] if self.block_obj.data is None else ["edit_org"]
+        self.block_obj.toolbar_buttons = self.build_toolbar_buttons(buttons, self.block_obj.data)
         return self.block_obj
 
 
     def get_context_data(self, **kwargs):
         ctx = super().get_context_data(**kwargs)
 
-
-        # ctx['obj'].update({
-        #     # 'data': self.get_obj_data(),
-        #     'data': organization_block.data,
-        #     'title': self.get_page_subtitle('org_name'),
-        #     # 'buttons': self.bild_toolbar_,
-        #
-        # })
         ctx['obj'] = self.get_obj_organization()
         # ctx['obj'] = {
         #     'toolbar_buttons': self.build_toolbar_buttons(self.block_obj.toolbar_buttons, self.block_obj.data),
         # }
+
 
         ctx['table'].update({
             'name': self.get_page_subtitle('table_name'),
@@ -64,7 +60,7 @@ class DashboardOrgView(SettingsOrgBaseView, SectionPageToolbarMixin, UIDashboard
 #
 #
 #
-        for c in ctx:
-            print(f'{c}: {ctx[c]}')
+#         for c in ctx:
+#             print(f'{c}: {ctx[c]}')
 #
         return ctx

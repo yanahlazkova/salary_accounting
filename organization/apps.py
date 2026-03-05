@@ -39,7 +39,7 @@ class OrganizationConfig(AppConfig):
         # },
         'exit': 'settings',
         'create_org': 'create_org',
-        'edits_org': 'edit_org',
+        'edit_org': 'edit_org',
         'create_ust': 'create_ust',
         'edit_ust': 'edit_ust',
         'view_ust': 'view_ust',

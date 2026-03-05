@@ -42,13 +42,13 @@ class BlockOneObject:
 
     @toolbar_buttons.setter
     def toolbar_buttons(self, buttons):
-        self._toolbar_buttons = self.build_toolbar_buttons(buttons, self._data)
+        self._toolbar_buttons = buttons # self.build_toolbar_buttons(buttons, self._data)
 
     def __dict__(self):
         return {
             'title': self._title,
-            # 'data': self.model.objects.last(),
-            'fields': self.get_fields(),
+            # 'data': self._data,
+            'fields': self._fields,
             'toolbar_buttons': self._toolbar_buttons,
         }
 
@@ -94,13 +94,16 @@ class UIDashboardView(HTMXTemplateMixin, TemplateView):
         return list(self.page_content)
 
     def get_obj_fields(self):
-        if self.obj_fields is not None:
-            return self.obj_fields
+        if self.block_obj.fields is not None:
+            return self.block_obj.fields
 
-        fields_to_check = self.obj_fields or [f.name for f in self.obj_model._meta.fields if f.name != 'id' and f.name != 'time_created' and f.name != 'time_updated']
+        fields_to_check = self.block_obj.fields or [f.name for f in self.block_obj_model._meta.fields if f.name != 'id' and f.name != 'time_created' and f.name != 'time_updated']
 
         return [
-            self.obj_model._meta.get_field(f).verbose_name for f in fields_to_check
+            {
+                'label': self.block_obj_model._meta.get_field(f).verbose_name,
+                'value': getattr(self.block_obj.data, f),
+             } for f in fields_to_check
         ]
 
     def build_toolbar_buttons(self,button_names=None, obj=None):
@@ -133,7 +136,6 @@ class UIDashboardView(HTMXTemplateMixin, TemplateView):
         # }
         self.block_obj = BlockOneObject(self.block_obj_model)
         # self.block_obj.buttons = self.bild_toolbar_buttons()
-        # ctx['obj'] = self.block_obj
 
         ctx['table'] = {
             'name': self.block_table_name,

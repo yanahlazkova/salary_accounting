@@ -12,9 +12,9 @@ class SettingsOrgBaseView(AppSectionMetaMixin):
     slug_url_kwarg = None
     #
     # form_class = OrganizationForm
-    model = None
-
-    form_title: str | None = None
+    # model = None
+    #
+    # form_title: str | None = None
 
     def get_section_config(self):
         if not self.app_label:
