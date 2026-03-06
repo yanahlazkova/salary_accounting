@@ -13,7 +13,7 @@ class Organization(models.Model):
     )
     edrpou = models.PositiveIntegerField(
         verbose_name='ЄДРПОУ',
-        # unique=True,
+        unique=True,
 #         name='ЄДРПОУ',
     )
     mfo = models.PositiveIntegerField(

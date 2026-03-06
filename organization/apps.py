@@ -27,19 +27,9 @@ class OrganizationConfig(AppConfig):
     }
 
     app_urls = {
-        # 'organization': {
-        #     'create': 'create_org',
-        #     'edits': 'edit_org',
-        # },
-        # 'ustanova': {
-        #     'create': 'create_ust',
-        #     'edit': 'edit_ust',
-        #     'view': 'view_ust',
-        #     'copy': 'copy_ust',
-        # },
         'exit': 'settings',
         'create_org': 'create_org',
-        'edits_org': 'edit_org',
+        'edit_org': 'edit_org',
         'create_ust': 'create_ust',
         'edit_ust': 'edit_ust',
         'view_ust': 'view_ust',

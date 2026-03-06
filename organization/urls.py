@@ -1,15 +1,16 @@
 from django.urls import path
 
+from organization.views.create import SettingsOrgCreateView, SettingsUstanovaCreateView
 from organization.views.dashboard import DashboardOrgView
-from organization.views1 import SettingsOrgEditView, SettingsOrgCreateView, SettingsUstanovaCreateView
+from organization.views.edit import SettingsOrgEditView
 
 app_name = 'organization'
 
 urlpatterns = [
     # path('', SettingsOrgView.as_view(), name='settings'),
     path('', DashboardOrgView.as_view(), name='settings'),
-    path('edit_org/<int:id>', SettingsOrgEditView.as_view(), name='edit_org'),
+    path('edit_org/<slug:edrpou>', SettingsOrgEditView.as_view(), name='edit_org'),
     path('create_org/', SettingsOrgCreateView.as_view(), name='create_org'),
-    path('create_ustanova/', SettingsUstanovaCreateView.as_view(), name='create'),
+    path('create_ustanova/', SettingsUstanovaCreateView.as_view(), name='create_ust'),
 
 ]
