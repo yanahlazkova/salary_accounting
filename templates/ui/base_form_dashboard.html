@@ -1,0 +1,22 @@
+<h2 class="mb-4 text-primary">{{ obj.title}}</h2>
+<div class="row mb-5">
+    {% if obj.fields %}
+    <div class="col">
+        <ul class="list-group">
+            {% for field in obj.fields %}
+            <li class="list-group-item  text-info"><strong class="text-secondary">
+                {{ field.label }}:</strong> {{ field.value }}
+            </li>
+            {% endfor %}
+        </ul>
+    </div>
+    {% else %}
+    <p>Дані ще не введені</p>
+    {% endif %}
+</div>
+<div>
+    {% for button in obj.toolbar_buttons %}
+    {% include "ui/htmx_button.html" with button=button %}
+    {% endfor %}
+</div>
+<hr>

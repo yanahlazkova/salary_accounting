@@ -1,51 +1,46 @@
 from django.urls import reverse
 from django.utils import timezone
+from settings.models import SocialSettings
+from settings.views.base import SocialSettingsBaseView
 from ui.buttons.registry import UIButtons
-
 from ui.mixins.page_toolbar import SectionPageToolbarMixin
 from ui.views.list import UIListView
-from .base import SocialSettingsBaseView
-from ..models import SocialSettings
 
-class SocialSettingsListView(SocialSettingsBaseView, SectionPageToolbarMixin, UIListView):
-    model = SocialSettings
 
-    toolbar_buttons = ['create', 'exit']
+class SocialSettingsListView(SocialSettingsBaseView,
+                             SectionPageToolbarMixin,
+                             UIListView):
+    # model = SocialSettings
 
+    toolbar_buttons = ['create']
 
     def get_queryset(self):
-        data_db = SocialSettings.objects.order_by('-effective_from')
-
-        # Створюємо список списків (ID + значення полів)
+        queryset = (
+            SocialSettings.objects
+            .order_by('-effective_from')
+            .values(*[
+                f.name for f in SocialSettings._meta.fields
+                if f.name != 'id'
+            ])
+        )
         rows_data = []
-        for obj in data_db:
+
+        for obj in queryset:
             rows_data.append({
-                'id': obj.id,
-                'values': [
-                    obj.id,
-                    obj.effective_from.strftime("%d.%m.%Y"),
-                    obj.min_salary,
-                    obj.pm_able_bodied,
-                    obj.pdfo_rate,
-                    obj.vz_rate,
-                    obj.esv_rate,
-                    obj.time_created.strftime("%d.%m.%Y"),
-                    obj.time_updated.strftime("%d.%m.%Y"),
-                ],
-                # ⬇ URL для кліку по рядку
-                # 'row_url': reverse('settings:view', kwargs={'date': obj['effective_from']}),
-                'row_url': reverse('settings:view', kwargs={self.slug_url_kwarg: getattr(obj, self.slug_field).isoformat()}),
-                # кнопки
+                'values': obj,
+                'row_url': reverse('settings:view', kwargs={self.slug_url_kwarg: obj[self.slug_field].isoformat()}),
                 'buttons': [
-                    # UIButtons('view').set_url_name('settings:view').set_kwargs({'date': obj['effective_from']}),
                     UIButtons('view')
                     .set_url_name('settings:view')
                     .set_kwargs({
-                        self.slug_url_kwarg: getattr(obj, self.slug_field).isoformat()
+                        self.slug_url_kwarg: obj[self.slug_field].isoformat()
                     }),
                 ]
             })
-            # print(f'**: {self.slug_url_kwarg}: {obj[self.slug_field]}')
+            obj['effective_from'] = obj['effective_from'].strftime("%d.%m.%Y")
+            obj['time_created'] = obj['time_created'].strftime("%d.%m.%Y")
+            obj['time_updated'] = obj['time_updated'].strftime("%d.%m.%Y")
+
         return rows_data
 
     def get_context_data(self, **kwargs):
@@ -54,11 +49,10 @@ class SocialSettingsListView(SocialSettingsBaseView, SectionPageToolbarMixin, UI
 
         social_indicators_db = (
             SocialSettings.objects
-            .filter(effective_from__lte=today)
+            .filter(effective_from__lte=today) # Діє з <= поточної дати
             .order_by('-effective_from')
             .first()
         )
-        # social_indicators_db = self.queryset.latest('effective_from')
         # 1. Ключові соціальні показники
         context['social_indicators'] = {
             'current_year': timezone.now().year,
@@ -71,7 +65,10 @@ class SocialSettingsListView(SocialSettingsBaseView, SectionPageToolbarMixin, UI
         }
         # контент складається з двох блоків. Додамо до загального блоку ще один
         context['page_content'].insert(0, 'social_settings.html')
-        context['table_name'] = self.get_page_subtitle('main')
+        context['table'].update({
+            'name': self.get_page_subtitle('main'),
+        })
         # for ctx in context:
         #     print(f'{ctx}: {context[ctx]}')
+
         return context

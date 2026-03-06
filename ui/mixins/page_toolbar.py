@@ -28,10 +28,20 @@ class SectionPageToolbarMixin:
                 return {self.slug_url_kwarg: slug_value}
 
         # 2️⃣ Якщо використовується pk
-        if hasattr(obj, "pk"):
-            return {"pk": obj.pk}
+        return {"pk": obj.pk}
 
-        return {}
+    def get_object_url_kwargs_for(self, obj):
+        if not obj:
+            return {}
+
+        # 1️⃣ Якщо використовується slug
+        if hasattr(self, "slug_field") and hasattr(self, "slug_url_kwarg"):
+            slug_value = getattr(obj, self.slug_field, None)
+            if slug_value:
+                return {self.slug_url_kwarg: slug_value}
+
+        # 2️⃣ Якщо використовується pk
+        return {"pk": obj.pk}
 
     def get_section_config(self):
         if not self.app_label:
@@ -51,11 +61,13 @@ class SectionPageToolbarMixin:
 
         buttons = []
 
-        # pk = getattr(getattr(self, "object", None), "pk", None)
-
         for name in self.toolbar_buttons:
+            # Назва кнопки не повинна мати знак "_",
+            # тому приберемо його, а для url - залишимо
+            # button_name = name[: name.find('_')] if name.find('_') != -1 else name
+            button_name = name.split("_")[0]
             button = (
-                UIButtons(name)
+                UIButtons(button_name)
                 .set_url_name(self.get_toolbar_url(name))
                 .set_kwargs(kwargs)
                 # .set_pk(pk)
@@ -77,20 +89,25 @@ class SectionPageToolbarMixin:
         urls = getattr(config, 'app_urls', {}) or {}
         return f'{self.app_label}:{urls[name]}'
 
-# class SectionPageToolbarMixin:
-#     toolbar_buttons = ()
-#
-#     def get_toolbar_buttons(self):
-#         obj = getattr(self, 'object', None)
-#         pk = getattr(obj, 'pk', None)
-#
-#         buttons = []
-#         for btn in self.toolbar_buttons:
-#             buttons.append(
-#                 UIButtons.build(
-#                     name=btn['action'],
-#                     url_name=btn['url'],
-#                     pk=pk,
-#                 )
-#             )
-#         return buttons
+    def build_toolbar_buttons(self, button_names: list[str], obj=None):
+        icons = self.get_app_icons()
+
+        kwargs = self.get_object_url_kwargs_for(obj)
+
+        buttons = []
+
+        for name in button_names:
+            button_name = name.split("_")[0]
+
+            button = (
+                UIButtons(button_name)
+                .set_url_name(self.get_toolbar_url(name))
+                .set_kwargs(kwargs)
+                .set_icon(icons.get(name))
+                .build()
+            )
+            buttons.append(button)
+
+        return buttons
+
+

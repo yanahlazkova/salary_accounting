@@ -26,5 +26,7 @@ class AppSectionMetaMixin:
             'page_title': getattr(config, 'page_title', ''),
             'icon': getattr(config, 'app_icon', None),
         }
+        # for ctx in context:
+        #     print(f'{ctx}: {context[ctx]}')
 
         return context

@@ -4,6 +4,7 @@ from ui.icons import ICONS
 
 class SettingsConfig(AppConfig):
     """ загальні дані розділу Кадри"""
+    default_auto_field = 'django.db.models.BigAutoField'
     name = 'settings'
     verbose_name = 'Налаштування'
 
@@ -19,7 +20,7 @@ class SettingsConfig(AppConfig):
         'create': 'Створення соціальних показників',
         'edit': 'Редагування соціальних показників за',
         'view': 'Соціальні показники на',
-        'copy': 'Створення соціальних показників',
+        'copy': 'Копіювання соціальних показників за ',
     }
 
 

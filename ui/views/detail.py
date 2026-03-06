@@ -27,8 +27,6 @@ class UIDetailView(HTMXTemplateMixin, DetailView):
 
     def get_context_data(self, **kwargs):
         ctx = super().get_context_data(**kwargs)
-        # obj = super().get_object()
-        # print(f'obj: {obj}')
 
         ctx.update({
             "page_content": self.get_page_content(),

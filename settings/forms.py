@@ -5,16 +5,6 @@ from settings.models import SocialSettings
 
 
 class SocialSettingsForm(ModelForm):
-    effective_from = forms.DateField(
-        widget=forms.DateInput(
-            format="%Y-%m-%d",
-            attrs={
-                "type": "date",
-                "class": "form-control w-50",
-            },
-        ),
-        input_formats=["%Y-%m-%d"],
-    )
 
     class Meta:
         model = SocialSettings
@@ -34,11 +24,11 @@ class SocialSettingsForm(ModelForm):
             field.widget.attrs.update({'class': 'form-control w-50'})
 
             # Якщо поле — це дата, міняємо тип на календар
-            # if isinstance(field, forms.DateField):
-            #     field.widget = forms.DateInput(format='%Y-%m-%d',
-            #                                    attrs={'type': 'date',
-            #                                           'class': 'form-control w-25'})
-            #     field.input_formats = ["%Y-%m-%d"]
+            if isinstance(field, forms.DateField):
+                field.widget = forms.DateInput(format='%Y-%m-%d',
+                                               attrs={'type': 'date',
+                                                      'class': 'form-control w-50'})
+                field.input_formats = ["%Y-%m-%d"]
 
             # Якщо поле — це Decimal (числове), додаємо крок 0.01
             if isinstance(field, forms.DecimalField):
