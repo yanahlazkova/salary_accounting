@@ -92,7 +92,7 @@ class SectionPageToolbarMixin:
     def build_toolbar_buttons(self, button_names: list[str], obj=None):
         icons = self.get_app_icons()
 
-        kwargs = self.get_object_url_kwargs_for(obj)
+        kwargs = self.get_object_url_kwargs_for(obj) if obj else {}
 
         buttons = []
 

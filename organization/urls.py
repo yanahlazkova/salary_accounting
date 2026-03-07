@@ -1,8 +1,13 @@
 from django.urls import path
 
-from organization.views.create import SettingsOrgCreateView, SettingsUstanovaCreateView
+from organization.views.create import SettingsOrgCreateView
 from organization.views.dashboard import DashboardOrgView
 from organization.views.edit import SettingsOrgEditView
+from organization.views1 import SettingsUstanovaCreateView
+
+# from organization.views.create import SettingsOrgCreateView, SettingsUstanovaCreateView
+# from organization.views.dashboard import DashboardOrgView
+# from organization.views.edit import SettingsOrgEditView
 
 app_name = 'organization'
 
