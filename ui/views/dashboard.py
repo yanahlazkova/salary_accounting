@@ -43,7 +43,7 @@ class BlockOneObject:
     def toolbar_buttons(self, buttons):
         self._toolbar_buttons = buttons # self.build_toolbar_buttons(buttons, self._data)
 
-    def __dict__(self):
+    def to_dict(self):
         return {
             'title': self._title,
             # 'data': self._data,
@@ -52,7 +52,7 @@ class BlockOneObject:
         }
 
     def __str__(self):
-        return str(self.__dict__())
+        return str(self.to_dict())
 
 class BlockTable:
 
@@ -62,7 +62,7 @@ class BlockTable:
         self._table_rows = None
         self._toolbar_buttons = None
 
-    def __dict__(self):
+    def to_dict(self):
         return {
             'name': self._table_name,
             'table_titles': self._table_titles,
@@ -71,7 +71,7 @@ class BlockTable:
         }
 
     def __str__(self):
-        return str(self.__dict__())
+        return str(self.to_dict())
 
     @property
     def table_name(self):
@@ -109,19 +109,12 @@ class UIDashboardView(HTMXTemplateMixin, TemplateView):
     page_content: tuple[str] = ('ui/base_form_dashboard.html', 'base_table.html',)
 
     # блок сторінки з одним елементом
-    # block_obj_title: dict | None = None # заголовок
     block_obj_model = None
-    block_obj = BlockOneObject()
-    # obj_fields: list[str] | None = None # поля об'єкта
-    # obj_data = None # дані об'єкта
-    # block_obj_toolbar_buttons: list[str] | None = None
+    block_obj = None
 
     # Дані таблиці
     table_model = None
-    block_table = BlockTable()
-    # table_titles: list[str] | None = None
-    # table_rows: list[str] | None = None
-    # toolbar_buttons_table: list[str] | None = None
+    block_table = None
 
     def get_page_content(self):
         # Перетворюємо на список тільки при виклику, щоб не псувати базовий атрибут
@@ -162,14 +155,6 @@ class UIDashboardView(HTMXTemplateMixin, TemplateView):
         ctx.update({
             "page_content": self.get_page_content(),
         })
-
-
-
-        # ctx['table'] = {
-        #     'name': self.block_table_name,
-        #     "table_titles": self.get_table_titles(),
-        #     # "toolbar_buttons": self.get_toolbar_buttons_table(),
-        # }
 
         return ctx
 

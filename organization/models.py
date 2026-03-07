@@ -11,8 +11,9 @@ class Organization(models.Model):
         max_length=500,
         # name='Назва установи'
     )
-    edrpou = models.PositiveIntegerField(
+    edrpou = models.CharField(
         verbose_name='ЄДРПОУ',
+        max_length=8,
         unique=True,
 #         name='ЄДРПОУ',
     )
