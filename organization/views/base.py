@@ -24,6 +24,7 @@ class SettingsOrgBaseView(AppSectionMetaMixin):
     def get_form_title(self, form_name):
         if (form_name == 'create'
                 or form_name == 'create_org'
+                or form_name == 'create_ust'
                 or form_name == 'main'
             or form_name == 'table_name'
         ):
