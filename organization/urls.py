@@ -3,7 +3,7 @@ from django.urls import path
 from organization.views.create import SettingsOrgCreateView
 from organization.views.dashboard import DashboardOrgView
 from organization.views.edit import SettingsOrgEditView
-from organization.views1 import SettingsUstanovaCreateView
+from organization.views1 import SettingsUstanovaCreateView, SettingsUstanovaDetailView
 
 # from organization.views.create import SettingsOrgCreateView, SettingsUstanovaCreateView
 # from organization.views.dashboard import DashboardOrgView
@@ -15,7 +15,8 @@ urlpatterns = [
     # path('', SettingsOrgView.as_view(), name='settings'),
     path('', DashboardOrgView.as_view(), name='settings'),
     path('edit_org/<slug:edrpou>', SettingsOrgEditView.as_view(), name='edit_org'),
-    path('create_org/', SettingsOrgCreateView.as_view(), name='create_org'),
-    path('create_ustanova/', SettingsUstanovaCreateView.as_view(), name='create_ust'),
+    path('new_org/', SettingsOrgCreateView.as_view(), name='create_org'),
+    path('new_ustanova/', SettingsUstanovaCreateView.as_view(), name='create_ust'),
+    path('ustanova/<slug:kpk>', SettingsUstanovaDetailView.as_view(), name='view_ust'),
 
 ]

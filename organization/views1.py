@@ -7,6 +7,7 @@ from ui.mixins.page_toolbar import SectionPageToolbarMixin
 from ui.mixins.section import AppSectionMetaMixin
 from ui.views.copy import UICopyView
 from ui.views.create import UICreateView
+from ui.views.detail import UIDetailView
 from ui.views.edit import UIEditView
 # from ui.views.create import UICreateView
 # from ui.views.edit import UIEditView
@@ -113,14 +114,34 @@ class SettingsUstanovaCreateView(SettingsOrgBaseView, SectionPageToolbarMixin, U
     model = Ustanova
     toolbar_buttons = ['exit']
 
+    slug_field = 'kpk'
+    slug_url_kwarg = 'kpk'
 
     form_class = UstanovaForm
 
     def get_context_data(self, **kwargs):
         ctx = super().get_context_data(**kwargs)
-        ctx['form_title'] = self.get_form_title('create')
-        for c in ctx:
-            print(f'{c}: {ctx[c]}')
+        ctx['form_title'] = self.get_form_title('create_ust')
+        # for c in ctx:
+        #     print(f'{c}: {ctx[c]}')
         return ctx
+
+
+class SettingsUstanovaDetailView(SettingsOrgBaseView, SectionPageToolbarMixin, UIDetailView):
+    model = Ustanova
+    toolbar_buttons = ['exit']
+
+    slug_field = 'kpk'
+    slug_url_kwarg = 'kpk'
+
+    form_class = UstanovaForm
+
+    def get_context_data(self, **kwargs):
+        ctx = super().get_context_data(**kwargs)
+        ctx['form_title'] = self.get_form_title('view_ust')
+        # for c in ctx:
+        #     print(f'{c}: {ctx[c]}')
+        return ctx
+
 
 
