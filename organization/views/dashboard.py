@@ -56,6 +56,8 @@ class DashboardOrgView(SettingsOrgBaseView, SectionPageToolbarMixin, UIDashboard
                     }),
                 ]
             })
+            obj['time_created'] = obj['time_created'].strftime("%d.%m.%Y")
+            obj['time_updated'] = obj['time_updated'].strftime("%d.%m.%Y")
         return rows_data
 
 

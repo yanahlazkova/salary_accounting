@@ -67,6 +67,7 @@ class SocialSettingsListView(SocialSettingsBaseView,
         context['page_content'].insert(0, 'social_settings.html')
         context['table'].update({
             'name': self.get_page_subtitle('main'),
+            'table_rows': self.get_queryset(),
         })
         # for ctx in context:
         #     print(f'{ctx}: {context[ctx]}')
