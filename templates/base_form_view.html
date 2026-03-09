@@ -1,30 +1,51 @@
+{% load static %}
 <h2 class="mb-4 text-primary">{{ form_title }}</h2>
 <div class="mb-3">
-{% for button in toolbar_buttons %}
+    {% for button in toolbar_buttons %}
     {% include 'ui/htmx_button.html' with button=button %}
-{% endfor %}
-</div>
-
-<div class="row mb-5">
-    <div class="col-md-6">
-        <ul class="list-group">
-            <li class="list-group-item  text-info"><strong class="text-secondary">Діє з:</strong> {{ form_data.effective_from }}
-            </li>
-            <li class="list-group-item text-info"><strong class="text-secondary">Мінімальна заробітна плата
-                (місячна):</strong> {{ form_data.min_salary }}
-            </li>
-            <li class="list-group-item text-info"><strong class="text-secondary">Прожитковий мінімум (для
-                працездатних):</strong> {{ form_data.pm_able_bodied }}
-            </li>
-        </ul>
-    </div>
-    <div class="col-md-6">
-        <ul class="list-group">
-            <li class="list-group-item text-info"><strong class="text-secondary">Ставка ПДФО:</strong> {{ form_data.pdfo_rate }}</li>
-            <li class="list-group-item text-info"><strong class="text-secondary">Ставка Військового збору:</strong> {{ form_data.vz_rate }}
-            </li>
-            <li class="list-group-item text-info"><strong class="text-secondary">Ставка ЄСВ:</strong> {{ form_data.esv_rate }}</li>
-        </ul>
-    </div>
+    {% endfor %}
 </div>
 <hr>
+
+{% comment %}
+<div class="col-md-6">
+    <ul class="list-group">
+        <li class="list-group-item  text-info"><strong class="text-secondary">Діє з:</strong> {{
+            form_data.effective_from }}
+        </li>
+        <li class="list-group-item text-info"><strong class="text-secondary">Мінімальна заробітна плата
+            (місячна):</strong> {{ form_data.min_salary }}
+        </li>
+        <li class="list-group-item text-info"><strong class="text-secondary">Прожитковий мінімум (для
+            працездатних):</strong> {{ form_data.pm_able_bodied }}
+        </li>
+    </ul>
+</div>
+<div class="col-md-6">
+    <ul class="list-group">
+        <li class="list-group-item text-info"><strong class="text-secondary">Ставка ПДФО:</strong> {{
+            form_data.pdfo_rate }}
+        </li>
+        <li class="list-group-item text-info"><strong class="text-secondary">Ставка Військового збору:</strong> {{
+            form_data.vz_rate }}
+        </li>
+        <li class="list-group-item text-info"><strong class="text-secondary">Ставка ЄСВ:</strong> {{ form_data.esv_rate
+            }}
+        </li>
+    </ul>
+</div>
+</div>
+<hr>
+{% endcomment %}
+<div class="row mb-5">
+    <div class="col">
+        <ul class="list-group">
+            {% for field in fields %}
+            <li class="list-group-item  text-info"><strong class="text-secondary">
+                {{ field.label }}:</strong> {{ field.value }}
+            </li>
+            {% endfor %}
+        </ul>
+    </div>
+
+</div>

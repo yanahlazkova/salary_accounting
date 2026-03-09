@@ -1,3 +1,4 @@
+{% load static %}
 <h2 class="mb-4 text-primary">{{ obj.title}}</h2>
 <div class="row mb-5">
     {% if obj.fields %}
@@ -14,7 +15,7 @@
     <p>Дані ще не введені</p>
     {% endif %}
 </div>
-<div>
+<div>\
     {% for button in obj.toolbar_buttons %}
     {% include "ui/htmx_button.html" with button=button %}
     {% endfor %}

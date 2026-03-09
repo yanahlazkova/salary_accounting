@@ -139,8 +139,8 @@ class SettingsUstanovaDetailView(SettingsOrgBaseView, SectionPageToolbarMixin, U
     def get_context_data(self, **kwargs):
         ctx = super().get_context_data(**kwargs)
         ctx['form_title'] = self.get_form_title('view_ust')
-        # for c in ctx:
-        #     print(f'{c}: {ctx[c]}')
+        for c in ctx:
+            print(f'{c}: {ctx[c]}')
         return ctx
 
 

@@ -71,7 +71,6 @@ class DashboardOrgView(SettingsOrgBaseView, SectionPageToolbarMixin, UIDashboard
 
         ctx['table'] = self.get_block_ustanoty()
 
-        print(f'table: {ctx["table"]}')
         # for c in ctx:
         #     print(f'{c}: {ctx[c]}')
         return ctx

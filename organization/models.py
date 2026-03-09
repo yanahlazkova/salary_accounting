@@ -66,7 +66,7 @@ class Ustanova(models.Model):
         verbose_name_plural = 'Налаштування установи'
 
     def __str__(self):
-        return self.kpk
+        return f"{self.name} ({self.kpk})"
 
     def get_absolute_url(self):
         """ щоб після будь-якої дії з об'єктом (створення, редагування) Django знав, куди "йти" """
