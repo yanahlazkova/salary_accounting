@@ -2,6 +2,7 @@ from django.views.generic import ListView, DetailView
 
 from ui.buttons.registry import UIButtons
 from ui.mixins.htmx import HTMXTemplateMixin
+from ui.views.helper import model_to_fields
 
 
 class UIDetailView(HTMXTemplateMixin, DetailView):
@@ -33,38 +34,23 @@ class UIDetailView(HTMXTemplateMixin, DetailView):
     #         for field in obj._meta.fields
     #     }
 
-    def model_to_fields(obj):
-        fields = []
 
-        for field in obj._meta.fields:
-            fields.append({
-                "label": field.verbose_name,
-                "value": getattr(obj, field.name)
-            })
-
-            value = getattr(obj, field.name)
-
-            if hasattr(value, "strftime"):
-                value = value.strftime("%d.%m.%Y %H:%M")
-
-        return fields
 
     def get_context_data(self, **kwargs):
         ctx = super().get_context_data(**kwargs)
 
-        obj = self.object
-
-        fields = [{
-            'label': field.verbose_name,
-            "value": getattr(obj, field.name)
-        } for field in obj._meta.fields]
+        # obj = self.object
+        #
+        # fields = [{
+        #     'label': field.verbose_name,
+        #     "value": getattr(obj, field.name)
+        # } for field in obj._meta.fields]
 
         ctx.update({
             "page_content": self.get_page_content(),
             'page_subtitle': self.page_subtitle,
             'toolbar_buttons': self.get_toolbar_buttons(),
-            'fields': fields,
+            'fields': model_to_fields(self.object),
         })
-
 
         return ctx

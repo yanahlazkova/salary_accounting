@@ -1,3 +1,21 @@
+def model_to_fields(obj):
+    fields = []
+
+    for field in obj._meta.fields:
+        value = getattr(obj, field.name)
+        fields.append({
+            "label": field.verbose_name,
+            "value": value.strftime("%d.%m.%Y %H:%M") if hasattr(value, "strftime") else value,
+            'time_updated': value.strftime("%d.%m.%Y %H:%M") if field.verbose_name == 'time_updated' else None,
+            'time_updated': value.strftime("%d.%m.%Y %H:%M") if field.verbose_name == 'time_created' else None,
+        })
+
+        # if hasattr(value, "strftime"):
+        #     value = value.strftime("%d.%m.%Y %H:%M")
+
+    return fields
+
+
 def get_obj_fields(obj):
     """ повертая словник-об'єкт з полями та значеннями """
     if obj.block_obj.fields is not None:
