@@ -25,13 +25,45 @@ class UIDetailView(HTMXTemplateMixin, DetailView):
     def get_toolbar_buttons(self):
         return []  # Заглушка, щоб не було помилки
 
+    # def get_form_data(self):
+    #     obj = self.get_object()
+    #
+    #     return {
+    #         field.verbose_name: getattr(obj, field.name)
+    #         for field in obj._meta.fields
+    #     }
+
+    def model_to_fields(obj):
+        fields = []
+
+        for field in obj._meta.fields:
+            fields.append({
+                "label": field.verbose_name,
+                "value": getattr(obj, field.name)
+            })
+
+            value = getattr(obj, field.name)
+
+            if hasattr(value, "strftime"):
+                value = value.strftime("%d.%m.%Y %H:%M")
+
+        return fields
+
     def get_context_data(self, **kwargs):
         ctx = super().get_context_data(**kwargs)
+
+        obj = self.object
+
+        fields = [{
+            'label': field.verbose_name,
+            "value": getattr(obj, field.name)
+        } for field in obj._meta.fields]
 
         ctx.update({
             "page_content": self.get_page_content(),
             'page_subtitle': self.page_subtitle,
             'toolbar_buttons': self.get_toolbar_buttons(),
+            'fields': fields,
         })
 
 

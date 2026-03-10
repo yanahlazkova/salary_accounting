@@ -15,7 +15,7 @@
     <p>Дані ще не введені</p>
     {% endif %}
 </div>
-<div>\
+<div>
     {% for button in obj.toolbar_buttons %}
     {% include "ui/htmx_button.html" with button=button %}
     {% endfor %}
