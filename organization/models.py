@@ -25,8 +25,8 @@ class Organization(models.Model):
         verbose_name="Юридична адреса",
         blank=True
     )
-    time_created = models.DateTimeField(auto_now_add=True, )  # дата при створенні запису
-    time_updated = models.DateTimeField(auto_now=True)  # дата при зміні запису
+    time_created = models.DateTimeField(auto_now_add=True, verbose_name='Дата створення')  # дата при створенні запису
+    time_updated = models.DateTimeField(auto_now=True, verbose_name='Дата оновлення')  # дата при зміні запису
 
     # user_created - користувач, який створив запис
     # user_updated - останній користувач, який змінив запис
@@ -51,11 +51,12 @@ class Organization(models.Model):
 
 
 class Ustanova(models.Model):
-    name = models.CharField(max_length=500)
+    name = models.CharField(max_length=500,
+                            verbose_name='Назва установи')
     kpk = models.PositiveIntegerField(
         verbose_name='КПК')
-    time_created = models.DateTimeField(auto_now_add=True, )  # дата при створенні запису
-    time_updated = models.DateTimeField(auto_now=True)  # дата при зміні запису
+    time_created = models.DateTimeField(auto_now_add=True, verbose_name='Дата створення')  # дата при створенні запису
+    time_updated = models.DateTimeField(auto_now=True, verbose_name='Дата оновлення')  # дата при зміні запису
 
     # user_created - користувач, який створив запис
     # user_updated - останній користувач, який змінив запис
@@ -100,8 +101,8 @@ class BankAccount(models.Model):
         null=True,
         blank=True,
     )
-    time_created = models.DateTimeField(auto_now_add=True, )  # дата при створенні запису
-    time_updated = models.DateTimeField(auto_now=True)  # дата при зміні запису
+    time_created = models.DateTimeField(auto_now_add=True, verbose_name='Дата створення')  # дата при створенні запису
+    time_updated = models.DateTimeField(auto_now=True, verbose_name='Дата оновлення')  # дата при зміні запису
     # user_created - користувач, який створив запис
     # user_updated - останній користувач, який змінив запис
 

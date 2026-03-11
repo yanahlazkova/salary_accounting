@@ -9,16 +9,16 @@
 
 <div class="row mb-5">
 
-    {% for field in fields %}
+    {% for key, field in fields.items %}
         <div class="col-md-6 mb-2">
             <div class="d-flex border-bottom mb-4 py-2">
 
                 <div class="text-info fw-semibold me-2 text-info" style="min-width: 55%;">
-                    {{ field.label }}:
+                    {{ key }}:
                 </div>
 
                 <div class="form-control border-info text-info">
-                    <strong class="float-end text-secondary">{{ field.value|default:"—" }}</strong>
+                    <strong class="float-end text-secondary">{{ field|default:"—" }}</strong>
                 </div>
 
             </div>
@@ -26,15 +26,17 @@
     {% endfor %}
 
 <p>
-  <button class="btn btn-primary" type="button" data-bs-toggle="collapse" data-bs-target="#collapseWidthExample" aria-expanded="false" aria-controls="collapseWidthExample">
+  <button class="btn btn-info" type="button" data-bs-toggle="collapse" data-bs-target="#collapseWidthExample" aria-expanded="false" aria-controls="collapseWidthExample">
     Info
   </button>
 </p>
 <div style="min-height: 120px;">
   <div class="collapse collapse-horizontal" id="collapseWidthExample">
-    <div class="card card-body" style="width: 300px;">
-        <strong class="float-end text-secondary">Створено</strong>{{ fields.time_created }}
-        <strong class="float-end text-secondary">Останнє оновлення</strong>{{ fields.time_updated }}
+    <div class="border-info card card-body" style="width: 500px;">
+        <strong class="mb-3 text-info">Інформація:</strong>
+        {% for key, value in info.items %}
+        <p><strong class="float-start text-secondary me-4">{{ key }}: </strong> {{ value }}</p>
+        {% endfor %}
     </div>
   </div>
 </div>

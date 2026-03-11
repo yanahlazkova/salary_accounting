@@ -4,9 +4,9 @@
     {% if obj.fields %}
     <div class="col">
         <ul class="list-group">
-            {% for field in obj.fields %}
+            {% for key, field in obj.fields.items %}
             <li class="list-group-item  text-info"><strong class="text-secondary">
-                {{ field.label }}:</strong> {{ field.value }}
+                {{ key }}:</strong> {{ field }}
             </li>
             {% endfor %}
         </ul>

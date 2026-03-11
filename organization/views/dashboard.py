@@ -18,9 +18,9 @@ class DashboardOrgView(SettingsOrgBaseView, SectionPageToolbarMixin, UIDashboard
         self.block_obj = BlockOneObject()
         self.slug_field = 'edrpou'
         self.slug_url_kwarg = 'edrpou'
-        self.block_obj.data = self.block_obj_model.objects.last()
-        self.block_obj.fields = get_obj_fields(self) if self.block_obj.data is not None else None
         self.block_obj.title = self.get_page_subtitle('org_name')
+        self.block_obj.data = self.block_obj_model.objects.last()
+        self.block_obj.fields, info = get_obj_fields(self.block_obj.data) if self.block_obj.data is not None else None
 
         buttons = ["create_org"] if self.block_obj.data is None else ["edit_org"]
         self.block_obj.toolbar_buttons = self.build_toolbar_buttons(buttons, self.block_obj.data)
@@ -31,7 +31,7 @@ class DashboardOrgView(SettingsOrgBaseView, SectionPageToolbarMixin, UIDashboard
         self.block_table = BlockTable()
         self.slug_field = 'kpk'
         self.slug_url_kwarg = 'kpk'
-        self.block_table.table_name = self.get_page_subtitle('table_name')
+        self.block_table.name = self.get_page_subtitle('table_name')
         self.block_table.table_titles = get_table_titles(self)
         self.block_table.table_rows = self.get_table_data()
         self.block_table.toolbar_buttons = self.build_toolbar_buttons(['create_ust'], self.table_model)
@@ -69,6 +69,8 @@ class DashboardOrgView(SettingsOrgBaseView, SectionPageToolbarMixin, UIDashboard
         ctx.update({
             'obj': self.get_obj_organization(),
         })
+        for c in ctx:
+            print(f'{c}: {ctx[c]}')
 
         ctx['table'] = self.get_block_ustanoty()
 
