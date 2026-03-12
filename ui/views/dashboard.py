@@ -6,18 +6,9 @@ from ui.mixins.page_toolbar import SectionPageToolbarMixin
 
 class BlockOneObject:
     def __init__(self):
-        self._data = None
         self._fields = None
         self._title = None
         self._toolbar_buttons: list[str] | None = None
-
-    @property
-    def data(self):
-        return self._data
-
-    @data.setter
-    def data(self, data):
-        self._data = data
 
     @property
     def title(self):
