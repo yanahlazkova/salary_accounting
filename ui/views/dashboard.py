@@ -1,7 +1,6 @@
 from django.views.generic import TemplateView
 
 from ui.mixins.htmx import HTMXTemplateMixin
-from ui.mixins.page_toolbar import SectionPageToolbarMixin
 
 
 class BlockOneObject:
@@ -111,34 +110,8 @@ class UIDashboardView(HTMXTemplateMixin, TemplateView):
         # Перетворюємо на список тільки при виклику, щоб не псувати базовий атрибут
         return list(self.page_content)
 
-    # def get_obj_fields(self):
-    #     if self.block_obj.fields is not None:
-    #         return self.block_obj.fields
-    #
-    #     fields_to_check = self.block_obj.fields or [f.name for f in self.block_obj_model._meta.fields if f.name != 'id' and f.name != 'time_created' and f.name != 'time_updated']
-    #
-    #     return [
-    #         {
-    #             'label': self.block_obj_model._meta.get_field(f).verbose_name,
-    #             'value': getattr(self.block_obj.data, f),
-    #          } for f in fields_to_check
-    #     ]
-
     def build_toolbar_buttons(self,button_names=None, obj=None):
         return []  # Заглушка, щоб не було помилки
-
-    # def get_table_titles(self):
-    #     """
-    #     Повертає заголовки таблиці
-    #     """
-    #     if self.block_table.table_titles is not None:
-    #         return self.block_table.table_titles
-    #
-    #     fields_to_check = [f.name for f in self.table_model._meta.fields]
-    #     return [
-    #         self.table_model._meta.get_field(f).verbose_name
-    #         for f in fields_to_check
-    #     ]
 
     def get_context_data(self, **kwargs):
         ctx = super().get_context_data(**kwargs)
@@ -146,6 +119,7 @@ class UIDashboardView(HTMXTemplateMixin, TemplateView):
         ctx.update({
             "page_content": self.get_page_content(),
         })
+
 
         return ctx
 

@@ -25,7 +25,7 @@ from ui.buttons.registry import UIButtons
 #     }
 
 
-def get_obj_fields(obj):
+def get_obj_data(obj):
     """ повертає словник з даними об'єкта """
 
     exclude_fields = {'id', 'time_created', 'time_updated'}
@@ -49,8 +49,10 @@ def get_obj_fields(obj):
         )
         for f in obj._meta.fields if f.name in exclude_fields
     }
-    print(f'info: {info_fields}')
-    return fields, info_fields
+    return {
+        'fields': fields,
+        'info': info_fields,
+    }
 
 
 def get_table_titles(self):

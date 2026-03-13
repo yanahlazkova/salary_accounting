@@ -5,7 +5,7 @@ from organization.views.base import SettingsOrgBaseView
 from ui.buttons.registry import UIButtons
 from ui.mixins.page_toolbar import SectionPageToolbarMixin
 from ui.views.dashboard import UIDashboardView, BlockOneObject, BlockTable
-from ui.views.helper import get_table_titles, get_obj_fields
+from ui.views.helper import get_table_titles, get_obj_data
 
 
 class DashboardOrgView(SettingsOrgBaseView, SectionPageToolbarMixin, UIDashboardView):
@@ -16,14 +16,18 @@ class DashboardOrgView(SettingsOrgBaseView, SectionPageToolbarMixin, UIDashboard
 
     def get_obj_organization(self):
         self.block_obj = BlockOneObject()
+
+        data = self.block_obj_model.objects.last()
+
         self.slug_field = 'edrpou'
         self.slug_url_kwarg = 'edrpou'
         self.block_obj.title = self.get_page_subtitle('org_name')
-        data = self.block_obj_model.objects.last()
-        self.block_obj.fields, info = get_obj_fields(data) if data is not None else None
 
-        buttons = ["create_org"] if self.block_obj.data is None else ["edit_org"]
-        self.block_obj.toolbar_buttons = self.build_toolbar_buttons(buttons, self.block_obj.data)
+        obj_data = get_obj_data(data) if data is not None else None
+
+        self.block_obj.fields = obj_data['fields']
+        buttons = ["create_org"] if data is None else ["edit_org"]
+        self.block_obj.toolbar_buttons = self.build_toolbar_buttons(buttons, data)
 
         return self.block_obj
 
@@ -68,11 +72,8 @@ class DashboardOrgView(SettingsOrgBaseView, SectionPageToolbarMixin, UIDashboard
 
         ctx.update({
             'obj': self.get_obj_organization(),
+            'table': self.get_block_ustanoty(),
         })
-        for c in ctx:
-            print(f'{c}: {ctx[c]}')
-
-        ctx['table'] = self.get_block_ustanoty()
 
         # for c in ctx:
         #     print(f'{c}: {ctx[c]}')
