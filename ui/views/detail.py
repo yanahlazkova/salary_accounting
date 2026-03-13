@@ -2,7 +2,7 @@ from django.views.generic import ListView, DetailView
 
 from ui.buttons.registry import UIButtons
 from ui.mixins.htmx import HTMXTemplateMixin
-from ui.views.helper import get_obj_fields
+from ui.views.helper import get_obj_data
 
 
 class UIDetailView(HTMXTemplateMixin, DetailView):
@@ -26,28 +26,17 @@ class UIDetailView(HTMXTemplateMixin, DetailView):
     def get_toolbar_buttons(self):
         return []  # Заглушка, щоб не було помилки
 
-    # def get_form_data(self):
-    #     obj = self.get_object()
-    #
-    #     return {
-    #         field.verbose_name: getattr(obj, field.name)
-    #         for field in obj._meta.fields
-    #     }
-
-
-
     def get_context_data(self, **kwargs):
         ctx = super().get_context_data(**kwargs)
 
-        field, info = get_obj_fields(self.object)
+        field = get_obj_data(self.object)
 
         ctx.update({
             "page_content": self.get_page_content(),
             'page_subtitle': self.page_subtitle,
             'toolbar_buttons': self.get_toolbar_buttons(),
-            # 'fields': model_to_fields(self.object),
-            'fields': field,
-            'info': info,
+            'fields': field['fields'],
+            'info': field['info'],
         })
 
         return ctx
