@@ -1,92 +1,43 @@
+from dataclasses import dataclass, field
+
 from django.views.generic import TemplateView
 
 from ui.mixins.htmx import HTMXTemplateMixin
 
 
+@dataclass
 class BlockOneObject:
-    def __init__(self):
-        self._fields = None
-        self._title = None
-        self._toolbar_buttons: list[str] | None = None
+    title: str = None
+    fields: dict = field(default_factory=dict)
+    toolbar_buttons: list = field(default_factory=list)
 
-    @property
-    def title(self):
-        return self._title
+    # def to_dict(self):
+    #     return {
+    #         'title': self.title,
+    #         'fields': self.fields,
+    #         'toolbar_buttons': self.toolbar_buttons,
+    #     }
+    #
+    # def __str__(self):
+    #     return str(self.to_dict())
 
-    @title.setter
-    def title(self, name):
-        self._title = name
-
-    @property
-    def fields(self):
-        return self._fields
-
-    @fields.setter
-    def fields(self, fields):
-        self._fields = fields
-
-    @property
-    def toolbar_buttons(self):
-        return self._toolbar_buttons
-
-    @toolbar_buttons.setter
-    def toolbar_buttons(self, buttons):
-        self._toolbar_buttons = buttons # self.build_toolbar_buttons(buttons, self._data)
-
-    def to_dict(self):
-        return {
-            'title': self._title,
-            # 'data': self._data,
-            'fields': self._fields,
-            'toolbar_buttons': self._toolbar_buttons,
-        }
-
-    def __str__(self):
-        return str(self.to_dict())
-
+@dataclass
 class BlockTable:
+    name: str = None
+    table_titles: list = field(default_factory=list)
+    table_rows: list = field(default_factory=list)
+    toolbar_buttons: list = field(default_factory=list)
 
-    def __init__(self):
-        self._table_name = None
-        self._table_titles = None
-        self._table_rows = None
-        self._toolbar_buttons = None
-
-    def to_dict(self):
-        return {
-            'name': self._table_name,
-            'table_titles': self._table_titles,
-            'table_rows': self._table_rows,
-            'toolbar_buttons': self._toolbar_buttons,
-        }
-
-    def __str__(self):
-        return str(self.to_dict())
-
-    @property
-    def table_name(self):
-        return self._table_name
-    @table_name.setter
-    def table_name(self, name):
-        self._table_name = name
-    @property
-    def table_titles(self):
-        return self._table_titles
-    @table_titles.setter
-    def table_titles(self, titles):
-        self._table_titles = titles
-    @property
-    def table_rows(self):
-        return self._table_rows
-    @table_rows.setter
-    def table_rows(self, rows):
-        self._table_rows = rows
-    @property
-    def toolbar_buttons(self):
-        return self._toolbar_buttons
-    @toolbar_buttons.setter
-    def toolbar_buttons(self, buttons):
-        self._toolbar_buttons = buttons
+    # def to_dict(self):
+    #     return {
+    #         'name': self.table_name,
+    #         'table_titles': self.table_titles,
+    #         'table_rows': self.table_rows,
+    #         'toolbar_buttons': self.toolbar_buttons,
+    #     }
+    #
+    # def __str__(self):
+    #     return str(self.to_dict())
 
 
 class UIDashboardView(HTMXTemplateMixin, TemplateView):

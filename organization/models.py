@@ -54,6 +54,7 @@ class Ustanova(models.Model):
     name = models.CharField(max_length=500,
                             verbose_name='Назва установи')
     kpk = models.PositiveIntegerField(
+        unique=True,
         verbose_name='КПК')
     time_created = models.DateTimeField(auto_now_add=True, verbose_name='Дата створення')  # дата при створенні запису
     time_updated = models.DateTimeField(auto_now=True, verbose_name='Дата оновлення')  # дата при зміні запису
@@ -63,8 +64,8 @@ class Ustanova(models.Model):
 
 
     class Meta:
-        verbose_name = 'Налаштування установи'
-        verbose_name_plural = 'Налаштування установи'
+        verbose_name = 'Установа'
+        verbose_name_plural = 'Установи'
 
     def __str__(self):
         return f"{self.name} ({self.kpk})"

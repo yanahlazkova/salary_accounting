@@ -33,8 +33,7 @@ class DashboardOrgView(SettingsOrgBaseView, SectionPageToolbarMixin, UIDashboard
 
     def get_block_ustanoty(self):
         self.block_table = BlockTable()
-        self.slug_field = 'kpk'
-        self.slug_url_kwarg = 'kpk'
+
         self.block_table.name = self.get_page_subtitle('table_name')
         self.block_table.table_titles = get_table_titles(self)
         self.block_table.table_rows = self.get_table_data()
@@ -42,27 +41,29 @@ class DashboardOrgView(SettingsOrgBaseView, SectionPageToolbarMixin, UIDashboard
         return self.block_table
 
     def get_table_data(self):
+        slug_field = 'kpk'
+        slug_url_kwarg = 'kpk'
         queryset = Ustanova.objects.all().values(*[
-                f.name for f in Ustanova._meta.fields
+            f.name for f in Ustanova._meta.fields
                 if f.name != 'id'
             ])
 
         rows_data = []
 
         for obj in queryset:
+            obj['time_created'] = obj['time_created'].strftime("%d.%m.%Y %H:%M:%S")
+            obj['time_updated'] = obj['time_updated'].strftime("%d.%m.%Y %H:%M:%S")
             rows_data.append({
                 'values': obj,
-                'row_url': reverse('organization:view_ust', kwargs={self.slug_url_kwarg: obj[self.slug_field]}), # .isoformat()}),
+                'row_url': reverse('organization:view_ust', kwargs={slug_url_kwarg: obj[slug_field]}), # .isoformat()}),
                 'buttons': [
                     UIButtons('view_ust')
                     .set_url_name('organization:view_ust')
                     .set_kwargs({
-                        self.slug_url_kwarg: obj[self.slug_field] # .isoformat()
+                        slug_url_kwarg: obj[slug_field] # .isoformat()
                     }),
                 ]
             })
-            obj['time_created'] = obj['time_created'].strftime("%d.%m.%Y")
-            obj['time_updated'] = obj['time_updated'].strftime("%d.%m.%Y")
         return rows_data
 
 
