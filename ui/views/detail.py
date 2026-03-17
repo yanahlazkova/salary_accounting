@@ -29,14 +29,14 @@ class UIDetailView(HTMXTemplateMixin, DetailView):
     def get_context_data(self, **kwargs):
         ctx = super().get_context_data(**kwargs)
 
-        field = get_obj_data(self.object)
+        fields = get_obj_data(self.object)
 
         ctx.update({
             "page_content": self.get_page_content(),
             'page_subtitle': self.page_subtitle,
             'toolbar_buttons': self.get_toolbar_buttons(),
-            'fields': field['fields'],
-            'info': field['info'],
+            'fields': fields['fields'],
+            'info': fields['info'],
         })
 
         return ctx

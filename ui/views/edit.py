@@ -5,11 +5,12 @@ from django.views.generic import UpdateView
 
 from ui.forms.base import BaseHTMXForm
 from ui.mixins.htmx import HTMXTemplateMixin
+from ui.views.helper import get_obj_data
 
 
 class UIEditView(HTMXTemplateMixin, UpdateView):
     """ Базовий клас для редагування об'єктів """
-    context_object_name = 'form_data'
+    # context_object_name = 'form_data'
     page_content: tuple[str] | None = ('ui/base_form.html',)
     page_subtitle: dict | None = None
     template_name_suffix = '_update'
