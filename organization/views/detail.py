@@ -9,8 +9,8 @@ class SettingsUstanovaDetailView(SettingsOrgBaseView, SectionPageToolbarMixin, U
     model = Ustanova
     toolbar_buttons = ['exit', 'edit_ust']
 
-    slug_field = 'pk'
-    slug_url_kwarg = 'pk'
+    slug_field = 'kpk'
+    slug_url_kwarg = 'kpk'
 
     form_class = UstanovaForm
 

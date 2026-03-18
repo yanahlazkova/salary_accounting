@@ -27,8 +27,8 @@ class SettingsUstanovaCreateView(SettingsOrgBaseView, SectionPageToolbarMixin, U
     model = Ustanova
     toolbar_buttons = ['exit']
 
-    slug_field = 'pk'
-    slug_url_kwarg = 'pk'
+    slug_field = 'kpk'
+    slug_url_kwarg = 'kpk'
 
     form_class = UstanovaForm
 

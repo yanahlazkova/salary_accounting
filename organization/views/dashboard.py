@@ -39,8 +39,8 @@ class DashboardOrgView(SettingsOrgBaseView, SectionPageToolbarMixin, UIDashboard
 
         self.block_table.model = Ustanova
 
-        self.block_table.slug_field = 'pk'
-        self.block_table.slug_url_kwarg = 'pk'
+        self.block_table.slug_field = 'kpk'
+        self.block_table.slug_url_kwarg = 'kpk'
 
         self.block_table.name = self.get_page_subtitle('table_name')
         self.block_table.table_titles = self.block_table.get_table_titles()
@@ -50,8 +50,8 @@ class DashboardOrgView(SettingsOrgBaseView, SectionPageToolbarMixin, UIDashboard
         return self.block_table
 
     def get_table_data(self):
-        slug_field = 'pk'
-        slug_url_kwarg = 'pk'
+        slug_field = 'kpk'
+        slug_url_kwarg = 'kpk'
         queryset = self.table_model.objects.all().values(*[
             f.name for f in Ustanova._meta.fields
                 if f.name != 'id'

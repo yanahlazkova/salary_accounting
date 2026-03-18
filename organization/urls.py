@@ -18,7 +18,7 @@ urlpatterns = [
     path('edit_org/<slug:edrpou>', SettingsOrgEditView.as_view(), name='edit_org'),
     path('new_org/', SettingsOrgCreateView.as_view(), name='create_org'),
     path('new_ustanova/', SettingsUstanovaCreateView.as_view(), name='create_ust'),
-    path('ustanovy/<slug:pk>', SettingsUstanovaDetailView.as_view(), name='view_ust'),
-    path('ustanovy/<slug:pk>/edit/', SettingsUstanovaEditView.as_view(), name='edit_ust'),
+    path('ustanovy/<slug:kpk>', SettingsUstanovaDetailView.as_view(), name='view_ust'),
+    path('ustanovy/<slug:kpk>/edit/', SettingsUstanovaEditView.as_view(), name='edit_ust'),
 
 ]

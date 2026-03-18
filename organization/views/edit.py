@@ -25,15 +25,14 @@ class SettingsUstanovaEditView(SettingsOrgBaseView, SectionPageToolbarMixin, UIE
     model = Ustanova
     toolbar_buttons = ['exit', 'view_ust']
 
-    slug_field = 'name'
-    slug_url_kwarg = 'name'
+    slug_field = 'kpk'
+    slug_url_kwarg = 'kpk'
 
     form_class = UstanovaForm
 
     def get_context_data(self, **kwargs):
         ctx = super().get_context_data(**kwargs)
         ctx['form_title'] = self.get_form_title('edit_ust')
-        print(f'form: {ctx['form']}')
 
         # for c in ctx:
         #     print(f'{c}: {ctx[c]}')
