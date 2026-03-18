@@ -29,6 +29,7 @@ class DashboardOrgView(SettingsOrgBaseView, SectionPageToolbarMixin, UIDashboard
 
         self.block_obj.fields = obj_data['fields']
         self.block_obj.toolbar_buttons = ["create_org"] if self.block_obj.data is None else ["edit_org"]
+        self.block_obj.toolbar_buttons = self.block_obj.get_toolbar_buttons()
 
         return self.block_obj
 
@@ -46,7 +47,8 @@ class DashboardOrgView(SettingsOrgBaseView, SectionPageToolbarMixin, UIDashboard
         self.block_table.table_titles = self.block_table.get_table_titles()
         self.block_table.table_rows = self.get_table_data()
         self.block_table.toolbar_buttons = ['create_ust']
-        # self.block_table.toolbar_buttons = self.build_toolbar_buttons(['create_ust'], self.table_model)
+        self.block_table.toolbar_buttons = self.block_table.get_toolbar_buttons()
+
         return self.block_table
 
     def get_table_data(self):
@@ -77,14 +79,10 @@ class DashboardOrgView(SettingsOrgBaseView, SectionPageToolbarMixin, UIDashboard
 
     def get_context_data(self, **kwargs):
         ctx = super().get_context_data(**kwargs)
-        block_object = self.get_obj_organization()
-        block_object.toolbar_buttons = block_object.get_toolbar_buttons()
-        block_table = self.get_block_ustanoty()
-        block_table.toolbar_buttons = block_table.get_toolbar_buttons()
 
         ctx.update({
-            'obj': block_object,
-            'table': block_table,
+            'obj': self.get_obj_organization(),
+            'table': self.get_block_ustanoty(),
         })
 
         # for c in ctx:
