@@ -59,12 +59,12 @@ def get_table_titles(self):
     """
     Повертає заголовки таблиці
     """
-    if self.block_table.table_titles is not None:
-        return self.block_table.table_titles
+    if self.table_titles is not None:
+        return self.table_titles
 
-    fields_to_check = [f.name for f in self.table_model._meta.fields]
+    fields_to_check = [f.name for f in self.model._meta.fields]
     return [
-        self.table_model._meta.get_field(f).verbose_name
+        self.model._meta.get_field(f).verbose_name
         for f in fields_to_check
     ]
 

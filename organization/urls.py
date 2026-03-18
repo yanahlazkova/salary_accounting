@@ -1,9 +1,10 @@
 from django.urls import path
 
-from organization.views.create import SettingsOrgCreateView
+from organization.views.create import SettingsOrgCreateView, SettingsUstanovaCreateView
 from organization.views.dashboard import DashboardOrgView
-from organization.views.edit import SettingsOrgEditView
-from organization.views1 import SettingsUstanovaCreateView, SettingsUstanovaDetailView, SettingsUstanovaEditView
+from organization.views.detail import SettingsUstanovaDetailView
+from organization.views.edit import SettingsOrgEditView, SettingsUstanovaEditView
+# from organization.views1 import SettingsUstanovaCreateView #, SettingsUstanovaDetailView #, SettingsUstanovaEditView
 
 # from organization.views.create import SettingsOrgCreateView, SettingsUstanovaCreateView
 # from organization.views.dashboard import DashboardOrgView

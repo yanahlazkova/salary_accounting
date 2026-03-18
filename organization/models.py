@@ -15,11 +15,11 @@ class Organization(models.Model):
         verbose_name='ЄДРПОУ',
         max_length=8,
         unique=True,
-#         name='ЄДРПОУ',
+        #         name='ЄДРПОУ',
     )
     mfo = models.PositiveIntegerField(
         verbose_name='МФО',
-#         name='МФО'
+        #         name='МФО'
     )
     address = models.TextField(
         verbose_name="Юридична адреса",
@@ -30,7 +30,6 @@ class Organization(models.Model):
 
     # user_created - користувач, який створив запис
     # user_updated - останній користувач, який змінив запис
-
 
     class Meta:
         verbose_name = "Налаштування організації"
@@ -52,16 +51,23 @@ class Organization(models.Model):
 
 class Ustanova(models.Model):
     name = models.CharField(max_length=500,
+                            unique=True,
                             verbose_name='Назва установи')
     kpk = models.PositiveIntegerField(
-        unique=True,
         verbose_name='КПК')
+    location = models.CharField(
+        max_length=500,
+        verbose_name='Розташування',
+        null=True,
+
+    )
+    address = models.TextField(verbose_name='адреса', blank=False, null=True)
+
     time_created = models.DateTimeField(auto_now_add=True, verbose_name='Дата створення')  # дата при створенні запису
     time_updated = models.DateTimeField(auto_now=True, verbose_name='Дата оновлення')  # дата при зміні запису
 
     # user_created - користувач, який створив запис
     # user_updated - останній користувач, який змінив запис
-
 
     class Meta:
         verbose_name = 'Установа'
@@ -76,7 +82,6 @@ class Ustanova(models.Model):
 
 
 class BankAccount(models.Model):
-
     FUND_CHOICES = {
         'general_fund': 'Загальний фонд',
         'special_fund': 'Спеціальний фонд',

@@ -32,6 +32,8 @@ class UstanovaForm(ModelForm):
         fields = [
             'name',
             'kpk',
+            'location',
+            'address',
         ]
 
     def __init__(self, *args, **kwargs):

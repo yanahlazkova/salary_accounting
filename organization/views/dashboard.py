@@ -17,33 +17,42 @@ class DashboardOrgView(SettingsOrgBaseView, SectionPageToolbarMixin, UIDashboard
     def get_obj_organization(self):
         self.block_obj = BlockOneObject()
 
-        data = self.block_obj_model.objects.last()
+        self.block_obj.app_label = self.app_label
 
-        self.slug_field = 'edrpou'
-        self.slug_url_kwarg = 'edrpou'
+        self.block_obj.slug_field = 'edrpou'
+        self.block_obj.slug_url_kwarg = 'edrpou'
         self.block_obj.title = self.get_page_subtitle('org_name')
 
-        obj_data = get_obj_data(data) if data is not None else None
+        self.block_obj.data = self.block_obj_model.objects.last()
+
+        obj_data = get_obj_data(self.block_obj.data) if self.block_obj.data is not None else None
 
         self.block_obj.fields = obj_data['fields']
-        buttons = ["create_org"] if data is None else ["edit_org"]
-        self.block_obj.toolbar_buttons = self.build_toolbar_buttons(buttons, data)
+        self.block_obj.toolbar_buttons = ["create_org"] if self.block_obj.data is None else ["edit_org"]
 
         return self.block_obj
 
     def get_block_ustanoty(self):
         self.block_table = BlockTable()
 
+        self.block_table.app_label = self.app_label
+
+        self.block_table.model = Ustanova
+
+        self.block_table.slug_field = 'kpk'
+        self.block_table.slug_url_kwarg = 'kpk'
+
         self.block_table.name = self.get_page_subtitle('table_name')
-        self.block_table.table_titles = get_table_titles(self)
+        self.block_table.table_titles = self.block_table.get_table_titles()
         self.block_table.table_rows = self.get_table_data()
-        self.block_table.toolbar_buttons = self.build_toolbar_buttons(['create_ust'], self.table_model)
+        self.block_table.toolbar_buttons = ['create_ust']
+        # self.block_table.toolbar_buttons = self.build_toolbar_buttons(['create_ust'], self.table_model)
         return self.block_table
 
     def get_table_data(self):
         slug_field = 'kpk'
         slug_url_kwarg = 'kpk'
-        queryset = Ustanova.objects.all().values(*[
+        queryset = self.table_model.objects.all().values(*[
             f.name for f in Ustanova._meta.fields
                 if f.name != 'id'
             ])
@@ -66,16 +75,19 @@ class DashboardOrgView(SettingsOrgBaseView, SectionPageToolbarMixin, UIDashboard
             })
         return rows_data
 
-
     def get_context_data(self, **kwargs):
         ctx = super().get_context_data(**kwargs)
-
+        block_object = self.get_obj_organization()
+        block_object.toolbar_buttons = block_object.get_toolbar_buttons()
+        block_table = self.get_block_ustanoty()
+        block_table.toolbar_buttons = block_table.get_toolbar_buttons()
 
         ctx.update({
-            'obj': self.get_obj_organization(),
-            'table': self.get_block_ustanoty(),
+            'obj': block_object,
+            'table': block_table,
         })
 
         # for c in ctx:
         #     print(f'{c}: {ctx[c]}')
         return ctx
+

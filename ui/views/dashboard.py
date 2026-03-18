@@ -1,43 +1,48 @@
 from dataclasses import dataclass, field
 
-from django.views.generic import TemplateView
+from django.db.models import Model
+from django.db.models.sql import Query
+from django.views.generic import TemplateView, DetailView
 
 from ui.mixins.htmx import HTMXTemplateMixin
+from ui.mixins.page_toolbar import SectionPageToolbarMixin
+from ui.views.helper import get_obj_data, get_table_titles
 
 
 @dataclass
-class BlockOneObject:
+class BlockOneObject(SectionPageToolbarMixin):
+    app_label: str = None
     title: str = None
+    data = None
     fields: dict = field(default_factory=dict)
     toolbar_buttons: list = field(default_factory=list)
+    slug_field: str = None
+    slug_url_kwargs: str = None
 
-    # def to_dict(self):
-    #     return {
-    #         'title': self.title,
-    #         'fields': self.fields,
-    #         'toolbar_buttons': self.toolbar_buttons,
-    #     }
-    #
-    # def __str__(self):
-    #     return str(self.to_dict())
+    def get_toolbar_buttons(self):
+        if self.toolbar_buttons is None:
+            return []
+        return self.build_toolbar_buttons(self.toolbar_buttons, self.data)
+
 
 @dataclass
-class BlockTable:
+class BlockTable(SectionPageToolbarMixin):
+    app_label: str = None
+    model: Model = None
     name: str = None
-    table_titles: list = field(default_factory=list)
+    table_titles = None # : list = field(default_factory=list)
     table_rows: list = field(default_factory=list)
     toolbar_buttons: list = field(default_factory=list)
+    slug_field: str = None
+    slug_url_kwargs: str = None
 
-    # def to_dict(self):
-    #     return {
-    #         'name': self.table_name,
-    #         'table_titles': self.table_titles,
-    #         'table_rows': self.table_rows,
-    #         'toolbar_buttons': self.toolbar_buttons,
-    #     }
-    #
-    # def __str__(self):
-    #     return str(self.to_dict())
+    def get_toolbar_buttons(self):
+        if self.toolbar_buttons is None:
+            return []
+        return self.build_toolbar_buttons(self.toolbar_buttons)
+
+    def get_table_titles(self):
+        return get_table_titles(self)
 
 
 class UIDashboardView(HTMXTemplateMixin, TemplateView):
@@ -70,7 +75,6 @@ class UIDashboardView(HTMXTemplateMixin, TemplateView):
         ctx.update({
             "page_content": self.get_page_content(),
         })
-
 
         return ctx
 
