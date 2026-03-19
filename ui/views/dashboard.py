@@ -28,7 +28,7 @@ class BlockOneObject(SectionPageToolbarMixin):
 @dataclass
 class BlockTable(SectionPageToolbarMixin):
     app_label: str = None
-    model: Model = None
+    model = None
     name: str = None
     table_titles = None # : list = field(default_factory=list)
     table_rows: list = field(default_factory=list)

@@ -1,4 +1,5 @@
 from django.apps import apps
+from django.utils import timezone
 
 from settings.forms import SocialSettingsForm
 from settings.models import SocialSettings
@@ -26,6 +27,8 @@ class SocialSettingsBaseView(AppSectionMetaMixin):
     def get_form_title(self, form_name):
         if form_name == 'create':
             return f'💰 {self.get_page_subtitle(form_name)}'
+        elif form_name == 'main':
+            return f'💰 {self.get_page_subtitle(form_name)} {timezone.now().year}'
         else:
             return f'💰 {self.get_page_subtitle(form_name)} {self.kwargs[self.slug_url_kwarg]}' # {self.kwargs['date']}'
 
