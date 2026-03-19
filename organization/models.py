@@ -55,13 +55,13 @@ class Ustanova(models.Model):
                             verbose_name='Назва установи')
     kpk = models.PositiveIntegerField(
         verbose_name='КПК')
-    location = models.CharField(
-        max_length=500,
-        verbose_name='Розташування',
-        null=True,
-
-    )
-    address = models.TextField(verbose_name='адреса', blank=False, null=True)
+    # location = models.CharField(
+    #     max_length=500,
+    #     verbose_name='Розташування',
+    #     null=True,
+    #
+    # )
+    # address = models.TextField(verbose_name='адреса', blank=False, null=True)
 
     time_created = models.DateTimeField(auto_now_add=True, verbose_name='Дата створення')  # дата при створенні запису
     time_updated = models.DateTimeField(auto_now=True, verbose_name='Дата оновлення')  # дата при зміні запису

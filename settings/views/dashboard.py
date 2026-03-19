@@ -110,15 +110,18 @@ class DashboardSettingsView(SocialSettingsBaseView,SectionPageToolbarMixin, UIDa
 
         return rows_data
 
+    def change_page_content(self):
+        page_content = self.get_page_content()
+        page_content[0] = 'social_settings.html'
+
+        return page_content
+
     def get_context_data(self, **kwargs):
         ctx = super().get_context_data(**kwargs)
 
-        ctx['page_content'].pop(0)
-        ctx['page_content'].insert(0, 'social_settings.html')
-
-        print(f'{ctx['page_content']}')
 
         ctx.update({
+            'page_content': self.change_page_content(),
             'social_indicators': self.get_social_settings(),
             'table': self.get_block_table_social_settings(),
         })
