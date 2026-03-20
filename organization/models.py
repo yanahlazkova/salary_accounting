@@ -111,6 +111,7 @@ class BankAccount(models.Model):
     )
     ustanova = models.ForeignKey(
         Ustanova,
+        verbose_name='Установа',
         on_delete=models.CASCADE,
         db_comment='Установа, якій належить рахунок',
         related_name='bank_accounts',

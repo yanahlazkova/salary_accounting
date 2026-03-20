@@ -19,13 +19,14 @@ class SettingsUstanovaDetailView(SettingsOrgBaseView, SectionPageToolbarMixin, U
     form_class = UstanovaForm
 
     def get_accounts_block(self):
-        accounts = BankAccount.objects.filter(ustanova=self.kwargs['ustanova__kpk'])
+        accounts_block = BlockTable()
         self.accounts_block.app_label = self.app_label
 
         self.accounts_block.model = BankAccount
 
         self.accounts_block.slug_field = 'account'
         self.accounts_block.slug_url_kwarg = 'account'
+        accounts = BankAccount.objects.filter(account=self.accounts_block.slug_url_kwarg)
 
         self.accounts_block.name = self.get_page_subtitle('table_accounts')
         self.accounts_block.table_titles = self.accounts_block.get_table_titles()
