@@ -1,6 +1,6 @@
 from django.urls import path
 
-from organization.views.create import SettingsOrgCreateView, SettingsUstanovaCreateView
+from organization.views.create import SettingsOrgCreateView, SettingsUstanovaCreateView, BankAccountCreateView
 from organization.views.dashboard import DashboardOrgView
 from organization.views.detail import SettingsUstanovaDetailView
 from organization.views.edit import SettingsOrgEditView, SettingsUstanovaEditView
@@ -23,5 +23,6 @@ urlpatterns = [
     path('ustanovy/<slug:kpk>', SettingsUstanovaDetailView.as_view(), name='view_ust'),
     path('ustanovy/<slug:kpk>/edit/', SettingsUstanovaEditView.as_view(), name='edit_ust'),
     path('account/<slug:account>', BankAccountDetailView.as_view(), name='view_account'),
+    path('new_account', BankAccountCreateView.as_view(), name='create_account'),
 
 ]

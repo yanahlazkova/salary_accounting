@@ -31,7 +31,7 @@ class SettingsUstanovaDetailView(SettingsOrgBaseView, SectionPageToolbarMixin, U
         self.accounts_block.name = self.get_page_subtitle('table_accounts')
         self.accounts_block.table_titles = self.accounts_block.get_table_titles()
         self.accounts_block.table_rows = get_table_data(self, revers_url='organization:view_account', queryset=accounts)
-        self.accounts_block.toolbar_buttons = ['exit']
+        self.accounts_block.toolbar_buttons = ['create_account']
         self.accounts_block.toolbar_buttons = self.accounts_block.get_toolbar_buttons()
 
         return self.accounts_block

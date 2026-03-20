@@ -1,5 +1,5 @@
-from organization.forms import OrganizationForm, UstanovaForm
-from organization.models import Organization, Ustanova
+from organization.forms import OrganizationForm, UstanovaForm, BankAccountForm
+from organization.models import Organization, Ustanova, BankAccount
 from organization.views.base import SettingsOrgBaseView
 from ui.mixins.page_toolbar import SectionPageToolbarMixin
 from ui.views.create import UICreateView
@@ -37,4 +37,19 @@ class SettingsUstanovaCreateView(SettingsOrgBaseView, SectionPageToolbarMixin, U
         ctx['form_title'] = self.get_form_title('create_ust')
         # for c in ctx:
         #     print(f'{c}: {ctx[c]}')
+        return ctx
+
+
+class BankAccountCreateView(SettingsOrgBaseView, SectionPageToolbarMixin, UICreateView):
+    model = BankAccount
+    toolbar_buttons = ['exit', 'view_account']
+    slug_field = 'account'
+    slug_url_kwarg = 'account'
+
+    form_class = BankAccountForm
+
+    def get_context_data(self, **kwargs):
+        ctx = super().get_context_data(**kwargs)
+        ctx['form_title'] = self.get_form_title('create_account')
+
         return ctx
