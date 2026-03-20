@@ -69,22 +69,25 @@ def get_table_titles(self):
     ]
 
 
-def get_table_data(self):
-    queryset = self._model.objects.all().values(*[
-        f.name for f in self._model._meta.fields
-        if f.name != 'id'
-    ])
+def get_table_data(self, revers_url, queryset=None):
+    if queryset is None:
+        queryset = self._model.objects.all().values(*[
+            f.name for f in self._model._meta.fields
+            if f.name != 'id'
+        ])
 
     rows_data = []
 
     for obj in queryset:
         rows_data.append({
             'values': obj,
-            'row_url': reverse('organization:view_ust', kwargs={self.slug_url_kwarg: obj[self.slug_field]}),
+            'row_url': reverse(viewname=revers_url, kwargs={self.slug_url_kwarg: obj[self.slug_field]}),
+            # 'row_url': reverse(viewname='organization:view_ust', kwargs={self.slug_url_kwarg: obj[self.slug_field]}),
             # .isoformat()}),
             'buttons': [
                 UIButtons('view_ust')
-                .set_url_name('organization:view_ust')
+                .set_url_name(revers_url)
+                # .set_url_name('organization:view_ust')
                 .set_kwargs({
                     self.slug_url_kwarg: obj[self.slug_field]  # .isoformat()
                 }),

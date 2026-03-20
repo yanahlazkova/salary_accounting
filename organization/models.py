@@ -53,8 +53,19 @@ class Ustanova(models.Model):
     name = models.CharField(max_length=500,
                             unique=True,
                             verbose_name='Назва установи')
+    short_name = models.CharField(max_length=20,
+                                  verbose_name='Скорочена назва',
+                                  blank=True,
+                                  null=True,)
     kpk = models.PositiveIntegerField(
         verbose_name='КПК')
+
+    head = models.CharField(max_length=500,
+                            verbose_name='Керівник',
+                            blank=True,
+                            null=True,
+                            # default='-',
+                            )
     # location = models.CharField(
     #     max_length=500,
     #     verbose_name='Розташування',
@@ -78,7 +89,7 @@ class Ustanova(models.Model):
 
     def get_absolute_url(self):
         """ щоб після будь-якої дії з об'єктом (створення, редагування) Django знав, куди "йти" """
-        return reverse('organization:settings')
+        return reverse(f'organization:view_ust', kwargs={'kpk': self.kpk})
 
 
 class BankAccount(models.Model):

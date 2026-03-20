@@ -1,0 +1,35 @@
+{% load static %}
+<h2 class="mb-4 text-primary">{{ form_title }}</h2>
+<div class="mb-3">
+    {% for button in toolbar_buttons %}
+    {% include 'ui/htmx_button.html' with button=button %}
+    {% endfor %}
+</div>
+
+<div class="card border-info mb-4">
+  <h5 class="card-header text-primary">{{ form_data.kpk }}</h5>
+  <div class="card-body">
+    <h5 class="card-title">{{ form_data.name }}</h5>
+      <p class="card-text text-secondary"><strong>Керівник:</strong> {{ form_data.head|default:"-" }}</p>
+
+    <p>
+        <button class="btn btn-primary" type="button" data-bs-toggle="collapse" data-bs-target="#collapseWidthExample"
+                aria-expanded="false" aria-controls="collapseWidthExample">
+            Info
+        </button>
+    </p>
+    <div>
+        <div class="collapse collapse-horizontal" id="collapseWidthExample">
+            <div class="card card-body border-info" style="width: 500px;">
+                <strong class="mb-3 text-info">Інформація:</strong>
+                {% for key, value in info.items %}
+                <p><strong class="float-start text-secondary me-4">{{ key }}: </strong> {{ value }}</p>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+  </div>
+</div>
+
+<hr>
+{% include "base_table.html" with table=accounts%}
