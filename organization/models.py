@@ -124,6 +124,11 @@ class BankAccount(models.Model):
     # user_created - користувач, який створив запис
     # user_updated - останній користувач, який змінив запис
 
+    def get_absolute_url(self):
+        """ щоб після будь-якої дії з об'єктом (створення, редагування) Django знав, куди "йти" """
+        return reverse(f'organization:view_ust', kwargs={'kpk': self.ustanova.kpk})
+
+
 
 class KEKV(models.Model):
     name = models.PositiveSmallIntegerField(

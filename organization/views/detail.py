@@ -19,20 +19,24 @@ class SettingsUstanovaDetailView(SettingsOrgBaseView, SectionPageToolbarMixin, U
     form_class = UstanovaForm
 
     def get_accounts_block(self):
-        accounts_block = BlockTable()
+        self.accounts_block = BlockTable()
         self.accounts_block.app_label = self.app_label
 
         self.accounts_block.model = BankAccount
 
         self.accounts_block.slug_field = 'account'
         self.accounts_block.slug_url_kwarg = 'account'
-        accounts = BankAccount.objects.filter(account=self.accounts_block.slug_url_kwarg)
+        accounts = BankAccount.objects.filter(ustanova=self.object).values()
 
         self.accounts_block.name = self.get_page_subtitle('table_accounts')
         self.accounts_block.table_titles = self.accounts_block.get_table_titles()
-        self.accounts_block.table_rows = get_table_data(self, revers_url='organization:view_account', queryset=accounts)
-        self.accounts_block.toolbar_buttons = ['exit']
+        revers_url = 'organization:view_account'
+        self.accounts_block.table_rows = get_table_data(self.accounts_block, revers_url=revers_url, queryset=accounts)
+        self.accounts_block.toolbar_buttons = ['create_account']
         self.accounts_block.toolbar_buttons = self.accounts_block.get_toolbar_buttons()
+        # print(f'accounts_block: {self.accounts_block}')
+        # print('accounts_block:', self.accounts_block.toolbar_buttons)
+        # self.accounts_block.toolbar_buttons = self.accounts_block.get_toolbar_buttons()
 
         return self.accounts_block
 

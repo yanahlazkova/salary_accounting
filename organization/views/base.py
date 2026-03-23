@@ -20,6 +20,8 @@ class SettingsOrgBaseView(AppSectionMetaMixin):
         if (form_name == 'create'
                 or form_name == 'create_org'
                 or form_name == 'create_ust'
+                or form_name == 'create_account'
+                or form_name == 'view_account'
                 or form_name == 'main'
             or form_name == 'table_name'
         ):

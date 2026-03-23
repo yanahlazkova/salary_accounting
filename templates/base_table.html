@@ -11,6 +11,7 @@
     <table class="table table-sm table-success table-striped table-bordered table-success table align-bottom table-hover mt-3">
         <thead>
         <tr class="table-info">
+            <th scope="col">№</th>
             {% for table_title in table.table_titles %}
             <th scope="col">{{ table_title|capfirst }}</th>
             {% endfor %}
@@ -29,7 +30,9 @@
             <td style="color: lightblue">{{ forloop.counter }}</td>
 
             {% for key, value in row.values.items %}
+            {% if key != 'id' %}
             <td>{{ value }}</td>
+            {% endif %}
             {% endfor %}
 
         </tr>

@@ -26,6 +26,7 @@ class OrganizationConfig(AppConfig):
         'view_ust': 'Перегляд установи КПК ',
         'copy_ust': 'Копіювання даних установи від ',
         'view_account': 'Перегляд банківського рахунку',
+        'create_account': 'Створення банківського рахунку',
         'edit_account': 'Редагування банківського рахунку',
     }
 
@@ -37,6 +38,9 @@ class OrganizationConfig(AppConfig):
         'edit_ust': 'edit_ust',
         'view_ust': 'view_ust',
         'copy_ust': 'copy_ust',
+        'create_account': 'create_account',
+        'view_account': 'view_account',
+        'edit_account': 'edit_account',
     }
 
 

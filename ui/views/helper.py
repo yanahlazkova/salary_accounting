@@ -62,7 +62,7 @@ def get_table_titles(self):
     if self.table_titles is not None:
         return self.table_titles
 
-    fields_to_check = [f.name for f in self.model._meta.fields]
+    fields_to_check = [f.name for f in self.model._meta.fields if f.name != 'id']
     return [
         self.model._meta.get_field(f).verbose_name
         for f in fields_to_check
@@ -85,7 +85,7 @@ def get_table_data(self, revers_url, queryset=None):
             # 'row_url': reverse(viewname='organization:view_ust', kwargs={self.slug_url_kwarg: obj[self.slug_field]}),
             # .isoformat()}),
             'buttons': [
-                UIButtons('view_ust')
+                UIButtons('view')
                 .set_url_name(revers_url)
                 # .set_url_name('organization:view_ust')
                 .set_kwargs({
