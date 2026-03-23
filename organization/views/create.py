@@ -42,7 +42,8 @@ class SettingsUstanovaCreateView(SettingsOrgBaseView, SectionPageToolbarMixin, U
 
 class BankAccountCreateView(SettingsOrgBaseView, SectionPageToolbarMixin, UICreateView):
     model = BankAccount
-    toolbar_buttons = ['exit', 'view_account']
+    toolbar_buttons = ['exit']
+
     slug_field = 'account'
     slug_url_kwarg = 'account'
 
@@ -50,6 +51,12 @@ class BankAccountCreateView(SettingsOrgBaseView, SectionPageToolbarMixin, UICrea
 
     def get_context_data(self, **kwargs):
         ctx = super().get_context_data(**kwargs)
-        ctx['form_title'] = self.get_form_title('create_account')
+        ctx.update({
+            'form_title': self.get_form_title('create_account'),
+            # 'ustanova':
+        })
+
+        for c in ctx:
+            print(f'{c}: {ctx[c]}')
 
         return ctx

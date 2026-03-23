@@ -40,6 +40,7 @@ class OrganizationConfig(AppConfig):
         'copy_ust': 'copy_ust',
         'create_account': 'create_account',
         'view_account': 'view_account',
+        'edit_account': 'edit_account',
     }
 
 

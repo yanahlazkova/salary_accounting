@@ -7,7 +7,8 @@ from ui.views.detail import UIDetailView
 
 class BankAccountDetailView(SettingsOrgBaseView, SectionPageToolbarMixin, UIDetailView):
     model = BankAccount
-    toolbar_buttons = ['exit']# , 'edit_ust']
+
+    toolbar_buttons = ['exit', 'edit_account']
 
     slug_field = 'account'
     slug_url_kwarg = 'account'
@@ -19,3 +20,4 @@ class BankAccountDetailView(SettingsOrgBaseView, SectionPageToolbarMixin, UIDeta
         ctx.update({
             'form_title': self.get_form_title('view_account'),
         })
+        return ctx
