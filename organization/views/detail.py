@@ -36,9 +36,6 @@ class SettingsUstanovaDetailView(SettingsOrgBaseView, SectionPageToolbarMixin, U
         self.accounts_block.toolbar_buttons = self.accounts_block.get_toolbar_buttons(
             extra_kwargs={'kpk': self.object.kpk}
         )
-        print(f'toolbar_buttons: {self.accounts_block.toolbar_buttons}')
-        # print('accounts_block:', self.accounts_block.toolbar_buttons)
-        # self.accounts_block.toolbar_buttons = self.accounts_block.get_toolbar_buttons()
 
         return self.accounts_block
 

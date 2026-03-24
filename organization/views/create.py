@@ -46,8 +46,7 @@ class BankAccountCreateView(SettingsOrgBaseView, SectionPageToolbarMixin, UICrea
     model = BankAccount
     toolbar_buttons = ['exit']
 
-    # slug_field = 'kpk'
-    # slug_url_kwarg = 'kpk'
+    # ustanova = None
 
     form_class = BankAccountForm
 
@@ -55,27 +54,30 @@ class BankAccountCreateView(SettingsOrgBaseView, SectionPageToolbarMixin, UICrea
 
         initial = super().get_initial()
 
-        ustanova_kpk = self.kwargs.get('ustanova_kpk')
+        ustanova_kpk = self.kwargs.get('kpk')
 
         if ustanova_kpk:
-            ustanova = get_object_or_404(Ustanova, kpk=ustanova_kpk)
-            initial['ustanova'] = ustanova.kpk
+            self.ustanova_obj = get_object_or_404(Ustanova, kpk=ustanova_kpk)
+            initial['ustanova'] = self.ustanova_obj.kpk
 
         return initial
+
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        print(f'kwargs: {kwargs}')
+        return kwargs
 
 
     def get_context_data(self, **kwargs):
         ctx = super().get_context_data(**kwargs)
 
-        ustanova_kpk = self.kwargs.get('ustanova_kpk')
-
         ctx.update({
             'form_title': self.get_form_title('create_account'),
-            # 'ustanova':
+            'ustanova:': self.ustanova_obj.name,
         })
 
-        # for c in ctx:
-        #     print(f'{c}: {ctx[c]}')
+        for c in ctx:
+            print(f'{c}: {ctx[c]}')
 
         return ctx
 

@@ -72,3 +72,12 @@ class BankAccountForm(ModelForm):
                                                attrs={'type': 'date',
                                                       'class': 'form-control w-50'})
                 field.input_formats = ["%Y-%m-%d"]
+
+        if 'ustanova' in self.fields:
+            # Залишаємо випадаючий список, але в ньому буде лише одна установа
+            ustanova_kpk = self.initial.get('ustanova') or self.data.get('ustanova')
+            if ustanova_kpk:
+                self.fields['ustanova'].queryset = Ustanova.objects.filter(kpk=ustanova_kpk)
+                # Додаємо атрибут disabled, щоб не можна було клацнути (опційно)
+                self.fields['ustanova'].widget.attrs['disabled'] = True
+
