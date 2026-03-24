@@ -61,6 +61,7 @@ class UIButtons:
             label="Додати",
             icon=self.icon or "bi bi-plus-circle",
             url_name=self.url_name,
+            url_kwargs=self.kwargs,
             css_class=self.css_class,
         )
 

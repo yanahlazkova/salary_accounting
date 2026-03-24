@@ -60,8 +60,8 @@ class BankAccountForm(ModelForm):
         ]
 
     def __init__(self, *args, **kwargs):
-        self.ustanova = kwargs.pop('ustanova', None)
-        print(f'ustanova: {self.ustanova}')
+        # self.ustanova = kwargs.pop('ustanova', None)
+        # print(f'ustanova: {self.ustanova}')
 
         super().__init__(*args, **kwargs)
         for field_name, field in self.fields.items():

@@ -89,10 +89,10 @@ class SectionPageToolbarMixin:
         urls = getattr(config, 'app_urls', {}) or {}
         return f'{self.app_label}:{urls[name]}'
 
-    def build_toolbar_buttons(self, button_names: list[str], obj=None):
+    def build_toolbar_buttons(self, button_names: list[str], obj=None, extra_kwargs=None):
         icons = self.get_app_icons()
 
-        kwargs = self.get_object_url_kwargs_for(obj) if obj else {}
+        kwargs = self.get_object_url_kwargs_for(obj) if obj else extra_kwargs
 
         buttons = []
 

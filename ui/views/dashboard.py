@@ -36,10 +36,10 @@ class BlockTable(SectionPageToolbarMixin):
     slug_field: str = None
     slug_url_kwargs: str = None
 
-    def get_toolbar_buttons(self):
+    def get_toolbar_buttons(self, extra_kwargs=None):
         if self.toolbar_buttons is None:
             return []
-        return self.build_toolbar_buttons(self.toolbar_buttons)
+        return self.build_toolbar_buttons(button_names=self.toolbar_buttons, extra_kwargs=extra_kwargs)
 
     def get_table_titles(self):
         return get_table_titles(self)
