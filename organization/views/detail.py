@@ -33,8 +33,10 @@ class SettingsUstanovaDetailView(SettingsOrgBaseView, SectionPageToolbarMixin, U
         revers_url = 'organization:view_account'
         self.accounts_block.table_rows = get_table_data(self.accounts_block, revers_url=revers_url, queryset=accounts)
         self.accounts_block.toolbar_buttons = ['create_account']
-        self.accounts_block.toolbar_buttons = self.accounts_block.get_toolbar_buttons()
-        # print(f'accounts_block: {self.accounts_block}')
+        self.accounts_block.toolbar_buttons = self.accounts_block.get_toolbar_buttons(
+            extra_kwargs={'kpk': self.object.kpk}
+        )
+        print(f'toolbar_buttons: {self.accounts_block.toolbar_buttons}')
         # print('accounts_block:', self.accounts_block.toolbar_buttons)
         # self.accounts_block.toolbar_buttons = self.accounts_block.get_toolbar_buttons()
 

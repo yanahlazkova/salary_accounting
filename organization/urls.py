@@ -17,7 +17,7 @@ urlpatterns = [
     path('ustanova/<slug:kpk>', SettingsUstanovaDetailView.as_view(), name='view_ust'),
     path('ustanova/edit/<slug:kpk>/', SettingsUstanovaEditView.as_view(), name='edit_ust'),
     path('ustanova/account/edit/<slug:account>', BankAccountEditView.as_view(), name='edit_account'),
-    path('ustanova/account/new/', BankAccountCreateView.as_view(), name='create_account'),
+    path('<slug:ustanova_kpk>/new-account/', BankAccountCreateView.as_view(), name='create_account'),
     # path('ustanova/account/new/<slug:kpk>/', BankAccountCreateView.as_view(), name='create_account'),
     path('ustanova/account/<slug:account>', BankAccountDetailView.as_view(), name='view_account'),
 
