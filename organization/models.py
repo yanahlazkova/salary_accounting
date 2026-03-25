@@ -55,8 +55,9 @@ class Ustanova(models.Model):
                             verbose_name='Назва установи')
     short_name = models.CharField(max_length=20,
                                   verbose_name='Скорочена назва',
-                                  blank=True,
-                                  null=True,)
+                                  # blank=True,
+                                  # null=True,
+                                  )
     kpk = models.PositiveIntegerField(
         verbose_name='КПК')
 
@@ -94,6 +95,7 @@ class Ustanova(models.Model):
 
 class BankAccount(models.Model):
     FUND_CHOICES = {
+        '': 'Дані не вибрані',
         'general_fund': 'Загальний фонд',
         'special_fund': 'Спеціальний фонд',
     }
@@ -106,8 +108,9 @@ class BankAccount(models.Model):
     )
     fund = models.CharField(
         choices=FUND_CHOICES,
-        verbose_name='Фонд коштів',
-        db_comment='Назва фонду коштів (загальний, спецкошти)'
+        verbose_name='Фонд виду коштів',
+        db_comment='Назва фонду коштів (загальний, спецкошти)',
+        # default='Рахунок не обраний'
     )
     ustanova = models.ForeignKey(
         Ustanova,
