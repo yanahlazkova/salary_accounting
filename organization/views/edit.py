@@ -1,5 +1,5 @@
 from organization.forms import OrganizationForm, UstanovaForm, BankAccountForm
-from organization.models import Organization, Ustanova, BankAccount
+from organization.models import Organization, Ustanova, BankAccount, Department
 from organization.views.base import SettingsOrgBaseView
 from ui.mixins.page_toolbar import SectionPageToolbarMixin
 from ui.views.edit import UIEditView
@@ -51,4 +51,19 @@ class BankAccountEditView(SettingsOrgBaseView, SectionPageToolbarMixin, UIEditVi
     def get_context_data(self, **kwargs):
         ctx = super().get_context_data(**kwargs)
         ctx['form_title'] = self.get_form_title('edit_account')
+        return ctx
+
+
+class DepartmentEditView(SettingsOrgBaseView, SectionPageToolbarMixin, UIEditView):
+    model = Department
+    toolbar_buttons = ['exit', 'view_department']
+
+    slug_field = 'department'
+    slug_url_kwarg = 'pk'
+
+    form_class = BankAccountForm
+
+    def get_context_data(self, **kwargs):
+        ctx = super().get_context_data(**kwargs)
+        ctx['form_title'] = self.get_form_title('edit_department')
         return ctx

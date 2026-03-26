@@ -93,9 +93,62 @@ class Ustanova(models.Model):
         return reverse(f'organization:view_ust', kwargs={'kpk': self.kpk})
 
 
+
+class Department(models.Model):
+    name = models.CharField(max_length=500,
+                            unique=True,
+                            verbose_name='Назва підгрупи')
+    # short_name = models.CharField(max_length=20,
+    #                               verbose_name='Скорочена назва',
+    #                               # blank=True,
+    #                               # null=True,
+    #                               )
+    ustanova = models.ForeignKey(
+        Ustanova,
+        verbose_name='Установа',
+        on_delete=models.CASCADE,
+        db_comment='Установа, якій підпорядковується підгрупа',
+        related_name='departments',
+        related_query_name='department',
+        # null=True,
+        # blank=True,
+    )
+
+    head = models.CharField(max_length=500,
+                            verbose_name='Керівник',
+                            blank=True,
+                            null=True,
+                            )
+    location = models.CharField(
+        max_length=500,
+        verbose_name='Розташування',
+        null=True,
+    )
+    # address = models.TextField(verbose_name='Адреса', blank=False, null=True)
+
+    time_created = models.DateTimeField(auto_now_add=True,
+                                        verbose_name='Дата створення')  # дата при створенні запису
+    time_updated = models.DateTimeField(auto_now=True, verbose_name='Дата оновлення')  # дата при зміні запису
+
+    # user_created - користувач, який створив запис
+    # user_updated - останній користувач, який змінив запис
+
+
+    class Meta:
+        verbose_name = 'Підгрупа'
+        verbose_name_plural = 'Підгрупа'
+
+    def __str__(self):
+        return f"{self.name} ({self.name})"
+
+    def get_absolute_url(self):
+        """ щоб після будь-якої дії з об'єктом (створення, редагування) Django знав, куди "йти" """
+        return reverse(f'organization:view_ust', kwargs={'kpk': self.ustanova.kpk})
+
+
 class BankAccount(models.Model):
     FUND_CHOICES = {
-        '': 'Дані не вибрані',
+        '': '- Дані не вибрані -',
         'general_fund': 'Загальний фонд',
         'special_fund': 'Спеціальний фонд',
     }
@@ -119,8 +172,8 @@ class BankAccount(models.Model):
         db_comment='Установа, якій належить рахунок',
         related_name='bank_accounts',
         related_query_name='bank_account',
-        null=True,
-        blank=True,
+        # null=True,
+        # blank=True,
     )
     time_created = models.DateTimeField(auto_now_add=True, verbose_name='Дата створення')  # дата при створенні запису
     time_updated = models.DateTimeField(auto_now=True, verbose_name='Дата оновлення')  # дата при зміні запису
