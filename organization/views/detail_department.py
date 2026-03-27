@@ -8,9 +8,9 @@ from ui.views.detail import UIDetailView
 class DepartmentDetailView(SettingsOrgBaseView, SectionPageToolbarMixin, UIDetailView):
     model = Department
 
-    toolbar_buttons = ['exit']
+    toolbar_buttons = ['exit', 'edit_department']
 
-    slug_field = 'department'
+    slug_field = 'pk'
     slug_url_kwarg = 'pk'
 
     form_class = DepartmentForm

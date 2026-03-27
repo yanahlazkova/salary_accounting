@@ -11,8 +11,8 @@ class SettingsUstanovaDetailView(SettingsOrgBaseView, SectionPageToolbarMixin, U
     model = Ustanova
     toolbar_buttons = ['exit', 'edit_ust']
 
-    accounts_block = None
-    departments_block = None
+    accounts_block = BlockTable()
+    departments_block = BlockTable()
 
     slug_field = 'kpk'
     slug_url_kwarg = 'kpk'
@@ -20,14 +20,14 @@ class SettingsUstanovaDetailView(SettingsOrgBaseView, SectionPageToolbarMixin, U
     form_class = UstanovaForm
 
     def get_accounts_block(self):
-        self.accounts_block = BlockTable()
+        # self.accounts_block = BlockTable()
         self.accounts_block.app_label = self.app_label
 
         self.accounts_block.model = BankAccount
 
         self.accounts_block.slug_field = 'account'
         self.accounts_block.slug_url_kwarg = 'account'
-        accounts = BankAccount.objects.filter(ustanova=self.object).values()
+        accounts = BankAccount.objects.filter(ustanova=self.object) #.values()
 
         self.accounts_block.name = self.get_page_subtitle('table_accounts')
         self.accounts_block.table_titles = self.accounts_block.get_table_titles()
@@ -42,14 +42,14 @@ class SettingsUstanovaDetailView(SettingsOrgBaseView, SectionPageToolbarMixin, U
 
 
     def get_departments_block(self):
-        self.departments_block = BlockTable()
+        # self.departments_block = BlockTable()
         self.departments_block.app_label = self.app_label
 
         self.departments_block.model = Department
 
-        self.departments_block.slug_field = 'department'
+        self.departments_block.slug_field = 'pk'
         self.departments_block.slug_url_kwarg = 'pk'
-        departments = Department.objects.filter(ustanova=self.object).values()
+        departments = Department.objects.filter(ustanova=self.object) #.values()
 
         self.departments_block.name = self.get_page_subtitle('table_departments')
         self.departments_block.table_titles = self.departments_block.get_table_titles()

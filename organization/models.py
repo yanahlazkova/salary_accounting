@@ -98,18 +98,13 @@ class Department(models.Model):
     name = models.CharField(max_length=500,
                             unique=True,
                             verbose_name='Назва підгрупи')
-    # short_name = models.CharField(max_length=20,
-    #                               verbose_name='Скорочена назва',
-    #                               # blank=True,
-    #                               # null=True,
-    #                               )
     ustanova = models.ForeignKey(
         Ustanova,
         verbose_name='Установа',
         on_delete=models.CASCADE,
         db_comment='Установа, якій підпорядковується підгрупа',
-        related_name='departments',
-        related_query_name='department',
+        related_name='ustanova',
+        related_query_name='ustanovas',
         # null=True,
         # blank=True,
     )
@@ -135,11 +130,11 @@ class Department(models.Model):
 
 
     class Meta:
-        verbose_name = 'Підгрупа'
-        verbose_name_plural = 'Підгрупа'
+        verbose_name = 'Підрозділ'
+        verbose_name_plural = 'Підрозділ'
 
     def __str__(self):
-        return f"{self.name} ({self.name})"
+        return f"{self.name} ({self.ustanova.kpk})"
 
     def get_absolute_url(self):
         """ щоб після будь-якої дії з об'єктом (створення, редагування) Django знав, куди "йти" """
