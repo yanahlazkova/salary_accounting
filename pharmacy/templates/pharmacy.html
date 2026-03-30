@@ -1,0 +1,9 @@
+{% load static %}
+<h2 class="mb-4 text-primary">{{ form_title }}</h2>
+<div class="mb-3">
+    {% for button in toolbar_buttons %}
+    {% include 'ui/htmx_button.html' with button=button %}
+    {% endfor %}
+</div>
+
+

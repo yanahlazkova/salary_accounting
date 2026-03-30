@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     'settings.apps.SettingsConfig',
     'ui.apps.UiConfig',
     'organization.apps.OrganizationConfig',
+    'pharmacy.apps.PharmacyConfig',
 ]
 
 MIDDLEWARE = [
