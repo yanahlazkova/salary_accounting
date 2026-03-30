@@ -19,28 +19,43 @@ class OrganizationConfig(AppConfig):
         'org_name': 'Данні організації',
         'table_name': 'Установи організації',
         'table_accounts': 'Банківські рахунки',
+        'table_departments': 'Підрозділи',
+
         'create_ust': 'Створення установи',
         'create_org': 'Введення даних організації',
+        'create_account': 'Створення банківського рахунку',
+        'create_department': 'Створення підрозділу для ',
+
         'edit_ust': 'Редагування установи',
         'edit_org': 'Редагування даних організації',
-        'view_ust': 'Перегляд установи КПК ',
-        'copy_ust': 'Копіювання даних установи від ',
-        'view_account': 'Перегляд банківського рахунку',
-        'create_account': 'Створення банківського рахунку',
         'edit_account': 'Редагування банківського рахунку',
+        'edit_department': 'Редагування підрозділу',
+
+        'view_ust': 'Перегляд установи КПК ',
+        'view_account': 'Перегляд банківського рахунку',
+        'view_department': 'Перегляд підрозділу',
+
+        'copy_ust': 'Копіювання даних установи від ',
     }
 
     app_urls = {
         'exit': 'settings',
+
         'create_org': 'create_org',
-        'edit_org': 'edit_org',
         'create_ust': 'create_ust',
-        'edit_ust': 'edit_ust',
-        'view_ust': 'view_ust',
-        'copy_ust': 'copy_ust',
         'create_account': 'create_account',
-        'view_account': 'view_account',
+        'create_department': 'create_department',
+
+        'edit_org': 'edit_org',
+        'edit_ust': 'edit_ust',
         'edit_account': 'edit_account',
+        'edit_department': 'edit_department',
+
+        'view_ust': 'view_ust',
+        'view_account': 'view_account',
+        'view_department': 'view_department',
+
+        'copy_ust': 'copy_ust',
     }
 
 

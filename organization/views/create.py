@@ -1,7 +1,8 @@
 from django.shortcuts import get_object_or_404
+from django.views.generic import FormView
 
-from organization.forms import OrganizationForm, UstanovaForm, BankAccountForm
-from organization.models import Organization, Ustanova, BankAccount
+from organization.forms import OrganizationForm, UstanovaForm, BankAccountCreateForm, DepartmentForm
+from organization.models import Organization, Ustanova, BankAccount, Department
 from organization.views.base import SettingsOrgBaseView
 from ui.mixins.page_toolbar import SectionPageToolbarMixin
 from ui.views.create import UICreateView
@@ -42,36 +43,36 @@ class SettingsUstanovaCreateView(SettingsOrgBaseView, SectionPageToolbarMixin, U
         return ctx
 
 
-class BankAccountCreateView(SettingsOrgBaseView, SectionPageToolbarMixin, UICreateView):
+class BankAccountCreateView(SettingsOrgBaseView, SectionPageToolbarMixin, UICreateView, FormView):
     model = BankAccount
     toolbar_buttons = ['exit']
 
-    # slug_field = 'kpk'
-    # slug_url_kwarg = 'kpk'
-
-    form_class = BankAccountForm
+    form_class = BankAccountCreateForm
 
     def get_initial(self):
 
         initial = super().get_initial()
 
-        ustanova_kpk = self.kwargs.get('ustanova_kpk')
+        ustanova_kpk = self.kwargs.get('kpk')
 
         if ustanova_kpk:
-            ustanova = get_object_or_404(Ustanova, kpk=ustanova_kpk)
-            initial['ustanova'] = ustanova.kpk
+            self.ustanova_obj = get_object_or_404(Ustanova, kpk=ustanova_kpk)
+            initial['ustanova'] = self.ustanova_obj
 
         return initial
+    #
+    # def get_form_kwargs(self):
+    #     kwargs = super().get_form_kwargs()
+    #     return kwargs
 
 
     def get_context_data(self, **kwargs):
         ctx = super().get_context_data(**kwargs)
 
-        ustanova_kpk = self.kwargs.get('ustanova_kpk')
-
         ctx.update({
-            'form_title': self.get_form_title('create_account'),
-            # 'ustanova':
+            'form_title': self.get_page_subtitle('create_account') + ' (' +
+                          self.ustanova_obj.short_name + ')',
+            'ustanova:': self.ustanova_obj.name,
         })
 
         # for c in ctx:
@@ -79,4 +80,37 @@ class BankAccountCreateView(SettingsOrgBaseView, SectionPageToolbarMixin, UICrea
 
         return ctx
 
+
+class DepartmentCreateView(SettingsOrgBaseView, SectionPageToolbarMixin, UICreateView):
+    model = Department
+
+    toolbar_buttons = ['exit']
+
+    form_class = DepartmentForm
+
+    def get_initial(self):
+
+        initial = super().get_initial()
+
+        ustanova_kpk = self.kwargs.get('kpk')
+
+        if ustanova_kpk:
+            self.ustanova_obj = get_object_or_404(Ustanova, kpk=ustanova_kpk)
+            initial['ustanova'] = self.ustanova_obj
+
+        return initial
+
+    def get_context_data(self, **kwargs):
+        ctx = super().get_context_data(**kwargs)
+
+        ctx.update({
+            'form_title': self.get_page_subtitle('create_department') + ' (' +
+                          self.ustanova_obj.short_name + ')',
+            'ustanova:': self.ustanova_obj.name,
+        })
+
+        # for c in ctx:
+        #     print(f'{c}: {ctx[c]}')
+
+        return ctx
 

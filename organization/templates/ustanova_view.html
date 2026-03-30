@@ -22,6 +22,7 @@
 
         <p>
             <button class="btn btn-primary" type="button" data-bs-toggle="collapse"
+                    data-bs-title="Popover title"
                     data-bs-target="#collapseWidthExample"
                     aria-expanded="false" aria-controls="collapseWidthExample">
                 Info
@@ -39,6 +40,16 @@
         </div>
     </div>
 </div>
-
+<ul class="nav nav-tabs">
+  <li class="nav-item">
+    <a class="nav-link active" aria-current="page" href="#">Рахунки</a>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link" href="#">Підрозділи</a>
+  </li>
+</ul>
 <hr>
 {% include "base_table.html" with table=accounts%}
+<hr>
+{% include "base_table.html" with table=departments%}
+
