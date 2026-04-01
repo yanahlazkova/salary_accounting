@@ -49,11 +49,14 @@ class SettingsUstanovaDetailView(SettingsOrgBaseView, SectionPageToolbarMixin, U
 
         self.departments_block.slug_field = 'pk'
         self.departments_block.slug_url_kwarg = 'pk'
-        departments = Department.objects.filter(ustanova=self.object) #.values()
 
         self.departments_block.name = self.get_page_subtitle('table_departments')
         self.departments_block.table_titles = self.departments_block.get_table_titles()
+
+        departments = Department.objects.filter(ustanova=self.object) #.values()
+
         revers_url = 'organization:view_department'
+
         self.departments_block.table_rows = get_table_data(self.departments_block, revers_url=revers_url, queryset=departments)
         self.departments_block.toolbar_buttons = ['create_department']
         self.departments_block.toolbar_buttons = self.departments_block.get_toolbar_buttons(
@@ -81,3 +84,95 @@ class SettingsUstanovaDetailView(SettingsOrgBaseView, SectionPageToolbarMixin, U
         # for c in ctx:
         #     print(f'{c}: {ctx[c]}')
         return ctx
+
+
+
+""" 1-й варіант """
+from django.urls import reverse
+
+def get_context_data1(self, **kwargs):
+    ctx = super().get_context_data(**kwargs)
+
+    # 1. Отримуємо QuerySet
+    departments_qs = Department.objects.filter(ustanova=self.object)
+
+    # 2. Визначаємо список полів, які хочемо вивести (крім ID)
+    # Можна вказати явно, або отримати всі автоматично
+    included_fields = ['name', 'code', 'description']  # Замініть на ваші назви полів
+
+    # 3. Формуємо заголовки (table_titles)
+    # Беремо verbose_name кожного поля з метаданих моделі
+    titles = [
+        Department._meta.get_field(field).verbose_name
+        for field in included_fields
+    ]
+
+    # 4. Формуємо рядки (table_rows)
+    rows = []
+    for dept in departments_qs:
+        rows.append({
+            # URL для HTMX (наприклад, перегляд відділу)
+            'row_url': reverse('organization:department_view', kwargs={'pk': dept.pk}),
+
+            # Дані рядка у форматі {поле: значення}
+            'values': {
+                field: getattr(dept, field) for field in included_fields
+            }
+        })
+
+    # 5. Збираємо все в об'єкт table, як очікує шаблон
+    ctx['table'] = {
+        'table_titles': titles,
+        'table_rows': rows
+    }
+
+    return ctx
+
+""" 2-й варіант """
+
+def get_context_data2(self, **kwargs):
+    ctx = super().get_context_data(**kwargs)
+
+    # 1. Отримуємо ваш QuerySet
+    departments = Department.objects.filter(ustanova=self.object)
+
+    # 2. Визначаємо, які саме поля ми хочемо бачити в таблиці
+    # Наприклад: 'code' (код підрозділу) та 'name' (назва)
+    fields_to_show = ['code', 'name']
+
+    # 3. Автоматично витягуємо verbose_name для заголовків
+    table_titles = []
+    for field_name in fields_to_show:
+        field = Department._meta.get_field(field_name)
+        table_titles.append(field.verbose_name)
+
+    # 4. Формуємо рядки для таблиці
+    table_rows = []
+    for dept in departments:
+        values_dict = {}
+        for field_name in fields_to_show:
+            # Отримуємо значення поля
+            value = getattr(dept, field_name)
+
+            # Якщо це поле з choices, красиво виведемо його текст, а не ключ
+            if hasattr(dept, f'get_{field_name}_display'):
+                value = getattr(dept, f'get_{field_name}_display')()
+
+            values_dict[field_name] = value
+
+        # Додаємо 'id', якщо ваш шаблон або HTMX його використовує
+        values_dict['id'] = dept.id
+
+        table_rows.append({
+            # Генеруємо URL для переходу на цей підрозділ
+            'row_url': reverse('organization:department_detail', kwargs={'pk': dept.pk}),
+            'values': values_dict
+        })
+
+    # 5. Пакуємо все в один словник 'table', як того вимагає ваш HTML
+    ctx['table'] = {
+        'table_titles': table_titles,
+        'table_rows': table_rows
+    }
+
+    return ctx
