@@ -31,7 +31,7 @@
 
             {% for key, value in row.values.items %}
             {% if key != 'id' %}
-            <td>{{ value }}</td>
+            <td>{{ value | default:'-' }}</td>
             {% endif %}
             {% endfor %}
 
