@@ -1,10 +1,10 @@
 from django.urls import path
 
 from pharmacy import views
-from pharmacy.views import PharmacyView
+from pharmacy.views import PharmacyView, PharmacyBasePageView
 
 app_name = 'pharmacy'
 
 urlpatterns = [
-    path('', PharmacyView.as_view(), name='pharmacy'),
+    path('', PharmacyBasePageView.as_view(), name='pharmacy'),
 ]
