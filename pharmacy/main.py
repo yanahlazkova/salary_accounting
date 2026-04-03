@@ -262,11 +262,32 @@ def get_drugs_apteka911_from_sitemap():
                         full_url = url_tag.text
 
                         if 'borispol' in full_url:
-                            alias = "/" + "/".join(full_url.split("/")[3:-1])
-                            drug_code = alias.split('-')[-1].strip('/')
+                            # # 1. Отримуємо шлях без домену
+                            # path = full_url.replace('https://apteka911.ua/shop/', '')
+                            #
+                            # # 2. Видаляємо мовний префікс, якщо він є
+                            # path = path.replace('/ua/', '/').replace('/ru/', '/')
+                            #
+                            # # 3. Видаляємо місто (останній сегмент)
+                            # # Розбиваємо шлях, прибираємо останній елемент і збираємо назад
+                            # parts = [p for p in path.split('/') if p]  # ['shop', 'item-p123', 'borispol']
+                            # alias = "/" + "/".join(full_url.split("/")[3:-1])
+                            path = full_url.replace('https://apteka911.ua', '')
+
+                            parts = [p for p in path.split('/') if p]
+                            alias = "/" + "/".join(parts[:-1])  # прибрали тільки місто
+
+                            full_url = "/".join(full_url.split('/')[:-1])
+
+                            # 4. Витягуємо код товару (останній шматочок аліасу)
+                            drug_code = alias.split('-')[-1]
+
+                            # alias = "/" + "/".join(full_url.split("/")[3:-1])
+                            # drug_code = alias.split('-')[-1].strip('/')
 
                             # 4. Наповнюємо нашу множину
                             unique_codes.add(drug_code)
+
 
                             # Швидка перевірка в оперативній пам'яті без смикання Django
                             if drug_code in existing_codes:
@@ -318,6 +339,8 @@ def get_drugs_apteka911_from_sitemap():
                                         else:
                                             # Звичайна пауза між запитами
                                             time.sleep(random.uniform(5, 15))
+                                    else:
+                                        print(f"УВАГА: Для {alias} історія порожня. Можливо, alias невірний.")
 
                             except Exception as e:
                                 print(f"Помилка API на {alias}: {e}")
