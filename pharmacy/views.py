@@ -7,6 +7,7 @@ from django.urls import reverse_lazy
 from django.views import View
 from django.views.generic import ListView, TemplateView
 
+from pharmacy.helper_pharmacy import search_drugs_apteka911
 from pharmacy.models import Drug
 from ui.mixins.htmx import HTMXTemplateMixin
 from ui.mixins.section import AppSectionMetaMixin
@@ -66,8 +67,8 @@ class PharmacyBasePageView(PharmacyBaseView, HTMXTemplateMixin, TemplateView):
 
 class PharmacyListDrugsView(PharmacyBaseView, HTMXTemplateMixin, ListView):
     model = Drug
-    template_name = "base_table.html" # HTMX поверне тільки цей фрагмент
-    htmx_template_name = 'base_table.html'
+    # template_name = "base_table.html" # HTMX поверне тільки цей фрагмент
+    htmx_template_name = 'list_drugs.html'
     # context_object_name = 'table' # Щоб base_table.html бачив дані як 'table'
 
     def post(self, request, *args, **kwargs):
@@ -78,13 +79,14 @@ class PharmacyListDrugsView(PharmacyBaseView, HTMXTemplateMixin, ListView):
         # Дістаємо query з POST (якщо форма відправлена) або з GET
         query = self.request.POST.get('search_query') or self.request.GET.get('search_query', '')
         if query:
-            return self.model.objects.filter(name__icontains=query)
+            return search_drugs_apteka911(query)
+            # return self.model.objects.filter(name__icontains=query)
         return self.model.objects.none()
 
     def get_context_data(self, **kwargs):
         ctx = super().get_context_data(**kwargs)
         ctx.update({
             'word_search': self.request.POST.get('search_query', ''),
-            'drugs': ['drug1', 'drug2', 'drug3', 'drug4'],
+            'drugs': self.queryset,
         })
         return ctx

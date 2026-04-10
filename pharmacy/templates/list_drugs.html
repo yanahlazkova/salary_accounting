@@ -1,8 +1,39 @@
 {% load static %}
 {% if word_search %}
-<h3 class="mb-4 text-primary">Результат пошуку: {{ word_search }}</h3>
+<h3 class="mb-4 text-primary">Результат пошуку: <span class="text-warning">"{{ word_search }}"</span></h3>
     {% if drugs %}
-        {% include 'base_table.html' with table=drugs%}
+        <table class="table table-sm table-success table-striped table-bordered table-success table align-bottom table-hover mt-3">
+        <thead>
+        <tr class="table-info">
+            <th scope="col">№</th>
+            {% for table_title in table.table_titles %}
+            <th scope="col">{{ table_title|capfirst }}</th>
+            {% endfor %}
+        </tr>
+        </thead>
+        <tbody class="table-group-divider">
+        {% for row in table.table_rows %}
+        <tr role="button"
+            tabindex="0"
+            hx-get="{{ row.row_url }}"
+            hx-target="#main-content"
+            hx-push-url="true"
+            onkeypress="if(event.key === 'Enter') this.click();"
+            style="cursor: pointer;"
+        >
+            <td style="color: lightblue">{{ forloop.counter }}</td>
+
+            {% for key, value in row.values.items %}
+            {% if key != 'id' %}
+            <td>{{ value | default:'-' }}</td>
+            {% endif %}
+            {% endfor %}
+
+        </tr>
+        {% endfor %}
+
+        </tbody>
+    </table>
     {% else %}
         <p>Препарат {{ word_search }} не знайдено</p>
     {% endif %}
