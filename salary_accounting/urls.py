@@ -26,6 +26,7 @@ urlpatterns = [
     # path('directories', include('directories.urls')),
     path('settings/', include('settings.urls', namespace='settings')),
     path('organization/', include('organization.urls', namespace='organization')),
+    path('pharmacy/', include('pharmacy.urls', namespace='pharmacy')),
     path('admin/', admin.site.urls),
 ]
 
