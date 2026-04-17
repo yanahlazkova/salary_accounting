@@ -1,14 +1,16 @@
 import time
-
 import requests, json
 from django.http import HttpResponse
 from django.shortcuts import render
 from django.urls import reverse_lazy
 from django.views import View
 from django.views.generic import ListView, TemplateView
+from django.utils import timezone
 
-from pharmacy.helper_pharmacy import search_drugs_apteka911
-from pharmacy.models import Drug
+
+from pharmacy.helper_pharmacy import get_all_drugs, save_drugs
+# from pharmacy.helper_pharmacy import search_drugs_apteka911
+from pharmacy.models import Drug_apteka911
 from ui.mixins.htmx import HTMXTemplateMixin
 from ui.mixins.section import AppSectionMetaMixin
 
@@ -22,6 +24,23 @@ list_pharmacy = {
 class PharmacyBaseView(AppSectionMetaMixin):
     app_label = 'pharmacy'
 
+
+class PharmacyUpdateDB(PharmacyBaseView, HTMXTemplateMixin, TemplateView):
+    page_content = ('pharmacy.html',)
+
+    def get_context_data(self, **kwargs):
+        ctx = super().get_context_data(**kwargs)
+        drugs = get_all_drugs()
+        save_drugs(drugs)
+        today = timezone.now().date()
+        print(f'today: {Drug_apteka911.objects
+              .filter(time_updated__lte=today)
+              .order_by('-time_updated')
+              .first()}')
+        ctx['update'] = {
+            'apteka911': today.strftime("%d.%m.%Y %H:%M:%S"),
+        }
+        return ctx
 
 class PharmacyBasePageView(PharmacyBaseView, HTMXTemplateMixin, TemplateView):
     page_content = ('pharmacy.html',)
@@ -48,7 +67,6 @@ class PharmacyBasePageView(PharmacyBaseView, HTMXTemplateMixin, TemplateView):
     #     # Якщо це звичайний POST (наприклад, без JS), рендеримо всю сторінку
     #     return self.render_to_response(context)
 
-
     def get_page_content(self):
         # Перетворюємо на список тільки при виклику, щоб не псувати базовий атрибут
         return list(self.page_content)
@@ -66,9 +84,10 @@ class PharmacyBasePageView(PharmacyBaseView, HTMXTemplateMixin, TemplateView):
 
 
 class PharmacyListDrugsView(PharmacyBaseView, HTMXTemplateMixin, ListView):
-    model = Drug
+    model = Drug_apteka911
     # template_name = "base_table.html" # HTMX поверне тільки цей фрагмент
     htmx_template_name = 'list_drugs.html'
+
     # context_object_name = 'table' # Щоб base_table.html бачив дані як 'table'
 
     def post(self, request, *args, **kwargs):
@@ -78,10 +97,10 @@ class PharmacyListDrugsView(PharmacyBaseView, HTMXTemplateMixin, ListView):
     def get_queryset(self):
         # Дістаємо query з POST (якщо форма відправлена) або з GET
         query = self.request.POST.get('search_query') or self.request.GET.get('search_query', '')
-        if query:
-            return search_drugs_apteka911(query)
-            # return self.model.objects.filter(name__icontains=query)
-        return self.model.objects.none()
+        # if query:
+        #     return search_drugs_apteka911(query)
+        #     # return self.model.objects.filter(name__icontains=query)
+        # return self.model.objects.none()
 
     def get_context_data(self, **kwargs):
         ctx = super().get_context_data(**kwargs)

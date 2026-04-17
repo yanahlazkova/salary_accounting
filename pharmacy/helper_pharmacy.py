@@ -1,84 +1,291 @@
+import gzip
+import os
+import django
+
+import random
+import time
+import xml.etree.ElementTree as ET
+from io import BytesIO
 import requests
 from fake_useragent import UserAgent
 
-def search_drugs_apteka911(search_term):
+from pharmacy.models import Drug_apteka911
+
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'salary_accounting.settings')
+django.setup()
+
+
+"""
+архіви у sitemap (apteka911):
+https://apteka911.ua/content/sitemap/sitemap-products-0.xml.gz - дуже важкий (містить посилання на фото)
+https://apteka911.ua/content/sitemap/sitemap-groups-0.xml.gz - по групам (за основним компонентом)
+https://apteka911.ua/content/sitemap/sitemap-promotions-0.xml - акції
+https://apteka911.ua/content/sitemap/sitemap-medical-uses-group-0.xml.gz - симптоми та захворювання
+https://apteka911.ua/content/sitemap/sitemap-drugs-manual-0.xml.gz - /drugs/k*** (інструкції)
+https://apteka911.ua/content/sitemap/sitemap-drugs-items-0.xml.gz - довідник ліків
+https://apteka911.ua/content/sitemap/sitemap-tns-0.xml.gz - препарати
+https://apteka911.ua/content/sitemap/sitemap-filters-1.xml.gz
+
+"""
+
+"""
+1. get_category_urls()
+2. parse_category()
+3. save_to_db()
+"""
+
+def parse_category(session, url, url_page1, headers):
+    """ Парсинг категорії (ключове місце) """
+    drugs = []
+
+    try:
+        res = session.get(url_page1, headers=headers, timeout=10)
+        res.raise_for_status()
+        data = res.json()
+
+        pages = data.get('data', {}).get('pages', {}).get('npages', 1)
+
+        # ✅ ДОДАЄМО ПЕРШУ СТОРІНКУ
+        products = data.get('data', {}).get('ajax_products', [])
+        drugs.extend(products)
+
+        # ✅ ІНШІ СТОРІНКИ
+        for page in range(2, pages + 1):
+            page_url = f"{url}/page={page}"
+            page_products = get_drugs_apteka911_by_category(session, page_url, headers)
+            drugs.extend(page_products)
+
+        return drugs
+
+    except Exception as e:
+        print(f"[ERROR] parse_category: {e}")
+        return []
+
+
+def get_drugs_apteka911_by_category(session, target_url, headers):
+    print(f'full_url: {target_url}')
+    try:
+        response = session.get(target_url, headers=headers, timeout=10)
+        if response.status_code == 200:
+            json_data = response.json()
+            return json_data.get('data', {}).get('ajax_products', [])
+        else:
+            print(f"Помилка: {response.status_code}")
+            return []
+
+
+    except Exception as e:
+        print(f"Помилка API: {e}")
+        time.sleep(10)
+        return []
+
+
+def get_all_drugs():
     ua = UserAgent()
     session = requests.Session()
 
     headers = {
-        "User-Agent": ua.random
-    }
-
-    # 1. зайти на сайт (отримати cookies)
-    session.get("https://apteka911.ua/ua/", headers=headers)
-
-    # 2. подивитись що отримали
-    print(session.cookies.get_dict())
-
-    url = "https://apteka911.ua/ua/shop/search"
-
-
-    headers.update({
+        'accept': 'application/json, text/javascript, */*; q=0.01',
         'x-requested-with': 'XMLHttpRequest',
-        'content-type': 'application/x-www-form-urlencoded; charset=UTF-8',
         'origin': 'https://apteka911.ua',
-        'referrer': 'https://apteka911.ua',
-    })
-
-    payload = {
-        "q": search_term,
     }
 
-    response = session.post(url, headers=headers, data=payload, timeout=15)
-
-    print(f"Status: {response.status_code}")
-    data = response.json()
-
-    results = data.get("data", {}).get("results", [])
-
-    list_alias = [
-        item['alias']
-        for item in results
-        if item['alias'].startswith('/drugs/')
-    ]
-
-    return {
-        'table_rows': [
-            get_products_from_alias(session, headers.copy(), alias)
-            for alias in list_alias[:3]  # обмеж для тесту
-        ]
-    }
-
-
-def get_products_from_alias(session, headers, alias):
-    headers.update({
-        'x-requested-with': 'XMLHttpRequest',
-        'content-type': 'application/json',
-        'origin': 'https://apteka911.ua',
-        'referer': 'https://apteka911.ua',
+    session.cookies.update({
+        'site_version': 'desktop',
+        'wucmf_region': '89',
     })
 
-    cookies = session.cookies.copy()
-    cookies.update({
-        'wucmf_region': '89'
-    })
+    drugs = []
+    seen_ids = set()
 
-    # витягуємо slug
-    category = alias.split("/")[-1]
+    sitemap_url = 'https://apteka911.ua/sitemap.xml'
 
-    url = "https://apteka911.ua/shop/api/catalog/search"
+    res = session.get(sitemap_url, headers={'User-Agent': ua.random}, timeout=15)
+    root = ET.fromstring(res.content)
 
-    payload = {
-        "url": alias,  # 🔥 ключовий момент
-        # "page": 1
-    }
+    namespace = {'ns': 'http://www.sitemaps.org/schemas/sitemap/0.9'}
 
-    response = session.post(url, json=payload, headers=headers, cookies=cookies, timeout=15)
+    for sitemap in root.findall('ns:sitemap/ns:loc', namespace):
+        url = sitemap.text
 
-    print(response.status_code)
-    print(response.text)
-    return response.json()
+        if 'filters' not in url or not url.endswith('.gz'):
+            continue
 
+        print(f"[SITEMAP] {url}")
+
+        gz = session.get(url, timeout=20)
+
+        with gzip.GzipFile(fileobj=BytesIO(gz.content)) as f:
+            inner_root = ET.fromstring(f.read())
+
+        for loc in inner_root.findall('ns:url/ns:loc', namespace):
+            category_url = loc.text
+
+            headers.update({
+                "referer": "https://apteka911.ua/ua",
+                "user-agent": ua.random,
+            })
+            category_url_page1 = f'{category_url}/page=1'
+
+            category_drugs = parse_category(session, category_url, category_url_page1, headers)
+
+            for drug in category_drugs:
+                pid = drug.get('productID')
+
+                if pid and pid not in seen_ids:
+                    seen_ids.add(pid)
+                    drugs.append(drug)
+
+            time.sleep(random.uniform(3, 8))
+
+    return drugs
+
+
+def save_drugs(drugs):
+    for drug in drugs:
+        try:
+            Drug_apteka911.objects.update_or_create(
+                productID=drug.get('productID'),
+                defaults={
+                    'productName': drug.get('productName'),
+                    'alias': drug.get('alias'),
+                    'brandName': drug.get('brandName'),
+                    'formName': drug.get('formName'),
+                    'productAvail': True if drug.get('productAvail') == 'yes' else False,
+                    'productCountry': drug.get('productCountry'),
+                    'productForm': drug.get('productForm'),
+                    'productMeasure': drug.get('productMeasure'),
+                    'productMname': drug.get('productMname'),
+                    'productPrice': drug.get('productPrice'),
+                    'img': build_image_url(drug),
+
+                    # 'img': f"https://apteka911.ua{drug.get('dataUrl', '')}{drug.get('productThumbs', {}).get('webpmid', {}).get('file', '')}",
+
+                }
+            )
+        except Exception as e:
+            print(f"[DB ERROR]: {e}")
+
+
+def build_image_url(drug):
+    try:
+        return (
+            "https://apteka911.ua"
+            + drug.get('dataUrl', '')
+            + drug.get('productThumbs', {}).get('webpmid', {}).get('file', '')
+        )
+    except:
+        try:
+            return (
+                    "https://apteka911.ua"
+                    + drug.get('dataUrl', '')
+                    + drug.get('productThumbs', {}).get('mid', {}).get('file', '')
+            )
+        except:
+            return None
+
+
+# def search_drugs_apteka911(search_term):
+#     ua = UserAgent()
+#     session = requests.Session()
+#     base_url = "https://apteka911.ua/ua/"
+#
+#     session.get(base_url, headers={"User-Agent": ua.random})
+#
+#     headers = {
+#         "accept": "application/json, text/javascript, */*; q=0.01",
+#         "content-type": "application/x-www-form-urlencoded; charset=UTF-8",
+#         "x-requested-with": "XMLHttpRequest",  # КРИТИЧНО: саме це каже серверу віддати JSON
+#         # Referer має бути ПОВНИМ URL сторінки препарату
+#         "referer": base_url,
+#         "user-agent": ua.random # "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
+#     }
+#
+#     # 1. зайти на сайт (отримати cookies)
+#     session.cookies.update({
+#         'site_version': 'desktop',
+#         'wucmf_region': '89',
+#         # 'PHPSESSID': '601c139cc7ac20fdcbecfdfd55095eb8'
+#     })
+#
+#     # 2. подивитись що отримали
+#     print(session.cookies.get_dict())
+#
+#     url = "https://apteka911.ua/ua/shop/search"
+#     # url = "https://apteka911.ua/ua/shop"
+#     # url = "https://apteka911.ua/shop/api/catalog/search"
+#
+#
+#     # headers.update({
+#     #     'x-requested-with': 'XMLHttpRequest',
+#     #     'content-type': 'application/x-www-form-urlencoded; charset=UTF-8',
+#     #     'origin': 'https://apteka911.ua',
+#     #     'referrer': 'https://apteka911.ua',
+#     # })
+#
+#     payload = {
+#         "q": search_term,
+#     }
+#
+#     response = session.post(url, headers=headers, data=payload, timeout=15)
+#
+#     print(f"Status: {response.status_code}")
+#     data = response.json()
+#
+#     results = data.get("data", {}).get("results", [])
+#
+#     list_alias = [
+#         item['alias']
+#         for item in results
+#         if item['alias'].startswith('/drugs/')
+#     ]
+#
+#     return {
+#         'table_rows': [
+#             get_products_from_alias(session, headers.copy(), alias)
+#             for alias in list_alias[:3]  # обмеж для тесту
+#         ]
+#     }
+#
+#
+# def get_products_from_alias(session, headers, alias):
+#     url = f"https://apteka911.ua{alias}"
+#     response = session.get(url)
+#     print(response.text)
+#     headers.update({
+#         'x-requested-with': 'XMLHttpRequest',
+#         'content-type': 'application/json',
+#         'origin': 'https://apteka911.ua',
+#         'referer': 'https://apteka911.ua',
+#     })
+#
+#     cookies = session.cookies.copy()
+#     cookies.update({
+#         'wucmf_region': '89'
+#     })
+#
+#     # витягуємо slug
+#     category = alias.split("/")[-1]
+#
+#     url = "https://apteka911.ua/shop/api/catalog/search"
+#
+#     payload = {
+#         "url": alias,  # 🔥 ключовий момент
+#         # "page": 1
+#     }
+#
+#     response = session.post(url, json=payload, headers=headers, cookies=cookies, timeout=15)
+#
+#     print(response.status_code)
+#     print(response.text)
+#     return response.json()
+from django.utils import timezone
+
+
+drugs = get_all_drugs()
+save_drugs(drugs)
+today = timezone.now().date()
+print(f'today: {today}')
 """ 
 fetch("https://apteka911.ua/ua/shop/search", {
   "headers": {
@@ -100,4 +307,38 @@ fetch("https://apteka911.ua/ua/shop/search", {
   "mode": "cors",
   "credentials": "include"
 });
+
+curl 'https://apteka911.ua/ua/shop/lekarstvennyie-preparatyi/ot_boli_v_gorle/page=2' \
+  -H 'accept: application/json, text/javascript, */*; q=0.01' \
+  -H 'accept-language: ru,uk;q=0.9,en-US;q=0.8,en;q=0.7' \
+  -b 'PHPSESSID=601c139cc7ac20fdcbecfdfd55095eb8; 
+      PHPSESSID=601c139cc7ac20fdcbecfdfd55095eb8; 
+      site_version=desktop; 
+      traffic_source={"gclid":null,"utm_source":"google","utm_medium":"organic","utm_campaign":"none","utm_term":"none","utm_content":"none"}; 
+      userStatusSession=1776153117309; 
+      user_type=new; 
+      _gcl_au=1.1.2124508941.1776153119; 
+      _hjSession_6368290=eyJpZCI6IjI2YmQzYzdlLTYyNzItNDg0Mi1hYzVkLTUxNDNhMzBlNjRiMiIsImMiOjE3NzYxNTMxMTg4MzgsInMiOjAsInIiOjAsInNiIjowLCJzciI6MCwic2UiOjAsImZzIjoxLCJzcCI6MH0=; 
+      _fbp=fb.1.1776153118884.481103544605656094; 
+      cookie_chat_id=b826c2f75f334163a5c0a84b257fef51; 
+      am-uid-f=e91df7ee-d51d-44e4-96d3-eb42ce37e2d0; 
+      sc=1056581F-6060-F377-73F5-74534F7AD3CE; 
+      cookie_consent=1; 
+      noshowban_9f873692e73d8f6b5e04ae3ede770015=1; 
+      _hjSessionUser_6368290=eyJpZCI6IjIwZThmYTU2LTA4M2QtNWZiYS1hMjA2LWZmYmE2YTYwZDBlYyIsImNyZWF0ZWQiOjE3NzYxNTMxMTg4MzYsImV4aXN0aW5nIjp0cnVlfQ==; 
+      _gid=GA1.2.1252109726.1776153273; 
+      _ga=GA1.1.1513671076.1776153119; 
+      1776153117309=1776153472773; 
+      _ga_VRYFSBB3XF=GS2.1.s1776153119$o1$g1$t1776153491$j37$l0$h0' \
+  -H 'priority: u=1, i' \
+  -H 'referer: https://apteka911.ua/ua/shop/lekarstvennyie-preparatyi/ot_boli_v_gorle' \
+  -H 'sec-ch-ua: "Google Chrome";v="147", "Not.A/Brand";v="8", "Chromium";v="147"' \
+  -H 'sec-ch-ua-mobile: ?0' \
+  -H 'sec-ch-ua-platform: "Windows"' \
+  -H 'sec-fetch-dest: empty' \
+  -H 'sec-fetch-mode: cors' \
+  -H 'sec-fetch-site: same-origin' \
+  -H 'user-agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/147.0.0.0 Safari/537.36' \
+  -H 'x-requested-with: XMLHttpRequest'
+  
 """

@@ -197,13 +197,30 @@ from io import BytesIO
 import requests
 from fake_useragent import UserAgent
 
-from pharmacy.models import Drug
+from pharmacy.models import Drug_apteka911
 
+
+# def get_drugs_apteka911_by_category(session, target_url, headers):
+#     print(f'full_url: {target_url}')
+#     try:
+#         response = session.get(target_url, headers=headers, timeout=10)
+#         if response.status_code == 200:
+#             json_data = response.json()
+#             return json_data.get('data', {}).get('ajax_products', [])
+#         else:
+#             print(f"Помилка: {response.status_code}")
+#             return []
+#
+#
+#     except Exception as e:
+#         print(f"Помилка API: {e}")
+#         time.sleep(10)
+#         return []
 
 # from your_app.models import Drug # Переконайтеся, що модель імпортована
-LIST_DRUGS = []
 
 def get_drugs_apteka911_from_sitemap():
+    LIST_DRUGS = []
 
     # 1. Ініціалізація генератора юзер-агентів
     ua = UserAgent()
@@ -220,13 +237,11 @@ def get_drugs_apteka911_from_sitemap():
         'origin': origin_url
     }
 
-    unique_codes = set()
-
     print(f"--- Підготовка: Завантаження існуючих кодів з БД ---")
     # 2. ОПТИМІЗАЦІЯ БД: Отримуємо всі існуючі коди одним запитом
     # values_list('code', flat=True) повертає плоский список, який ми конвертуємо в set для миттєвого пошуку O(1)
-    existing_codes = set(Drug.objects.values_list('code', flat=True))
-    print(f"У базі вже є {len(existing_codes)} записів.")
+    # existing_codes = set(Drug.objects.values_list('code', flat=True))
+    # print(f"У базі вже є {len(existing_codes)} записів.")
 
     print(f"--- Завантаження головного sitemap ---")
 
@@ -245,7 +260,7 @@ def get_drugs_apteka911_from_sitemap():
         for sitemap_tag in sitemaps:
             url_text = sitemap_tag.text
 
-            if 'drugs-items' in url_text and url_text.endswith('gz'):
+            if 'filters' in url_text and url_text.endswith('gz'):
                 print(f"Відкриваємо архів: {url_text}")
 
                 try:
@@ -260,104 +275,64 @@ def get_drugs_apteka911_from_sitemap():
                     random_count = random.randint(80, 120)
 
                     for url_tag in inner_root.findall('ns:url/ns:loc', namespace):
-                        full_url = url_tag.text
-                        print(f'full_url: {full_url}')
-                        print(f'len full_url: {len(full_url)}')
-
-                        alias = '/' + '/'.join(full_url.split('/')[-2:])
-                        print(f'alias: {alias}')
-                        print(f'len alias: {len(alias)}')
-
-                        # referer = f"https://apteka911.ua{alias}"
-                        # print(f'referer: {referer}')
-
-
-                            # # 1. Отримуємо шлях без домену
-                            # path = full_url.replace('https://apteka911.ua/shop/', '')
-                            #
-                            # # 2. Видаляємо мовний префікс, якщо він є
-                            # path = path.replace('/ua/', '/').replace('/ru/', '/')
-                            #
-                            # # 3. Видаляємо місто (останній сегмент)
-                            # # Розбиваємо шлях, прибираємо останній елемент і збираємо назад
-                            # parts = [p for p in path.split('/') if p]  # ['shop', 'item-p123', 'borispol']
-                            # alias = "/" + "/".join(full_url.split("/")[3:-1])
-                            # path = full_url.replace('https://apteka911.ua', '')
-                            #
-                            # parts = [p for p in path.split('/') if p]
-                            # alias = "/" + "/".join(parts[:-1])  # прибрали тільки місто
-                            #
-                            # full_url = "/".join(full_url.split('/')[:-1])
-
-                            # 4. Витягуємо код товару (останній шматочок аліасу)
-                        drug_code = alias.split('-')[-1]
-
-                            # alias = "/" + "/".join(full_url.split("/")[3:-1])
-                            # drug_code = alias.split('-')[-1].strip('/')
-
-                            # 4. Наповнюємо нашу множину
-                        unique_codes.add(drug_code)
-
-
-                            # Швидка перевірка в оперативній пам'яті без смикання Django
-                        if drug_code in existing_codes:
-                            continue
+                        target_url = url_tag.text
+                        print(f'full_url: {target_url}')
 
                         headers = headers_base.copy()
-                        headers['User-Agent'] = ua.random
-                        # headers['referer'] = referer
 
-                        payload = {
-                            'pushHistory': 'true',
-                            'alias': alias
-                        }
-                        cookies = {
-                            "site_version": "desktop",
-                            "wucmf_region": "89"  # Київ/Бориспіль
-                        }
+                        headers.update({
+                            "referer": f"https://apteka911.ua/ua",
+                            "user-agent": ua.random,
+                        })
+
+                        session.cookies.update({
+                            'site_version': 'desktop',
+                            'wucmf_region': '89',
+                            # 'PHPSESSID': '601c139cc7ac20fdcbecfdfd55095eb8' - може змінюватись
+                        })
+
+                        page_number = 1
+                        # target_url = 'https://apteka911.ua/shop/lekarstvennyie-preparatyi/ot_boli_v_gorle'
+                        full_url = f'{target_url}/page={page_number}'
 
                         try:
-                            res = session.post(api_url, headers=headers, data=payload, cookies=cookies, timeout=10)
+                            res = session.get(target_url, headers=headers, timeout=10)
                             if res.status_code == 200:
                                 json_data = res.json()
+                                # отримаємо кількість сторінок
+                                full_pages = json_data.get('data', {}).get('pages', {}).get('npages', 1)
+                                products = json_data.get('data', {}).get('ajax_products', [])
+                                add_to_database(products)
 
-                                history = json_data.get('data', {}).get('history', [])
-                                if history:
-                                    # Тут можна додати перевірку на наявність ціни, якщо вона приходить у цьому API
-                                    item_data = history[0]
-                                    real_name = item_data.get('name')
-                                    price = item_data.get('price', 0)  # Приклад витягування ціни
+                                print(f'Count pages: {full_pages}')
+                                # якщо кількість сторінок більше 1, змінемо target_url і знов виконаємо запит
+                                if full_pages > 1:
+                                    for page in range(2, full_pages+1):
+                                        full_url = f'{target_url}/page={page}'
+                                        products = get_drugs_apteka911_by_category(session, full_url, headers)
+                                        add_to_database(products)
 
-                                    Drug.objects.update_or_create(
-                                        code=drug_code,
-                                        defaults={
-                                            'name': real_name,
-                                            'alias': alias,
-                                            'price': price # Якщо ви додасте це поле в модель
-                                        }
-                                    )
-                                    # Обов'язково додаємо новий код до нашого in-memory сету
-                                    existing_codes.add(drug_code)
-                                    print(f"Збережено: {real_name} ({drug_code})")
+                                processed_count += 1
 
-                                    processed_count += 1
-                                    print(f"[{processed_count}] Збережено: {real_name}")
 
-                                    # 3. ПЕРЕВІРКА: кожні 100 препаратів
-                                    if processed_count % random_count == 0:
-                                        random_count = random.randint(80, 120)
-                                        long_wait = random.uniform(30, 60)  # Пауза на 30-60 секунд
-                                        print(
-                                            f"--- Оброблено {processed_count} товарів. Велика пауза: {long_wait:.1f} сек. ---")
-                                        time.sleep(long_wait)
-                                    else:
-                                        # Звичайна пауза між запитами
-                                        time.sleep(random.uniform(5, 15))
-                                else:
-                                    print(f"УВАГА: Для {alias} історія порожня. Можливо, alias невірний.")
+                            else:
+                                print(f"Помилка: {res.status_code}")
+
+                            # 3. ПЕРЕВІРКА: кожні 100 препаратів
+                            if processed_count % random_count == 0:
+                                random_count = random.randint(80, 120)
+                                long_wait = random.uniform(30, 60)  # Пауза на 30-60 секунд
+                                print(
+                                    f"--- Оброблено {processed_count} товарів. Велика пауза: {long_wait:.1f} сек. ---")
+                                time.sleep(long_wait)
+                            else:
+                                # Звичайна пауза між запитами
+                                time.sleep(random.uniform(5, 15))
+                            # else:
+                            #     print(f"УВАГА: Для  історія порожня. Можливо, alias невірний.")
 
                         except Exception as e:
-                            print(f"Помилка API на {alias}: {e}")
+                            print(f"Помилка API: {e}")
                             time.sleep(10)
 
                 except Exception as e:
@@ -368,13 +343,35 @@ def get_drugs_apteka911_from_sitemap():
     except Exception as e:
         print(f"Критична помилка під час виконання: {e}")
 
-    return unique_codes
+    return LIST_DRUGS
 
+def add_to_database(list_drugs):
 
-# Запуск
-codes = get_drugs_apteka911_from_sitemap()
-print(f"\n--- ГОТОВО ---")
-print(f"Знайдено унікальних товарів: {len(codes)}")
+    for drug in list_drugs:
+        Drug_apteka911.objects.update_or_create(
+            productID=drug.get('productID'),
+            defaults={
+                'productName': drug.get('productName'),
+                'alias': drug.get('alias'),
+                'brandName': drug.get('brandName'),
+                'formName': drug.get('formName'),
+                'productAvail': True if drug.get('productAvail') == 'yes' else False,
+                'productCountry': drug.get('productCountry'),
+                'productForm': drug.get('productForm'),
+                'productMeasure': drug.get('productMeasure'),
+                'productMname': drug.get('productMname'),
+                'productPrice': drug.get('productPrice'),
+                'img': f"https://apteka911.ua{drug.get('dataUrl', '')}{drug.get('productThumbs', {}).get('webpmid', {}).get('file', '')}",
+            }
+    )
+#
+#
+#
+# # Запуск
+# list_drugs = get_drugs_apteka911_from_sitemap()
+# # add_to_database(list_drugs)
+# print(f"\n--- ГОТОВО ---")
+# print(f"Знайдено унікальних товарів: {len(codes)}")
 # print(f"Приклади кодів: {list(codes)[:10]}")
 #
 # # Збереження у файл для подальшої роботи
@@ -405,47 +402,261 @@ print(f"Знайдено унікальних товарів: {len(codes)}")
 # });
 
 import requests
-
-
-def test_single_request():
-    url = "https://apteka911.ua/ua/shop/search"
-
-    # Спробуйте саме цей alias, він перевірений
-    target_alias = "/drugs/glyukozamin-d811"
-    # target_alias = "/drugs/glitsin-d803"
-
-    headers = {
-        "accept": "application/json, text/javascript, */*; q=0.01",
-        "content-type": "application/x-www-form-urlencoded; charset=UTF-8",
-        "x-requested-with": "XMLHttpRequest",
-        # Referer має бути ПОВНИМ URL сторінки препарату
-        "referer": f"https://apteka911.ua{target_alias}",
-        "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
-    }
-
-    # # Спробуйте спочатку БЕЗ куків, якщо не вийде — додайте PHPSESSID з браузера
-    # cookies = {
-    #     "site_version": "desktop",
-    #     "wucmf_region": "89"  # Київ/Бориспіль
-    # }
-
-    payload = {
-        "pushHistory": "true",
-        "alias": target_alias
-    }
-
-    response = requests.post(url, headers=headers, data=payload)
-
-    print(f"Status: {response.status_code}")
-    data = response.json()
-
-    if data.get("data", {}).get("history"):
-        print("УРА! Дані отримано:")
-        print(data["data"]["history"][0]["name"])
-        print(data["data"]["history"][0])
-    else:
-        print("Знову порожньо. Спробуйте змінити 'target_alias' на '/shop/glitsin-d803'")
-        print(f"Відповідь сервера: {data}")
+#
+#
+# def test_single_request():
+#     ua = UserAgent()
+#     session = requests.Session()
+#     base_url = "https://apteka911.ua/ua/"
+#
+#     # # Спробуйте саме цей alias, він перевірений
+#     # target_alias = "/drugs/glyukozamin-d811"
+#     # # target_alias = "/drugs/glitsin-d803"
+#
+#     session.get(base_url, headers={"User-Agent": ua.random})
+#
+#     headers = {
+#         "accept": "application/json, text/javascript, */*; q=0.01",
+#         "content-type": "application/x-www-form-urlencoded; charset=UTF-8",
+#         "x-requested-with": "XMLHttpRequest", # КРИТИЧНО: саме це каже серверу віддати JSON
+#         # Referer має бути ПОВНИМ URL сторінки препарату
+#         "referer": f"https://apteka911.ua/ua",
+#         "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
+#     }
+#
+#     # Спробуйте спочатку БЕЗ куків, якщо не вийде — додайте PHPSESSID з браузера
+#     session.cookies.update({
+#         'site_version': 'desktop',
+#         'wucmf_region': '89',
+#         # 'PHPSESSID': '601c139cc7ac20fdcbecfdfd55095eb8'
+#     })
+#
+#     page_number = 1
+#     # target_url = f"https://apteka911.ua/ua/shop/lekarstvennyie-preparatyi/ot_boli_v_gorle/page={page_number}"
+#     target_url = f'https://apteka911.ua/shop/lekarstvennyie-preparatyi/glyukosat-ot_boli_v_myishtsah_i_sustavah/page={page_number}'
+#
+#     response = session.get(target_url, headers=headers, timeout=10)
+#
+#
+#     if response.status_code == 200:
+#         data_json = response.json()
+#         products = data_json['data'].get('ajax_products', [])
+#
+#         for item in products:
+#             name = item.get('productName')
+#             price = item.get('productPrice')
+#             print(f"Товар: {name} | Ціна: {price} грн")
+#         print(f'All pages: {data_json['data']['pages'].get('page')}')
+#         print(f'len: {len(products)}')
+#
+#     else:
+#         print(f"Помилка: {response.status_code}")
 
 
 # test_single_request()
+
+def parse_category(session, url, url_page1, headers):
+    """ Парсинг категорії (ключове місце) """
+    print(f'full_url: {url_page1}')
+    drugs = []
+
+    try:
+        res = session.get(url_page1, headers=headers, timeout=10)
+        res.raise_for_status()
+        data = res.json()
+
+        pages = data.get('data', {}).get('pages', {}).get('npages', 1)
+
+        # ✅ ДОДАЄМО ПЕРШУ СТОРІНКУ
+        products = data.get('data', {}).get('ajax_products', [])
+        save_drugs(products)
+
+        # drugs.extend(products)
+
+
+        # ✅ ІНШІ СТОРІНКИ
+        for page in range(2, pages + 1):
+            page_url = f"{url}/page={page}"
+            page_products = get_drugs_apteka911_by_category(session, page_url, headers)
+            # drugs.extend(page_products)
+            save_drugs(page_products)
+
+        return drugs
+
+    except Exception as e:
+        print(f"[ERROR] parse_category: {e}")
+        return []
+
+
+def get_drugs_apteka911_by_category(session, target_url, headers):
+    try:
+        response = session.get(target_url, headers=headers, timeout=10)
+        if response.status_code == 200:
+            json_data = response.json()
+            return json_data.get('data', {}).get('ajax_products', [])
+        else:
+            print(f"Помилка: {response.status_code}")
+            return []
+
+
+    except Exception as e:
+        print(f"Помилка API: {e}")
+        time.sleep(10)
+        return []
+
+
+def get_all_drugs():
+    ua = UserAgent()
+    session = requests.Session()
+
+    headers = {
+        'accept': 'application/json, text/javascript, */*; q=0.01',
+        'x-requested-with': 'XMLHttpRequest',
+        'origin': 'https://apteka911.ua',
+    }
+
+    session.cookies.update({
+        'site_version': 'desktop',
+        'wucmf_region': '89',
+    })
+
+    drugs = []
+    seen_ids = set()
+
+    sitemap_url = 'https://apteka911.ua/sitemap.xml'
+
+    res = session.get(sitemap_url, headers={'User-Agent': ua.random}, timeout=15)
+    root = ET.fromstring(res.content)
+
+    namespace = {'ns': 'http://www.sitemaps.org/schemas/sitemap/0.9'}
+
+    for sitemap in root.findall('ns:sitemap/ns:loc', namespace):
+        url = sitemap.text
+
+        if 'filters' not in url or not url.endswith('.gz'):
+            continue
+
+        print(f"[SITEMAP] {url}")
+
+        gz = session.get(url, timeout=20)
+
+        with gzip.GzipFile(fileobj=BytesIO(gz.content)) as f:
+            inner_root = ET.fromstring(f.read())
+
+        for loc in inner_root.findall('ns:url/ns:loc', namespace):
+            category_url = loc.text
+
+            headers.update({
+                "referer": "https://apteka911.ua/ua",
+                "user-agent": ua.random,
+            })
+            category_url_page1 = f'{category_url}/page=1'
+
+            category_drugs = parse_category(session, category_url, category_url_page1, headers)
+
+            for drug in category_drugs:
+                pid = drug.get('productID')
+
+                if pid and pid not in seen_ids:
+                    seen_ids.add(pid)
+                    drugs.append(drug)
+
+            time.sleep(random.uniform(3, 8))
+
+    return drugs
+
+def save_drugs(drugs):
+    for drug in drugs:
+        try:
+            Drug_apteka911.objects.update_or_create(
+                productID=drug.get('productID'),
+                defaults={
+                    'productName': drug.get('productName'),
+                    'alias': drug.get('alias'),
+                    'brandName': drug.get('brandName'),
+                    'formName': drug.get('formName'),
+                    'productAvail': True if drug.get('productAvail') == 'yes' else False,
+                    'productCountry': drug.get('productCountry'),
+                    'productForm': drug.get('productForm'),
+                    'productMeasure': drug.get('productMeasure'),
+                    'productMname': drug.get('productMname'),
+                    'productPrice': drug.get('productPrice'),
+                    'img': build_image_url(drug),
+
+                    # 'img': f"https://apteka911.ua{drug.get('dataUrl', '')}{drug.get('productThumbs', {}).get('webpmid', {}).get('file', '')}",
+
+                }
+            )
+        except Exception as e:
+            print(f"[DB ERROR]: {e}")
+
+
+def build_image_url(drug):
+    try:
+        return (
+            "https://apteka911.ua"
+            + drug.get('dataUrl', '')
+            + drug.get('productThumbs', {}).get('webpmid', {}).get('file', '')
+        )
+    except:
+        try:
+            return (
+                    "https://apteka911.ua"
+                    + drug.get('dataUrl', '')
+                    + drug.get('productThumbs', {}).get('mid', {}).get('file', '')
+            )
+        except:
+            return None
+
+from django.utils import timezone
+
+
+drugs = get_all_drugs()
+# save_drugs(drugs)
+today = timezone.now().date()
+print(f'today: {today}')
+
+"""
+data:{cart: null, yourpharmacy: null, defaultRegion: null, lastSelectedRegions: null, wish: null,…}
+ajax_banner:null
+ajax_fdata:null
+ajax_products:[{productID: 40347, productName: "Еналозид 25 табл. №30", productForm: "табл. блістер 10мг/25мг",…},…]
+0:{productID: 40347, productName: "Еналозид 25 табл. №30", productForm: "табл. блістер 10мг/25мг",…}
+alias:"enalozid-25-tabl-30-p40347"
+banDescript:null
+brandID:9004
+brandName:"ЕНАЛОЗИД"
+dataUrl:"/content/shop/products/40347/"
+drugID:3354
+formName:"таблетки для внутрішнього застосування"
+groupID:4170
+productATC:"C09BA02"
+productAnalogs:5
+productAvail:"yes"
+productBp5:"0.00"
+productCode:155981
+productCountry:"Україна"
+productForm:"табл. блістер 10мг/25мг"
+productHasMinPrice:1
+productID:40347
+productIsAction:0
+productIsBest:0
+productIsCashback:1
+productIsFreeSm:0
+productIsNew:0
+productIsOld:0
+productIsRare:0
+productIsSale:0
+productIsSets:0
+productIsVideo:0
+productMeasure:"блістер"
+productMname:"ENALAPRILUM"
+productMorion:"285116"
+productName:"Еналозид 25 табл. №30"
+productPack:3
+productPrice:"135.00"
+productPriceOld:"0.00"
+productPromotions:[]
+productQntComments:0
+productRating:0
+"""

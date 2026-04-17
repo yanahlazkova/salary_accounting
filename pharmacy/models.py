@@ -1,11 +1,21 @@
 from django.db import models
 
 
-class Drug(models.Model):
-    name = models.CharField(max_length=255, verbose_name="Назва препарату")
-    code = models.CharField(max_length=50, unique=True)  # Наприклад: p12181
-    alias = models.CharField(max_length=255)  # Наприклад: /shop/asparkam-p12181
-    price = models.DecimalField(max_digits=10, decimal_places=2)
+class Drug_apteka911(models.Model):
+    productID = models.IntegerField(unique=True)
+    productName = models.CharField(max_length=255, verbose_name="Назва препарату")
+    alias = models.CharField(max_length=255, blank=True, null=True)
+    brandName = models.CharField(max_length=255, blank=True, null=True)
+    formName = models.CharField(max_length=255, blank=True, null=True)
+    productAvail = models.BooleanField(default=True, verbose_name="Доступність")
+    productCountry = models.CharField(max_length=255, blank=True, null=True)
+    productForm = models.CharField(max_length=255, verbose_name="Форма випуску")
+    productMeasure = models.CharField(max_length=255, blank=True, null=True)
+    productMname = models.CharField(max_length=255, blank=True, null=True)
+    productPrice = models.DecimalField(max_digits=10, decimal_places=2, verbose_name="Ціна, від")
+    img = models.CharField(max_length=255, blank=True, null=True)
+    time_created = models.DateTimeField(auto_now_add=True, verbose_name='Дата створення')  # дата при створенні запису
+    time_updated = models.DateTimeField(auto_now=True, verbose_name='Дата оновлення')  # дата при зміні запису
 
     def __str__(self):
         return self.name
