@@ -1,8 +1,24 @@
 from django.db import models
 
 
+class CategoryApteka911(models.Model):
+    url = models.URLField(unique=True)
+    name = models.CharField(max_length=255, blank=True, null=True, verbose_name='Категорія')
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.name or self.url
+
+
 class Drug_apteka911(models.Model):
     productID = models.IntegerField(unique=True)
+    category = models.ForeignKey(
+        CategoryApteka911,
+        on_delete=models.CASCADE,
+        related_name='drugs',
+        blank=True,
+        null=True,
+    )
     productName = models.CharField(max_length=255, verbose_name="Назва препарату")
     alias = models.CharField(max_length=255, blank=True, null=True)
     brandName = models.CharField(max_length=255, blank=True, null=True)
@@ -19,3 +35,4 @@ class Drug_apteka911(models.Model):
 
     def __str__(self):
         return self.name
+

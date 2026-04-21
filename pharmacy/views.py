@@ -1,5 +1,6 @@
 import time
 import requests, json
+from django.apps import apps
 from django.http import HttpResponse
 from django.shortcuts import render
 from django.urls import reverse_lazy
@@ -7,11 +8,13 @@ from django.views import View
 from django.views.generic import ListView, TemplateView
 from django.utils import timezone
 
-
-from pharmacy.helper_pharmacy import get_all_drugs, save_drugs
+from pharmacy.helper_pharmacy import get_all_drugs, save_drugs, get_categories_apteka911
+from pharmacy.main import get_all_category
+from pharmacy.methods.toolbar_buttons import ToolbarMixin
 # from pharmacy.helper_pharmacy import search_drugs_apteka911
-from pharmacy.models import Drug_apteka911
+from pharmacy.models import Drug_apteka911, CategoryApteka911
 from ui.mixins.htmx import HTMXTemplateMixin
+from ui.mixins.page_toolbar import SectionPageToolbarMixin
 from ui.mixins.section import AppSectionMetaMixin
 
 list_pharmacy = {
@@ -23,6 +26,24 @@ list_pharmacy = {
 
 class PharmacyBaseView(AppSectionMetaMixin):
     app_label = 'pharmacy'
+    toolbar_buttons: list[str] = []
+    # toolbar_buttons = ['update_categories', 'update_drugs']
+
+    def get_section_config(self):
+        if not self.app_label:
+            raise ValueError("app_label is required")
+        return apps.get_app_config(self.app_label)
+
+    # def get_toolbar_buttons(self):
+    #     return []  # Заглушка, щоб не було помилки
+
+    def get_context_data(self, **kwargs):
+        ctx = super().get_context_data(**kwargs)
+
+        # ctx.update({
+        #     'toolbar_buttons': self.get_toolbar_buttons(),
+        # })
+        return ctx
 
 
 class PharmacyUpdateDB(PharmacyBaseView, HTMXTemplateMixin, TemplateView):
@@ -38,12 +59,33 @@ class PharmacyUpdateDB(PharmacyBaseView, HTMXTemplateMixin, TemplateView):
               .order_by('-time_updated')
               .first()}')
         ctx['update'] = {
-            'apteka911': today.strftime("%d.%m.%Y %H:%M:%S"),
+
         }
         return ctx
 
-class PharmacyBasePageView(PharmacyBaseView, HTMXTemplateMixin, TemplateView):
+class PharmacyUpdateCategory(PharmacyBaseView, HTMXTemplateMixin, ToolbarMixin, TemplateView):
+    # page_content = ('pharmacy.html',)
+
+    def get_context_data(self, **kwargs):
+        ctx = super().get_context_data(**kwargs)
+        get_categories_apteka911()
+
+        today = timezone.now().date()
+
+        # ctx.update({
+        #     'update_categories': today.strftime('%Y-%m-%d:%H-%M-%S'),
+        # })
+
+        return ctx
+
+
+
+
+
+
+class PharmacyBasePageView(PharmacyBaseView, HTMXTemplateMixin, ToolbarMixin, TemplateView):
     page_content = ('pharmacy.html',)
+    toolbar_buttons = ['update_categories', 'update_drugs']
 
     # def post(self, request, *args, **kwargs):
     #     # 1. Отримуємо текст пошуку з POST-запиту
@@ -78,6 +120,7 @@ class PharmacyBasePageView(PharmacyBaseView, HTMXTemplateMixin, TemplateView):
             "page_content": self.get_page_content(),
             'pharmacy': list_pharmacy,
             'form_action_url': reverse_lazy(f'{self.app_label}:search_drugs'),
+            'toolbar_buttons': self.get_toolbar_buttons(),
         })
 
         return ctx
@@ -93,7 +136,11 @@ class PharmacyListDrugsView(PharmacyBaseView, HTMXTemplateMixin, ListView):
     def post(self, request, *args, **kwargs):
         # Викликаємо метод get, щоб ListView відпрацював логіку
         return self.get(request, *args, **kwargs)
-
+    # url = "https://apteka911.ua/ua/"
+    # headers = {
+    #     "User-Agent": "Mozilla/5.0"
+    # }
+    # response = requests.get(url, headers=headers)
     def get_queryset(self):
         # Дістаємо query з POST (якщо форма відправлена) або з GET
         query = self.request.POST.get('search_query') or self.request.GET.get('search_query', '')

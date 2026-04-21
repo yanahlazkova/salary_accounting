@@ -197,7 +197,7 @@ from io import BytesIO
 import requests
 from fake_useragent import UserAgent
 
-from pharmacy.models import Drug_apteka911
+from pharmacy.models import Drug_apteka911, CategoryApteka911
 
 
 # def get_drugs_apteka911_by_category(session, target_url, headers):
@@ -219,151 +219,151 @@ from pharmacy.models import Drug_apteka911
 
 # from your_app.models import Drug # Переконайтеся, що модель імпортована
 
-def get_drugs_apteka911_from_sitemap():
-    LIST_DRUGS = []
+# def get_drugs_apteka911_from_sitemap():
+#     LIST_DRUGS = []
+#
+#     # 1. Ініціалізація генератора юзер-агентів
+#     ua = UserAgent()
+#     session = requests.Session()
+#
+#     sitemap_url = 'https://apteka911.ua/sitemap.xml'
+#     api_url = "https://apteka911.ua/ua/shop/search"
+#     origin_url = 'https://apteka911.ua'
+#
+#     headers_base = {
+#         'accept': 'application/json, text/javascript, */*; q=0.01',
+#         'content-type': 'application/x-www-form-urlencoded; charset=UTF-8',
+#         'x-requested-with': 'XMLHttpRequest',
+#         'origin': origin_url
+#     }
+#
+#     print(f"--- Підготовка: Завантаження існуючих кодів з БД ---")
+#     # 2. ОПТИМІЗАЦІЯ БД: Отримуємо всі існуючі коди одним запитом
+#     # values_list('code', flat=True) повертає плоский список, який ми конвертуємо в set для миттєвого пошуку O(1)
+#     # existing_codes = set(Drug.objects.values_list('code', flat=True))
+#     # print(f"У базі вже є {len(existing_codes)} записів.")
+#
+#     print(f"--- Завантаження головного sitemap ---")
+#
+#     processed_count = 0  # 1. Ініціалізуємо лічильник перед початком циклів
+#
+#     try:
+#         # 3. Додано timeout для безпеки
+#         response = session.get(sitemap_url, headers={'User-Agent': ua.random}, timeout=15)
+#         response.raise_for_status()  # Перевірка на помилки 404, 500
+#
+#         root = ET.fromstring(response.content)
+#         namespace = {'ns': 'http://www.sitemaps.org/schemas/sitemap/0.9'}
+#
+#         sitemaps = root.findall('ns:sitemap/ns:loc', namespace)
+#
+#         for sitemap_tag in sitemaps:
+#             url_text = sitemap_tag.text
+#
+#             if 'filters' in url_text and url_text.endswith('gz'):
+#                 print(f"Відкриваємо архів: {url_text}")
+#
+#                 try:
+#                     # Додано timeout для архіву
+#                     gz_response = session.get(url_text, headers={'User-Agent': ua.random}, timeout=20)
+#                     gz_response.raise_for_status()
+#
+#                     # Безпечне розпакування у пам'яті
+#                     with gzip.GzipFile(fileobj=BytesIO(gz_response.content)) as f:
+#                         inner_root = ET.fromstring(f.read())
+#
+#                     random_count = random.randint(80, 120)
+#
+#                     for url_tag in inner_root.findall('ns:url/ns:loc', namespace):
+#                         target_url = url_tag.text
+#                         print(f'full_url: {target_url}')
+#
+#                         headers = headers_base.copy()
+#
+#                         headers.update({
+#                             "referer": f"https://apteka911.ua/ua",
+#                             "user-agent": ua.random,
+#                         })
+#
+#                         session.cookies.update({
+#                             'site_version': 'desktop',
+#                             'wucmf_region': '89',
+#                             # 'PHPSESSID': '601c139cc7ac20fdcbecfdfd55095eb8' - може змінюватись
+#                         })
+#
+#                         page_number = 1
+#                         # target_url = 'https://apteka911.ua/shop/lekarstvennyie-preparatyi/ot_boli_v_gorle'
+#                         full_url = f'{target_url}/page={page_number}'
+#
+#                         try:
+#                             res = session.get(target_url, headers=headers, timeout=10)
+#                             if res.status_code == 200:
+#                                 json_data = res.json()
+#                                 # отримаємо кількість сторінок
+#                                 full_pages = json_data.get('data', {}).get('pages', {}).get('npages', 1)
+#                                 products = json_data.get('data', {}).get('ajax_products', [])
+#                                 add_to_database(products)
+#
+#                                 print(f'Count pages: {full_pages}')
+#                                 # якщо кількість сторінок більше 1, змінемо target_url і знов виконаємо запит
+#                                 if full_pages > 1:
+#                                     for page in range(2, full_pages+1):
+#                                         full_url = f'{target_url}/page={page}'
+#                                         products = get_drugs_apteka911_by_category(session, full_url, headers)
+#                                         add_to_database(products)
+#
+#                                 processed_count += 1
+#
+#
+#                             else:
+#                                 print(f"Помилка: {res.status_code}")
+#
+#                             # 3. ПЕРЕВІРКА: кожні 100 препаратів
+#                             if processed_count % random_count == 0:
+#                                 random_count = random.randint(80, 120)
+#                                 long_wait = random.uniform(30, 60)  # Пауза на 30-60 секунд
+#                                 print(
+#                                     f"--- Оброблено {processed_count} товарів. Велика пауза: {long_wait:.1f} сек. ---")
+#                                 time.sleep(long_wait)
+#                             else:
+#                                 # Звичайна пауза між запитами
+#                                 time.sleep(random.uniform(5, 15))
+#                             # else:
+#                             #     print(f"УВАГА: Для  історія порожня. Можливо, alias невірний.")
+#
+#                         except Exception as e:
+#                             print(f"Помилка API: {e}")
+#                             time.sleep(10)
+#
+#                 except Exception as e:
+#                     print(f"Помилка завантаження/розпакування архіву {url_text}: {e}")
+#
+#         print("--- Синхронізація успішно завершена! ---")
+#
+#     except Exception as e:
+#         print(f"Критична помилка під час виконання: {e}")
+#
+#     return LIST_DRUGS
 
-    # 1. Ініціалізація генератора юзер-агентів
-    ua = UserAgent()
-    session = requests.Session()
-
-    sitemap_url = 'https://apteka911.ua/sitemap.xml'
-    api_url = "https://apteka911.ua/ua/shop/search"
-    origin_url = 'https://apteka911.ua'
-
-    headers_base = {
-        'accept': 'application/json, text/javascript, */*; q=0.01',
-        'content-type': 'application/x-www-form-urlencoded; charset=UTF-8',
-        'x-requested-with': 'XMLHttpRequest',
-        'origin': origin_url
-    }
-
-    print(f"--- Підготовка: Завантаження існуючих кодів з БД ---")
-    # 2. ОПТИМІЗАЦІЯ БД: Отримуємо всі існуючі коди одним запитом
-    # values_list('code', flat=True) повертає плоский список, який ми конвертуємо в set для миттєвого пошуку O(1)
-    # existing_codes = set(Drug.objects.values_list('code', flat=True))
-    # print(f"У базі вже є {len(existing_codes)} записів.")
-
-    print(f"--- Завантаження головного sitemap ---")
-
-    processed_count = 0  # 1. Ініціалізуємо лічильник перед початком циклів
-
-    try:
-        # 3. Додано timeout для безпеки
-        response = session.get(sitemap_url, headers={'User-Agent': ua.random}, timeout=15)
-        response.raise_for_status()  # Перевірка на помилки 404, 500
-
-        root = ET.fromstring(response.content)
-        namespace = {'ns': 'http://www.sitemaps.org/schemas/sitemap/0.9'}
-
-        sitemaps = root.findall('ns:sitemap/ns:loc', namespace)
-
-        for sitemap_tag in sitemaps:
-            url_text = sitemap_tag.text
-
-            if 'filters' in url_text and url_text.endswith('gz'):
-                print(f"Відкриваємо архів: {url_text}")
-
-                try:
-                    # Додано timeout для архіву
-                    gz_response = session.get(url_text, headers={'User-Agent': ua.random}, timeout=20)
-                    gz_response.raise_for_status()
-
-                    # Безпечне розпакування у пам'яті
-                    with gzip.GzipFile(fileobj=BytesIO(gz_response.content)) as f:
-                        inner_root = ET.fromstring(f.read())
-
-                    random_count = random.randint(80, 120)
-
-                    for url_tag in inner_root.findall('ns:url/ns:loc', namespace):
-                        target_url = url_tag.text
-                        print(f'full_url: {target_url}')
-
-                        headers = headers_base.copy()
-
-                        headers.update({
-                            "referer": f"https://apteka911.ua/ua",
-                            "user-agent": ua.random,
-                        })
-
-                        session.cookies.update({
-                            'site_version': 'desktop',
-                            'wucmf_region': '89',
-                            # 'PHPSESSID': '601c139cc7ac20fdcbecfdfd55095eb8' - може змінюватись
-                        })
-
-                        page_number = 1
-                        # target_url = 'https://apteka911.ua/shop/lekarstvennyie-preparatyi/ot_boli_v_gorle'
-                        full_url = f'{target_url}/page={page_number}'
-
-                        try:
-                            res = session.get(target_url, headers=headers, timeout=10)
-                            if res.status_code == 200:
-                                json_data = res.json()
-                                # отримаємо кількість сторінок
-                                full_pages = json_data.get('data', {}).get('pages', {}).get('npages', 1)
-                                products = json_data.get('data', {}).get('ajax_products', [])
-                                add_to_database(products)
-
-                                print(f'Count pages: {full_pages}')
-                                # якщо кількість сторінок більше 1, змінемо target_url і знов виконаємо запит
-                                if full_pages > 1:
-                                    for page in range(2, full_pages+1):
-                                        full_url = f'{target_url}/page={page}'
-                                        products = get_drugs_apteka911_by_category(session, full_url, headers)
-                                        add_to_database(products)
-
-                                processed_count += 1
-
-
-                            else:
-                                print(f"Помилка: {res.status_code}")
-
-                            # 3. ПЕРЕВІРКА: кожні 100 препаратів
-                            if processed_count % random_count == 0:
-                                random_count = random.randint(80, 120)
-                                long_wait = random.uniform(30, 60)  # Пауза на 30-60 секунд
-                                print(
-                                    f"--- Оброблено {processed_count} товарів. Велика пауза: {long_wait:.1f} сек. ---")
-                                time.sleep(long_wait)
-                            else:
-                                # Звичайна пауза між запитами
-                                time.sleep(random.uniform(5, 15))
-                            # else:
-                            #     print(f"УВАГА: Для  історія порожня. Можливо, alias невірний.")
-
-                        except Exception as e:
-                            print(f"Помилка API: {e}")
-                            time.sleep(10)
-
-                except Exception as e:
-                    print(f"Помилка завантаження/розпакування архіву {url_text}: {e}")
-
-        print("--- Синхронізація успішно завершена! ---")
-
-    except Exception as e:
-        print(f"Критична помилка під час виконання: {e}")
-
-    return LIST_DRUGS
-
-def add_to_database(list_drugs):
-
-    for drug in list_drugs:
-        Drug_apteka911.objects.update_or_create(
-            productID=drug.get('productID'),
-            defaults={
-                'productName': drug.get('productName'),
-                'alias': drug.get('alias'),
-                'brandName': drug.get('brandName'),
-                'formName': drug.get('formName'),
-                'productAvail': True if drug.get('productAvail') == 'yes' else False,
-                'productCountry': drug.get('productCountry'),
-                'productForm': drug.get('productForm'),
-                'productMeasure': drug.get('productMeasure'),
-                'productMname': drug.get('productMname'),
-                'productPrice': drug.get('productPrice'),
-                'img': f"https://apteka911.ua{drug.get('dataUrl', '')}{drug.get('productThumbs', {}).get('webpmid', {}).get('file', '')}",
-            }
-    )
+# def add_to_database(list_drugs):
+#
+#     for drug in list_drugs:
+#         Drug_apteka911.objects.update_or_create(
+#             productID=drug.get('productID'),
+#             defaults={
+#                 'productName': drug.get('productName'),
+#                 'alias': drug.get('alias'),
+#                 'brandName': drug.get('brandName'),
+#                 'formName': drug.get('formName'),
+#                 'productAvail': True if drug.get('productAvail') == 'yes' else False,
+#                 'productCountry': drug.get('productCountry'),
+#                 'productForm': drug.get('productForm'),
+#                 'productMeasure': drug.get('productMeasure'),
+#                 'productMname': drug.get('productMname'),
+#                 'productPrice': drug.get('productPrice'),
+#                 'img': f"https://apteka911.ua{drug.get('dataUrl', '')}{drug.get('productThumbs', {}).get('webpmid', {}).get('file', '')}",
+#             }
+#     )
 #
 #
 #
@@ -455,57 +455,28 @@ import requests
 
 # test_single_request()
 
-def parse_category(session, url, url_page1, headers):
-    """ Парсинг категорії (ключове місце) """
-    print(f'full_url: {url_page1}')
-    drugs = []
+""" зупинилися на https://apteka911.ua/shop/lekarstvennyie-preparatyi/dinorik-beta_blokatoryi/page=1 """
 
-    try:
-        res = session.get(url_page1, headers=headers, timeout=10)
-        res.raise_for_status()
-        data = res.json()
-
-        pages = data.get('data', {}).get('pages', {}).get('npages', 1)
-
-        # ✅ ДОДАЄМО ПЕРШУ СТОРІНКУ
-        products = data.get('data', {}).get('ajax_products', [])
-        save_drugs(products)
-
-        # drugs.extend(products)
+def get_or_create_category(url_category):
+    name = url_category.rstrip('/').split('/')[-1]
+    category, _ = CategoryApteka911.objects.update_or_create(
+        url=url_category,
+        defaults={"name": name},
+    )
+    return category
 
 
-        # ✅ ІНШІ СТОРІНКИ
-        for page in range(2, pages + 1):
-            page_url = f"{url}/page={page}"
-            page_products = get_drugs_apteka911_by_category(session, page_url, headers)
-            # drugs.extend(page_products)
-            save_drugs(page_products)
+def is_valid_category(url: str) -> bool:
+    slug = url.rstrip('/').split('/')[-1]
 
-        return drugs
+    # відсікаємо фільтри
+    if slug.count('-') > 0:
+        return False
 
-    except Exception as e:
-        print(f"[ERROR] parse_category: {e}")
-        return []
+    return True
 
 
-def get_drugs_apteka911_by_category(session, target_url, headers):
-    try:
-        response = session.get(target_url, headers=headers, timeout=10)
-        if response.status_code == 200:
-            json_data = response.json()
-            return json_data.get('data', {}).get('ajax_products', [])
-        else:
-            print(f"Помилка: {response.status_code}")
-            return []
-
-
-    except Exception as e:
-        print(f"Помилка API: {e}")
-        time.sleep(10)
-        return []
-
-
-def get_all_drugs():
+def get_all_category():
     ua = UserAgent()
     session = requests.Session()
 
@@ -533,7 +504,7 @@ def get_all_drugs():
     for sitemap in root.findall('ns:sitemap/ns:loc', namespace):
         url = sitemap.text
 
-        if 'filters' not in url or not url.endswith('.gz'):
+        if 'filters-1' not in url or not url.endswith('.gz'):
             continue
 
         print(f"[SITEMAP] {url}")
@@ -545,32 +516,96 @@ def get_all_drugs():
 
         for loc in inner_root.findall('ns:url/ns:loc', namespace):
             category_url = loc.text
+            list_category = []
 
-            headers.update({
-                "referer": "https://apteka911.ua/ua",
-                "user-agent": ua.random,
-            })
-            category_url_page1 = f'{category_url}/page=1'
+            # перевірка це категорія чи фільтр
+            if not is_valid_category(category_url):
+                continue
+            else:
+                # отримаємо або додамо категорію
+                category = get_or_create_category(category_url)
+                # list_category.append(category.url)
 
-            category_drugs = parse_category(session, category_url, category_url_page1, headers)
+                headers.update({
+                    "referer": "https://apteka911.ua/ua",
+                    "user-agent": ua.random,
+                })
+                category_url_page1 = f'{category_url}/page=1'
 
-            for drug in category_drugs:
-                pid = drug.get('productID')
+                category_drugs = parse_category(session, category, category_url_page1, headers)
 
-                if pid and pid not in seen_ids:
-                    seen_ids.add(pid)
-                    drugs.append(drug)
+                for drug in category_drugs:
+                    pid = drug.get('productID')
 
-            time.sleep(random.uniform(3, 8))
+                    if pid and pid not in seen_ids:
+                        seen_ids.add(pid)
+                        drugs.append(drug)
+
+                time.sleep(random.uniform(3, 8))
 
     return drugs
 
-def save_drugs(drugs):
+
+def parse_category(session, category, url_page1, headers):
+    """ Парсинг категорії (ключове місце) """
+    print(f'url_category: {category.url}')
+    drugs = []
+
+    try:
+        res = session.get(url_page1, headers=headers, timeout=10)
+        res.raise_for_status()
+        data = res.json()
+
+        pages = data.get('data', {}).get('pages', {}).get('npages', 1)
+
+        # ✅ ДОДАЄМО ПЕРШУ СТОРІНКУ
+        products = data.get('data', {}).get('ajax_products', [])
+        print(f'len(products): {len(products)}')
+        save_drugs(products, category)
+
+        # drugs.extend(products)
+
+
+        # ✅ ІНШІ СТОРІНКИ
+        for page in range(2, pages + 1):
+            page_url = f"{category.url}/page={page}"
+            page_products = get_drugs_apteka911_by_category(session, page_url, headers)
+            # drugs.extend(page_products)
+            save_drugs(page_products, category)
+
+        return drugs
+
+    except Exception as e:
+        print(f"[ERROR] parse_category: {e}")
+        return []
+
+
+def get_drugs_apteka911_by_category(session, target_url, headers):
+    try:
+        response = session.get(target_url, headers=headers, timeout=10)
+        if response.status_code == 200:
+            json_data = response.json()
+            return json_data.get('data', {}).get('ajax_products', [])
+        else:
+            print(f"Помилка: {response.status_code}")
+            return []
+
+
+    except Exception as e:
+        print(f"Помилка API: {e}")
+        time.sleep(10)
+        return []
+
+
+
+
+def save_drugs(drugs, category):
     for drug in drugs:
         try:
             Drug_apteka911.objects.update_or_create(
                 productID=drug.get('productID'),
                 defaults={
+                    'category': category,
                     'productName': drug.get('productName'),
                     'alias': drug.get('alias'),
                     'brandName': drug.get('brandName'),
@@ -611,10 +646,10 @@ def build_image_url(drug):
 from django.utils import timezone
 
 
-drugs = get_all_drugs()
-# save_drugs(drugs)
-today = timezone.now().date()
-print(f'today: {today}')
+# drugs = get_all_category()
+# # save_drugs(drugs)
+# today = timezone.now().date()
+# print(f'today: {today}')
 
 """
 data:{cart: null, yourpharmacy: null, defaultRegion: null, lastSelectedRegions: null, wish: null,…}

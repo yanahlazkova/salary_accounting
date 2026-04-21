@@ -5,12 +5,7 @@
     {% include 'ui/htmx_button.html' with button=button %}
     {% endfor %}
 </div>
-<p>
-    <button class="btn btn-info" type="button" onclick="{% url 'pharmacy:update_db' %}" data-bs-toggle="collapse" data-bs-target="#collapseWidthExample"
-            aria-expanded="false" aria-controls="collapseWidthExample">
-        Оновити дані БД
-    </button>
-</p>
+<p>Update categories: {{ update_categories }}</p>
 <div style="min-height: 120px;">
     <div class="collapse collapse-horizontal" id="collapseWidthExample">
         <div class="border-info card card-body" style="width: 500px;">

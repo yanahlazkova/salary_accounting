@@ -11,8 +11,13 @@ from fake_useragent import UserAgent
 
 from pharmacy.models import Drug_apteka911
 
+import requests
+from bs4 import BeautifulSoup
+
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'salary_accounting.settings')
 django.setup()
+
+
 
 
 """
@@ -33,6 +38,50 @@ https://apteka911.ua/content/sitemap/sitemap-filters-1.xml.gz
 2. parse_category()
 3. save_to_db()
 """
+from selenium import webdriver
+from selenium.webdriver.common.by import By
+from selenium.webdriver.common.action_chains import ActionChains
+import time
+
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
+
+def get_categories_apteka911():
+    driver = webdriver.Chrome()
+    driver.get("https://apteka911.ua/ua/")
+
+    time.sleep(3)
+
+    # знайти кнопку меню
+    # menu_btn = driver.find_element(By.XPATH, "//div[contains(., 'Каталог')]")
+    # menu_btn = driver.find_element(By.CSS_SELECTOR, "div.menu-catalog__button")
+    menu_btn = WebDriverWait(driver, 10).until(
+        EC.element_to_be_clickable((By.CSS_SELECTOR, ".menu-nav span"))
+    )
+
+    menu_btn.click()
+
+    # навести / клікнути
+    # ActionChains(driver).move_to_element(menu_btn).perform()
+    #
+    # time.sleep(3)
+
+    html = driver.page_source
+
+
+    soup = BeautifulSoup(html, "html.parser")
+    categories = []
+
+    for a in soup.select("ul.menu-catalog__list a.menu-catalog__item"):
+        href = a.get("href")
+        if href:
+            categories.append(href)
+
+    for c in categories:
+        print(c)
+
+
 
 def parse_category(session, url, url_page1, headers):
     """ Парсинг категорії (ключове місце) """
@@ -282,10 +331,10 @@ def build_image_url(drug):
 from django.utils import timezone
 
 
-drugs = get_all_drugs()
-save_drugs(drugs)
-today = timezone.now().date()
-print(f'today: {today}')
+# drugs = get_all_drugs()
+# save_drugs(drugs)
+# today = timezone.now().date()
+# print(f'today: {today}')
 """ 
 fetch("https://apteka911.ua/ua/shop/search", {
   "headers": {
