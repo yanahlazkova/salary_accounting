@@ -8,7 +8,8 @@ from django.views import View
 from django.views.generic import ListView, TemplateView
 from django.utils import timezone
 
-from pharmacy.helper_pharmacy import get_all_drugs, save_drugs, get_categories_apteka911
+from pharmacy.helper_pharmacy import get_categories_whith_page_cite_apteka911, \
+    update_category, get_categories_with_sitemap
 from pharmacy.main import get_all_category
 from pharmacy.methods.toolbar_buttons import ToolbarMixin
 # from pharmacy.helper_pharmacy import search_drugs_apteka911
@@ -51,8 +52,8 @@ class PharmacyUpdateDB(PharmacyBaseView, HTMXTemplateMixin, TemplateView):
 
     def get_context_data(self, **kwargs):
         ctx = super().get_context_data(**kwargs)
-        drugs = get_all_drugs()
-        save_drugs(drugs)
+        # drugs = get_all_drugs()
+        # save_drugs(drugs)
         today = timezone.now().date()
         print(f'today: {Drug_apteka911.objects
               .filter(time_updated__lte=today)
@@ -66,10 +67,22 @@ class PharmacyUpdateDB(PharmacyBaseView, HTMXTemplateMixin, TemplateView):
 class PharmacyUpdateCategory(PharmacyBaseView, HTMXTemplateMixin, ToolbarMixin, TemplateView):
     # page_content = ('pharmacy.html',)
 
+    def get_queryset(self):
+        # отримати категорії зі сторінки сайту
+        categories = get_categories_whith_page_cite_apteka911()
+
+        # оновити категорії в БД
+        update_category(categories)
+        
+        # 
+
+        query = self.request.POST.get('search_query') or self.request.GET.get('search_query', '')
+
     def get_context_data(self, **kwargs):
         ctx = super().get_context_data(**kwargs)
-        get_categories_apteka911()
-
+        categories = get_categories_whith_page_cite_apteka911()
+        # get_categories_with_sitemap(categories)
+        update_category(categories)
         today = timezone.now().date()
 
         # ctx.update({
@@ -136,11 +149,7 @@ class PharmacyListDrugsView(PharmacyBaseView, HTMXTemplateMixin, ListView):
     def post(self, request, *args, **kwargs):
         # Викликаємо метод get, щоб ListView відпрацював логіку
         return self.get(request, *args, **kwargs)
-    # url = "https://apteka911.ua/ua/"
-    # headers = {
-    #     "User-Agent": "Mozilla/5.0"
-    # }
-    # response = requests.get(url, headers=headers)
+
     def get_queryset(self):
         # Дістаємо query з POST (якщо форма відправлена) або з GET
         query = self.request.POST.get('search_query') or self.request.GET.get('search_query', '')

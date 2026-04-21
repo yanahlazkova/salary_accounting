@@ -560,7 +560,6 @@ def parse_category(session, category, url_page1, headers):
 
         # ✅ ДОДАЄМО ПЕРШУ СТОРІНКУ
         products = data.get('data', {}).get('ajax_products', [])
-        print(f'len(products): {len(products)}')
         save_drugs(products, category)
 
         # drugs.extend(products)

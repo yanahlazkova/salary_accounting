@@ -9,7 +9,7 @@ from io import BytesIO
 import requests
 from fake_useragent import UserAgent
 
-from pharmacy.models import Drug_apteka911
+from pharmacy.models import Drug_apteka911, CategoryApteka911
 
 import requests
 from bs4 import BeautifulSoup
@@ -47,7 +47,7 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 
-def get_categories_apteka911():
+def get_categories_whith_page_cite_apteka911():
     driver = webdriver.Chrome()
     driver.get("https://apteka911.ua/ua/")
 
@@ -73,63 +73,57 @@ def get_categories_apteka911():
     soup = BeautifulSoup(html, "html.parser")
     categories = []
 
-    for a in soup.select("ul.menu-catalog__list a.menu-catalog__item"):
-        href = a.get("href")
-        if href:
-            categories.append(href)
+    items = driver.find_elements(By.CSS_SELECTOR, "ul.menu-catalog__list > li")
+
+    categories = []
+
+    for item in items:
+        try:
+            name = item.find_element(By.CSS_SELECTOR, "meta[itemprop='name']").get_attribute("content")
+            url = item.find_element(By.CSS_SELECTOR, "a[itemprop='url']").get_attribute("href")
+
+            categories.append({
+                "name": name,
+                "url": url
+            })
+
+        except:
+            continue
 
     for c in categories:
         print(c)
+    return categories
 
+def update_category(categories):
+    get_categories_with_sitemap(categories)
 
+def is_valid_category(url: str, categories: list) -> bool:
+    print(f'categories: {url}')
 
-def parse_category(session, url, url_page1, headers):
-    """ Парсинг категорії (ключове місце) """
-    drugs = []
-
-    try:
-        res = session.get(url_page1, headers=headers, timeout=10)
-        res.raise_for_status()
-        data = res.json()
-
-        pages = data.get('data', {}).get('pages', {}).get('npages', 1)
-
-        # ✅ ДОДАЄМО ПЕРШУ СТОРІНКУ
-        products = data.get('data', {}).get('ajax_products', [])
-        drugs.extend(products)
-
-        # ✅ ІНШІ СТОРІНКИ
-        for page in range(2, pages + 1):
-            page_url = f"{url}/page={page}"
-            page_products = get_drugs_apteka911_by_category(session, page_url, headers)
-            drugs.extend(page_products)
-
-        return drugs
-
-    except Exception as e:
-        print(f"[ERROR] parse_category: {e}")
-        return []
-
-
-def get_drugs_apteka911_by_category(session, target_url, headers):
-    print(f'full_url: {target_url}')
-    try:
-        response = session.get(target_url, headers=headers, timeout=10)
-        if response.status_code == 200:
-            json_data = response.json()
-            return json_data.get('data', {}).get('ajax_products', [])
+    for category in categories:
+        if url.find(category['url']) == -1:
+            continue
         else:
-            print(f"Помилка: {response.status_code}")
-            return []
+            slug = url.rstrip('/').split('/')[-1]
+
+            # відсікаємо фільтри
+            if slug.count('-') > 0:
+                return False
+            else:
+                return True
+
+    return False
+
+def get_or_create_category(url_category):
+    name = url_category.rstrip('/').split('/')[-1]
+    category, _ = CategoryApteka911.objects.update_or_create(
+        url=url_category,
+        defaults={"name": name},
+    )
+    return category
 
 
-    except Exception as e:
-        print(f"Помилка API: {e}")
-        time.sleep(10)
-        return []
-
-
-def get_all_drugs():
+def get_categories_with_sitemap(categories):
     ua = UserAgent()
     session = requests.Session()
 
@@ -170,165 +164,128 @@ def get_all_drugs():
         for loc in inner_root.findall('ns:url/ns:loc', namespace):
             category_url = loc.text
 
-            headers.update({
-                "referer": "https://apteka911.ua/ua",
-                "user-agent": ua.random,
-            })
-            category_url_page1 = f'{category_url}/page=1'
+            # перевірка чи співпадає категорія із отриманою з сайту
+            # перевірка це категорія чи фільтр
+            if not is_valid_category(category_url, categories):
+                continue
+            else:
+                # отримаємо або додамо категорію
+                category = get_or_create_category(category_url)
 
-            category_drugs = parse_category(session, category_url, category_url_page1, headers)
+            # headers.update({
+            #     "referer": "https://apteka911.ua/ua",
+            #     "user-agent": ua.random,
+            # })
+            # category_url_page1 = f'{category_url}/page=1'
 
-            for drug in category_drugs:
-                pid = drug.get('productID')
+            # category_drugs = parse_category(session, category, category_url_page1, headers)
 
-                if pid and pid not in seen_ids:
-                    seen_ids.add(pid)
-                    drugs.append(drug)
+            # for drug in category_drugs:
+            #     pid = drug.get('productID')
+            #
+            #     if pid and pid not in seen_ids:
+            #         seen_ids.add(pid)
+            #         drugs.append(drug)
 
             time.sleep(random.uniform(3, 8))
 
     return drugs
 
+def parse_category(session, category, url_page1, headers):
+    """ Парсинг категорії (ключове місце) """
+    print(f'url_category: {category.url}')
+    drugs = []
 
-def save_drugs(drugs):
-    for drug in drugs:
-        try:
-            Drug_apteka911.objects.update_or_create(
-                productID=drug.get('productID'),
-                defaults={
-                    'productName': drug.get('productName'),
-                    'alias': drug.get('alias'),
-                    'brandName': drug.get('brandName'),
-                    'formName': drug.get('formName'),
-                    'productAvail': True if drug.get('productAvail') == 'yes' else False,
-                    'productCountry': drug.get('productCountry'),
-                    'productForm': drug.get('productForm'),
-                    'productMeasure': drug.get('productMeasure'),
-                    'productMname': drug.get('productMname'),
-                    'productPrice': drug.get('productPrice'),
-                    'img': build_image_url(drug),
-
-                    # 'img': f"https://apteka911.ua{drug.get('dataUrl', '')}{drug.get('productThumbs', {}).get('webpmid', {}).get('file', '')}",
-
-                }
-            )
-        except Exception as e:
-            print(f"[DB ERROR]: {e}")
-
-
-def build_image_url(drug):
     try:
-        return (
-            "https://apteka911.ua"
-            + drug.get('dataUrl', '')
-            + drug.get('productThumbs', {}).get('webpmid', {}).get('file', '')
-        )
-    except:
-        try:
-            return (
-                    "https://apteka911.ua"
-                    + drug.get('dataUrl', '')
-                    + drug.get('productThumbs', {}).get('mid', {}).get('file', '')
-            )
-        except:
-            return None
+        res = session.get(url_page1, headers=headers, timeout=10)
+        res.raise_for_status()
+        data = res.json()
+
+        pages = data.get('data', {}).get('pages', {}).get('npages', 1)
+
+        # ✅ ДОДАЄМО ПЕРШУ СТОРІНКУ
+        products = data.get('data', {}).get('ajax_products', [])
+        drugs.extend(products)
+
+        # ✅ ІНШІ СТОРІНКИ
+        # for page in range(2, pages + 1):
+        #     page_url = f"{url}/page={page}"
+        #     page_products = get_drugs_apteka911_by_category(session, page_url, headers)
+        #     drugs.extend(page_products)
+        #
+        # return drugs
+
+    except Exception as e:
+        print(f"[ERROR] parse_category: {e}")
+        return []
 
 
-# def search_drugs_apteka911(search_term):
-#     ua = UserAgent()
-#     session = requests.Session()
-#     base_url = "https://apteka911.ua/ua/"
-#
-#     session.get(base_url, headers={"User-Agent": ua.random})
-#
-#     headers = {
-#         "accept": "application/json, text/javascript, */*; q=0.01",
-#         "content-type": "application/x-www-form-urlencoded; charset=UTF-8",
-#         "x-requested-with": "XMLHttpRequest",  # КРИТИЧНО: саме це каже серверу віддати JSON
-#         # Referer має бути ПОВНИМ URL сторінки препарату
-#         "referer": base_url,
-#         "user-agent": ua.random # "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
-#     }
-#
-#     # 1. зайти на сайт (отримати cookies)
-#     session.cookies.update({
-#         'site_version': 'desktop',
-#         'wucmf_region': '89',
-#         # 'PHPSESSID': '601c139cc7ac20fdcbecfdfd55095eb8'
-#     })
-#
-#     # 2. подивитись що отримали
-#     print(session.cookies.get_dict())
-#
-#     url = "https://apteka911.ua/ua/shop/search"
-#     # url = "https://apteka911.ua/ua/shop"
-#     # url = "https://apteka911.ua/shop/api/catalog/search"
+# def get_drugs_apteka911_by_category(session, target_url, headers):
+#     print(f'full_url: {target_url}')
+#     try:
+#         response = session.get(target_url, headers=headers, timeout=10)
+#         if response.status_code == 200:
+#             json_data = response.json()
+#             return json_data.get('data', {}).get('ajax_products', [])
+#         else:
+#             print(f"Помилка: {response.status_code}")
+#             return []
 #
 #
-#     # headers.update({
-#     #     'x-requested-with': 'XMLHttpRequest',
-#     #     'content-type': 'application/x-www-form-urlencoded; charset=UTF-8',
-#     #     'origin': 'https://apteka911.ua',
-#     #     'referrer': 'https://apteka911.ua',
-#     # })
-#
-#     payload = {
-#         "q": search_term,
-#     }
-#
-#     response = session.post(url, headers=headers, data=payload, timeout=15)
-#
-#     print(f"Status: {response.status_code}")
-#     data = response.json()
-#
-#     results = data.get("data", {}).get("results", [])
-#
-#     list_alias = [
-#         item['alias']
-#         for item in results
-#         if item['alias'].startswith('/drugs/')
-#     ]
-#
-#     return {
-#         'table_rows': [
-#             get_products_from_alias(session, headers.copy(), alias)
-#             for alias in list_alias[:3]  # обмеж для тесту
-#         ]
-#     }
+#     except Exception as e:
+#         print(f"Помилка API: {e}")
+#         time.sleep(10)
+#         return []
 #
 #
-# def get_products_from_alias(session, headers, alias):
-#     url = f"https://apteka911.ua{alias}"
-#     response = session.get(url)
-#     print(response.text)
-#     headers.update({
-#         'x-requested-with': 'XMLHttpRequest',
-#         'content-type': 'application/json',
-#         'origin': 'https://apteka911.ua',
-#         'referer': 'https://apteka911.ua',
-#     })
 #
-#     cookies = session.cookies.copy()
-#     cookies.update({
-#         'wucmf_region': '89'
-#     })
 #
-#     # витягуємо slug
-#     category = alias.split("/")[-1]
 #
-#     url = "https://apteka911.ua/shop/api/catalog/search"
+# def save_drugs(drugs):
+#     for drug in drugs:
+#         try:
+#             Drug_apteka911.objects.update_or_create(
+#                 productID=drug.get('productID'),
+#                 defaults={
+#                     'productName': drug.get('productName'),
+#                     'alias': drug.get('alias'),
+#                     'brandName': drug.get('brandName'),
+#                     'formName': drug.get('formName'),
+#                     'productAvail': True if drug.get('productAvail') == 'yes' else False,
+#                     'productCountry': drug.get('productCountry'),
+#                     'productForm': drug.get('productForm'),
+#                     'productMeasure': drug.get('productMeasure'),
+#                     'productMname': drug.get('productMname'),
+#                     'productPrice': drug.get('productPrice'),
+#                     'img': build_image_url(drug),
 #
-#     payload = {
-#         "url": alias,  # 🔥 ключовий момент
-#         # "page": 1
-#     }
+#                     # 'img': f"https://apteka911.ua{drug.get('dataUrl', '')}{drug.get('productThumbs', {}).get('webpmid', {}).get('file', '')}",
 #
-#     response = session.post(url, json=payload, headers=headers, cookies=cookies, timeout=15)
+#                 }
+#             )
+#         except Exception as e:
+#             print(f"[DB ERROR]: {e}")
 #
-#     print(response.status_code)
-#     print(response.text)
-#     return response.json()
-from django.utils import timezone
+#
+# def build_image_url(drug):
+#     try:
+#         return (
+#             "https://apteka911.ua"
+#             + drug.get('dataUrl', '')
+#             + drug.get('productThumbs', {}).get('webpmid', {}).get('file', '')
+#         )
+#     except:
+#         try:
+#             return (
+#                     "https://apteka911.ua"
+#                     + drug.get('dataUrl', '')
+#                     + drug.get('productThumbs', {}).get('mid', {}).get('file', '')
+#             )
+#         except:
+#             return None
+
+
+
 
 
 # drugs = get_all_drugs()
