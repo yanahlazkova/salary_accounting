@@ -3,7 +3,6 @@ from django.db import models
 
 class CategoryApteka911(models.Model):
     url = models.URLField(unique=True)
-    base_category = models.CharField(max_length=255, blank=True, null=True, verbose_name='Основна атегорія')
     name = models.CharField(max_length=255, blank=True, null=True, verbose_name='Категорія')
     created_at = models.DateTimeField(auto_now_add=True)
 

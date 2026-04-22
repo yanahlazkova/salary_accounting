@@ -1,4 +1,5 @@
 import gzip
+import json
 import os
 import django
 
@@ -72,30 +73,124 @@ def get_categories_whith_page_cite_apteka911():
 
     soup = BeautifulSoup(html, "html.parser")
     categories = []
+    seen_urls = set()
 
     items = driver.find_elements(By.CSS_SELECTOR, "ul.menu-catalog__list > li")
-
-    categories = []
 
     for item in items:
         try:
             name = item.find_element(By.CSS_SELECTOR, "meta[itemprop='name']").get_attribute("content")
             url = item.find_element(By.CSS_SELECTOR, "a[itemprop='url']").get_attribute("href")
 
-            categories.append({
-                "name": name,
-                "url": url
-            })
+            if url and url in seen_urls:
+                continue
+            else:
+                seen_urls.add(url)
 
+                categories.append({
+                    "name": name,
+                    "url": url
+                })
+                category_tree = check_category_tree_html(url)
         except:
             continue
 
-    for c in categories:
-        print(c)
+    # записати у файл json
+    with open('categories.json', 'w') as f:
+        json.dump(categories, f, indent=4)
+
     return categories
 
-def update_category(categories):
-    get_categories_with_sitemap(categories)
+
+def check_category_tree_html(url: str):
+    ua = UserAgent()
+    session = requests.Session()
+
+    response = session.get('https://apteka911.ua/ua', headers={"User-Agent": ua.random})
+
+    headers = {
+        "accept": "application/json, text/javascript, */*; q=0.01",
+        "content-type": "application/x-www-form-urlencoded; charset=UTF-8",
+        "x-requested-with": "XMLHttpRequest",  # КРИТИЧНО: саме це каже серверу віддати JSON
+        # Referer має бути ПОВНИМ URL сторінки препарату
+        "referer": f"https://apteka911.ua/ua",
+        "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
+    }
+    session.cookies.update({
+        'site_version': 'desktop',
+        'wucmf_region': '89',
+        # 'PHPSESSID': '601c139cc7ac20fdcbecfdfd55095eb8'
+    })
+    try:
+        response = session.get(url, headers=headers, timeout=10)
+        response.raise_for_status()
+        content_type = response.headers.get('Content-Type', '').lower()
+
+        if 'application/json' in content_type:
+            # data = response.json()
+            print("Це JSON")
+            return None
+
+        elif 'text/html' in content_type:
+            html = response.text
+            categories_tree = get_categories_tree_with_html(html)
+            print("Це HTML")
+            return categories_tree
+
+        else:
+            print(f"Невідомий тип: {content_type}")
+            return None
+    except requests.exceptions.HTTPError as e:
+        print(f"HTTP error: {e}")
+        return None
+
+
+def get_categories_tree_with_html(html):
+    soup = BeautifulSoup(html, 'html.parser')
+
+    root = soup.select_one('ul.block-medications')
+    categories = []
+
+    def walk(node, parent=None):
+        for li in node.find_all('li', recursive=False):
+            a = li.find('a', recursive=False)
+
+            if not a:
+                continue
+
+            name = a.get_text(strip=True)
+            url = a.get('href')
+
+            category = {
+                'name': name,
+                'url': url,
+                'parent': parent
+            }
+            categories.append(category)
+
+            # шукаємо вкладений список
+            sub_ul = li.find('ul', class_='block-medications')
+            if sub_ul:
+                walk(sub_ul, parent=url)
+
+    walk(root)
+
+    return categories
+
+
+def update_categories_db(categories):
+    """ оновлення категорій в БД """
+    for c in categories:
+        obj_category, _ = CategoryApteka911.objects.update_or_create(
+            url=c['url'],
+            defaults={"name": c['name']},
+        )
+        print(obj_category)
+
+
+
+
+
 
 def is_valid_category(url: str, categories: list) -> bool:
     print(f'categories: {url}')
@@ -121,6 +216,33 @@ def get_or_create_category(url_category):
         defaults={"name": name},
     )
     return category
+
+
+def update_category(categories):
+    cats = []
+    # відкриваємо файл json та перебираємо категорії
+    with open('categories.json', 'r') as f:
+        file_content = f.read()
+        cats = json.loads(file_content)
+
+    ua = UserAgent()
+    session = requests.Session()
+    base_url = "https://apteka911.ua/ua/"
+
+    session.get(base_url, headers={"User-Agent": ua.random})
+
+    headers = {
+        'accept': 'application/json, text/javascript, */*; q=0.01',
+        'x-requested-with': 'XMLHttpRequest',
+        'origin': 'https://apteka911.ua',
+    }
+
+    session.cookies.update({
+        'site_version': 'desktop',
+        'wucmf_region': '89',
+    })
+
+
 
 
 def get_categories_with_sitemap(categories):
@@ -174,7 +296,7 @@ def get_categories_with_sitemap(categories):
 
             # headers.update({
             #     "referer": "https://apteka911.ua/ua",
-            #     "user-agent": ua.random,
+            #     "user-agent": ui.random,
             # })
             # category_url_page1 = f'{category_url}/page=1'
 
@@ -299,9 +421,9 @@ fetch("https://apteka911.ua/ua/shop/search", {
     "accept-language": "ru,en;q=0.9,en-GB;q=0.8,en-US;q=0.7,uk;q=0.6",
     "content-type": "application/x-www-form-urlencoded; charset=UTF-8",
     "priority": "u=1, i",
-    "sec-ch-ua": "\"Chromium\";v=\"146\", \"Not-A.Brand\";v=\"24\", \"Microsoft Edge\";v=\"146\"",
-    "sec-ch-ua-mobile": "?0",
-    "sec-ch-ua-platform": "\"Windows\"",
+    "sec-ch-ui": "\"Chromium\";v=\"146\", \"Not-A.Brand\";v=\"24\", \"Microsoft Edge\";v=\"146\"",
+    "sec-ch-ui-mobile": "?0",
+    "sec-ch-ui-platform": "\"Windows\"",
     "sec-fetch-dest": "empty",
     "sec-fetch-mode": "cors",
     "sec-fetch-site": "same-origin",
@@ -338,9 +460,9 @@ curl 'https://apteka911.ua/ua/shop/lekarstvennyie-preparatyi/ot_boli_v_gorle/pag
       _ga_VRYFSBB3XF=GS2.1.s1776153119$o1$g1$t1776153491$j37$l0$h0' \
   -H 'priority: u=1, i' \
   -H 'referer: https://apteka911.ua/ua/shop/lekarstvennyie-preparatyi/ot_boli_v_gorle' \
-  -H 'sec-ch-ua: "Google Chrome";v="147", "Not.A/Brand";v="8", "Chromium";v="147"' \
-  -H 'sec-ch-ua-mobile: ?0' \
-  -H 'sec-ch-ua-platform: "Windows"' \
+  -H 'sec-ch-ui: "Google Chrome";v="147", "Not.A/Brand";v="8", "Chromium";v="147"' \
+  -H 'sec-ch-ui-mobile: ?0' \
+  -H 'sec-ch-ui-platform: "Windows"' \
   -H 'sec-fetch-dest: empty' \
   -H 'sec-fetch-mode: cors' \
   -H 'sec-fetch-site: same-origin' \

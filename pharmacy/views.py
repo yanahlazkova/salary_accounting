@@ -11,7 +11,7 @@ from django.utils import timezone
 from pharmacy.helper_pharmacy import get_categories_whith_page_cite_apteka911, \
     update_category, get_categories_with_sitemap
 from pharmacy.main import get_all_category
-from pharmacy.methods.toolbar_buttons import ToolbarMixin
+from pharmacy.ui.toolbar_buttons import ToolbarMixin
 # from pharmacy.helper_pharmacy import search_drugs_apteka911
 from pharmacy.models import Drug_apteka911, CategoryApteka911
 from ui.mixins.htmx import HTMXTemplateMixin
@@ -41,13 +41,10 @@ class PharmacyBaseView(AppSectionMetaMixin):
     def get_context_data(self, **kwargs):
         ctx = super().get_context_data(**kwargs)
 
-        # ctx.update({
-        #     'toolbar_buttons': self.get_toolbar_buttons(),
-        # })
         return ctx
 
 
-class PharmacyUpdateDB(PharmacyBaseView, HTMXTemplateMixin, TemplateView):
+class PharmacyUpdateDrugsDB(PharmacyBaseView, HTMXTemplateMixin, TemplateView):
     page_content = ('pharmacy.html',)
 
     def get_context_data(self, **kwargs):
@@ -66,23 +63,18 @@ class PharmacyUpdateDB(PharmacyBaseView, HTMXTemplateMixin, TemplateView):
 
 class PharmacyUpdateCategory(PharmacyBaseView, HTMXTemplateMixin, ToolbarMixin, TemplateView):
     # page_content = ('pharmacy.html',)
+    queryset = CategoryApteka911.objects.all()
 
     def get_queryset(self):
         # отримати категорії зі сторінки сайту
         categories = get_categories_whith_page_cite_apteka911()
-
-        # оновити категорії в БД
         update_category(categories)
-        
-        # 
-
-        query = self.request.POST.get('search_query') or self.request.GET.get('search_query', '')
+        return CategoryApteka911.objects.all()
 
     def get_context_data(self, **kwargs):
         ctx = super().get_context_data(**kwargs)
-        categories = get_categories_whith_page_cite_apteka911()
-        # get_categories_with_sitemap(categories)
-        update_category(categories)
+        categories = self.queryset
+
         today = timezone.now().date()
 
         # ctx.update({

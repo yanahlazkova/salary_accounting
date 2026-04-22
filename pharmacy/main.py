@@ -32,10 +32,10 @@
 #
 #
 # def get_unique_drug_codes_apteka911():
-#     ua = UserAgent()
+#     ui = UserAgent()
 #     main_sitemap_url = pharmacy['apteka911']
 #     headers = {
-#         'User-Agent': ua.random,
+#         'User-Agent': ui.random,
 #         # 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'
 #     }
 #
@@ -106,7 +106,7 @@
 #
 #
 # def sync_drugs_from_sitemap():
-#     ua = UserAgent()
+#     ui = UserAgent()
 #     session = requests.Session()
 #
 #     # Посилання на один із архівів товарів (можна автоматизувати перебір усіх)
@@ -121,7 +121,7 @@
 #     }
 #
 #     print("--- Завантаження карти сайту ---")
-#     response = session.get(sitemap_url, headers={'User-Agent': ua.random})
+#     response = session.get(sitemap_url, headers={'User-Agent': ui.random})
 #
 #     with gzip.GzipFile(fileobj=BytesIO(response.content)) as f:
 #         root = ET.fromstring(f.read())
@@ -132,7 +132,7 @@
 #     print(f"Знайдено {len(urls)} посилань. Починаємо імпорт...")
 #
 #     for full_url in urls:
-#         # Витягуємо аліас (наприклад, /ua/shop/asparkam-p12181)
+#         # Витягуємо аліас (наприклад, /ui/shop/asparkam-p12181)
 #         alias = "/" + "/".join(full_url.split("/")[3:])
 #
 #         # Перевіряємо, чи немає вже такого коду в базі, щоб не дублювати запити
@@ -142,7 +142,7 @@
 #
 #         # Змінюємо User-Agent для кожного запиту
 #         headers = headers_base.copy()
-#         headers['User-Agent'] = ua.random
+#         headers['User-Agent'] = ui.random
 #         headers['referer'] = full_url
 #
 #         payload = {
@@ -180,8 +180,12 @@
 #             time.sleep(10)  # Довша пауза при помилці
 #
 #     print("Синхронізація завершена!")
+import json
 import os
+from urllib.parse import urljoin
+
 import django
+from bs4 import BeautifulSoup
 
 # Вкажіть назву вашого проєкту (замість 'myproject' назва папки, де лежить settings.py)
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'salary_accounting.settings')
@@ -223,7 +227,7 @@ from pharmacy.models import Drug_apteka911, CategoryApteka911
 #     LIST_DRUGS = []
 #
 #     # 1. Ініціалізація генератора юзер-агентів
-#     ua = UserAgent()
+#     ui = UserAgent()
 #     session = requests.Session()
 #
 #     sitemap_url = 'https://apteka911.ua/sitemap.xml'
@@ -249,7 +253,7 @@ from pharmacy.models import Drug_apteka911, CategoryApteka911
 #
 #     try:
 #         # 3. Додано timeout для безпеки
-#         response = session.get(sitemap_url, headers={'User-Agent': ua.random}, timeout=15)
+#         response = session.get(sitemap_url, headers={'User-Agent': ui.random}, timeout=15)
 #         response.raise_for_status()  # Перевірка на помилки 404, 500
 #
 #         root = ET.fromstring(response.content)
@@ -265,7 +269,7 @@ from pharmacy.models import Drug_apteka911, CategoryApteka911
 #
 #                 try:
 #                     # Додано timeout для архіву
-#                     gz_response = session.get(url_text, headers={'User-Agent': ua.random}, timeout=20)
+#                     gz_response = session.get(url_text, headers={'User-Agent': ui.random}, timeout=20)
 #                     gz_response.raise_for_status()
 #
 #                     # Безпечне розпакування у пам'яті
@@ -282,7 +286,7 @@ from pharmacy.models import Drug_apteka911, CategoryApteka911
 #
 #                         headers.update({
 #                             "referer": f"https://apteka911.ua/ua",
-#                             "user-agent": ua.random,
+#                             "user-agent": ui.random,
 #                         })
 #
 #                         session.cookies.update({
@@ -386,9 +390,9 @@ from pharmacy.models import Drug_apteka911, CategoryApteka911
 #     "accept-language": "ru,en;q=0.9,en-GB;q=0.8,en-US;q=0.7,uk;q=0.6",
 #     "content-type": "application/x-www-form-urlencoded; charset=UTF-8",
 #     "priority": "u=1, i",
-#     "sec-ch-ua": "\"Chromium\";v=\"146\", \"Not-A.Brand\";v=\"24\", \"Microsoft Edge\";v=\"146\"",
-#     "sec-ch-ua-mobile": "?0",
-#     "sec-ch-ua-platform": "\"Windows\"",
+#     "sec-ch-ui": "\"Chromium\";v=\"146\", \"Not-A.Brand\";v=\"24\", \"Microsoft Edge\";v=\"146\"",
+#     "sec-ch-ui-mobile": "?0",
+#     "sec-ch-ui-platform": "\"Windows\"",
 #     "sec-fetch-dest": "empty",
 #     "sec-fetch-mode": "cors",
 #     "sec-fetch-site": "same-origin",
@@ -405,7 +409,7 @@ import requests
 #
 #
 # def test_single_request():
-#     ua = UserAgent()
+#     ui = UserAgent()
 #     session = requests.Session()
 #     base_url = "https://apteka911.ua/ua/"
 #
@@ -413,7 +417,7 @@ import requests
 #     # target_alias = "/drugs/glyukozamin-d811"
 #     # # target_alias = "/drugs/glitsin-d803"
 #
-#     session.get(base_url, headers={"User-Agent": ua.random})
+#     session.get(base_url, headers={"User-Agent": ui.random})
 #
 #     headers = {
 #         "accept": "application/json, text/javascript, */*; q=0.01",
@@ -694,3 +698,89 @@ productPromotions:[]
 productQntComments:0
 productRating:0
 """
+
+def test_categories_page():
+    ua = UserAgent()
+    session = requests.Session()
+
+    response = session.get('https://apteka911.ua/ua', headers={"User-Agent": ua.random})
+
+    headers = {
+                "accept": "application/json, text/javascript, */*; q=0.01",
+                "content-type": "application/x-www-form-urlencoded; charset=UTF-8",
+                "x-requested-with": "XMLHttpRequest", # КРИТИЧНО: саме це каже серверу віддати JSON
+                # Referer має бути ПОВНИМ URL сторінки препарату
+                "referer": f"https://apteka911.ua/ua",
+                "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
+            }
+    session.cookies.update({
+                'site_version': 'desktop',
+                'wucmf_region': '89',
+                # 'PHPSESSID': '601c139cc7ac20fdcbecfdfd55095eb8'
+            })
+    page = '/page=1'
+    target_url = ''
+    with open('../categories.json') as f:
+        file_content = f.read()
+        cats_json = json.loads(file_content)
+    for cat in cats_json:
+        target_url = cat['url']
+        print(f'url: {target_url}')
+    # target_url = 'https://apteka911.ua/ua/shop/lekarstvennyie-preparatyi'
+    # target_url = 'https://apteka911.ua/ua/shop/tovaryi-dlya-zdorovya'
+    # target_url = 'https://apteka911.ua/ua/shop/mama-i-malyish'
+        try:
+            response = session.get(f'{target_url}/page=1', headers=headers, timeout=10)
+            response.raise_for_status()
+            content_type = response.headers.get('Content-Type', '').lower()
+
+            if 'application/json' in content_type:
+                data = response.json()
+                print("Це JSON")
+
+            elif 'text/html' in content_type:
+                html = response.text
+                categories_tree = get_categories_tree_with_html(html)
+                print("Це HTML")
+                return categories_tree
+
+            else:
+                print(f"Невідомий тип: {content_type}")
+        except requests.exceptions.HTTPError as e:
+            print(f"HTTP error: {e}")
+            return None
+
+def get_categories_tree_with_html(template_html):
+    # ua = UserAgent()
+    # headers = {'User-Agent': ua.random}
+    # response = requests.get('https://apteka911.ua/ua/shop/lekarstvennyie-preparatyi', headers=headers)
+    soup = BeautifulSoup(template_html, 'html.parser')
+    script = soup.find('script', {'type': 'text/x-template'})
+    if not script:
+        print("❌ script не знайдено")
+
+    template_html = script.string
+
+    soup2 = BeautifulSoup(template_html, 'html.parser')
+
+    categories = []
+
+    for a in soup2.select('a[data-link-self-path]'):
+    # for a in soup.select('a[data-link-self-path]'):
+        name = a.get_text(strip=True)
+        path = a.get('data-link-self-path')
+
+        if not path:
+            continue
+
+        url = urljoin('https://apteka911.ua', path)
+
+        categories.append({
+            'name': name,
+            'url': url
+        })
+
+    return categories
+
+
+test_categories_page()
