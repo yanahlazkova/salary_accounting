@@ -9,7 +9,7 @@ from django.views.generic import ListView, TemplateView
 from django.utils import timezone
 
 from pharmacy.helper_pharmacy import get_categories_whith_page_cite_apteka911, \
-    update_category, get_categories_with_sitemap
+    update_category, get_categories_with_sitemap, update_categories_db
 from pharmacy.main import get_all_category
 from pharmacy.ui.toolbar_buttons import ToolbarMixin
 # from pharmacy.helper_pharmacy import search_drugs_apteka911
@@ -68,12 +68,12 @@ class PharmacyUpdateCategory(PharmacyBaseView, HTMXTemplateMixin, ToolbarMixin, 
     def get_queryset(self):
         # отримати категорії зі сторінки сайту
         categories = get_categories_whith_page_cite_apteka911()
-        update_category(categories)
+        update_categories_db(categories)
         return CategoryApteka911.objects.all()
 
     def get_context_data(self, **kwargs):
         ctx = super().get_context_data(**kwargs)
-        categories = self.queryset
+        categories = self.get_queryset()
 
         today = timezone.now().date()
 
