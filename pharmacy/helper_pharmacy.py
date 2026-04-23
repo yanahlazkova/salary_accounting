@@ -48,6 +48,9 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 
+SEEN_URLS = set()
+
+
 def get_categories_whith_page_cite_apteka911():
     driver = webdriver.Chrome()
     driver.get("https://apteka911.ua/ua/")
@@ -73,7 +76,6 @@ def get_categories_whith_page_cite_apteka911():
 
     soup = BeautifulSoup(html, "html.parser")
     categories = []
-    seen_urls = set()
 
     items = driver.find_elements(By.CSS_SELECTOR, "ul.menu-catalog__list > li")
 
@@ -82,16 +84,16 @@ def get_categories_whith_page_cite_apteka911():
             name = item.find_element(By.CSS_SELECTOR, "meta[itemprop='name']").get_attribute("content")
             url = item.find_element(By.CSS_SELECTOR, "a[itemprop='url']").get_attribute("href")
 
-            if url and url in seen_urls:
+            if url and url in SEEN_URLS:
                 continue
             else:
-                seen_urls.add(url)
+                SEEN_URLS.add(url)
 
                 categories.append({
                     "name": name,
                     "url": url
                 })
-                category_tree = check_category_tree_html(url)
+                categories += check_category_tree_html(url)
         except:
             continue
 
@@ -144,36 +146,38 @@ def check_category_tree_html(url: str):
         print(f"HTTP error: {e}")
         return None
 
+from urllib.parse import urljoin
 
 def get_categories_tree_with_html(html):
     soup = BeautifulSoup(html, 'html.parser')
+    script = soup.find('script', {'type': 'text/x-template'})
+    if not script:
+        print("❌ script не знайдено")
 
-    root = soup.select_one('ul.block-medications')
+    template_html = script.string
+
+    soup2 = BeautifulSoup(template_html, 'html.parser')
+
     categories = []
 
-    def walk(node, parent=None):
-        for li in node.find_all('li', recursive=False):
-            a = li.find('a', recursive=False)
+    for a in soup2.select('a[data-link-self-path]'):
+        name = a.get_text(strip=True)
+        path = a.get('data-link-self-path')
 
-            if not a:
-                continue
+        if not path:
+            continue
 
-            name = a.get_text(strip=True)
-            url = a.get('href')
+        url = urljoin('https://apteka911.ua', path)
 
-            category = {
-                'name': name,
-                'url': url,
-                'parent': parent
-            }
-            categories.append(category)
+        if path and path in SEEN_URLS:
+            continue
+        else:
+            SEEN_URLS.add(url)
 
-            # шукаємо вкладений список
-            sub_ul = li.find('ul', class_='block-medications')
-            if sub_ul:
-                walk(sub_ul, parent=url)
-
-    walk(root)
+            categories.append({
+                "name": name,
+                "url": url
+            })
 
     return categories
 

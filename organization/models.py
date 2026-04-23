@@ -57,6 +57,7 @@ class Ustanova(models.Model):
                                   verbose_name='Скорочена назва',
                                   # blank=True,
                                   # null=True,
+                                  default=name,
                                   )
     kpk = models.PositiveIntegerField(
         verbose_name='КПК')
@@ -169,6 +170,7 @@ class BankAccount(models.Model):
         related_query_name='bank_account',
         # null=True,
         # blank=True,
+        default=1
     )
     time_created = models.DateTimeField(auto_now_add=True, verbose_name='Дата створення')  # дата при створенні запису
     time_updated = models.DateTimeField(auto_now=True, verbose_name='Дата оновлення')  # дата при зміні запису

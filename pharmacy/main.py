@@ -750,11 +750,8 @@ def test_categories_page():
             print(f"HTTP error: {e}")
             return None
 
-def get_categories_tree_with_html(template_html):
-    # ua = UserAgent()
-    # headers = {'User-Agent': ua.random}
-    # response = requests.get('https://apteka911.ua/ua/shop/lekarstvennyie-preparatyi', headers=headers)
-    soup = BeautifulSoup(template_html, 'html.parser')
+def get_categories_tree_with_html(html):
+    soup = BeautifulSoup(html, 'html.parser')
     script = soup.find('script', {'type': 'text/x-template'})
     if not script:
         print("❌ script не знайдено")
@@ -766,7 +763,6 @@ def get_categories_tree_with_html(template_html):
     categories = []
 
     for a in soup2.select('a[data-link-self-path]'):
-    # for a in soup.select('a[data-link-self-path]'):
         name = a.get_text(strip=True)
         path = a.get('data-link-self-path')
 
@@ -783,4 +779,4 @@ def get_categories_tree_with_html(template_html):
     return categories
 
 
-test_categories_page()
+# test_categories_page()
